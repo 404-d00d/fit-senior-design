@@ -1,5 +1,7 @@
 package Main;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,33 +10,37 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private Stage primaryStage;
+    private static Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-        loadScreen("/resources/User Dashboard.fxml");
+        Main.primaryStage = primaryStage;
+        showLoginScreen();  // Show the login screen on app startup
     }
-    
-    //testing thing 
 
-    //@Override
-    //public void start(Stage primaryStage) throws Exception {
-        //FXMLLoader loader = new FXMLLoader(getClass().getResource("/resources/UploadOptions.fxml"));
-        //Scene scene = new Scene(loader.load());
-        //primaryStage.setScene(scene);
-        //primaryStage.setTitle("Upload Options");
-        //primaryStage.show();
-    //}
-
-    // Method to load and switch between screens
-    public void loadScreen(String fxmlFile) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-        Parent screen = loader.load();
-        Scene scene = new Scene(screen);
-        primaryStage.setScene(scene);
+    // Load the login screen
+    public static void showLoginScreen() throws IOException {
+        Parent loginScreen = FXMLLoader.load(Main.class.getResource("/resources/LoginPage.fxml"));
+        primaryStage.setScene(new Scene(loginScreen));
         primaryStage.show();
     }
+
+    // Load the dashboard screen (user dashboard after login)
+    public static void showDashboardScreen() throws IOException {
+        Parent dashboardScreen = FXMLLoader.load(Main.class.getResource("/resources/User Dashboard.fxml"));
+        primaryStage.setScene(new Scene(dashboardScreen));
+        primaryStage.show();
+    }
+
+    // Load the sign-up screen
+    public static void showSignUpScreen() throws IOException {
+        Parent signUpScreen = FXMLLoader.load(Main.class.getResource("/resources/Signuppage.fxml"));
+        primaryStage.setScene(new Scene(signUpScreen));
+        primaryStage.show();
+    }
+
+    //add more screens here...
+
 
     public static void main(String[] args) {
         launch(args);

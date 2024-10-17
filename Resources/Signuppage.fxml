@@ -42,21 +42,20 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.SignUpPageController">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#686868" height="1080.0" stroke="BLACK" strokeType="INSIDE" width="1920.0" />
       <Rectangle arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="983.0" layoutX="1084.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="756.0" />
-      <PasswordField layoutX="1220.0" layoutY="317.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
-      <Button layoutX="1389.0" layoutY="752.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="170.0" style="-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50;" text="Sign Up" textAlignment="CENTER">
+      <PasswordField fx:id="emailField" layoutX="1220.0" layoutY="317.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <Button fx:id="signUpButton" layoutX="1389.0" layoutY="752.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="170.0" style="-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50;" text="Sign Up" textAlignment="CENTER">
          <font>
             <Font size="41.0" />
          </font>
       </Button>
-      <TextField layoutX="1220.0" layoutY="240.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <TextField fx:id="usernameField" layoutX="1220.0" layoutY="240.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
       <Separator layoutX="1087.0" layoutY="634.0" prefHeight="18.0" prefWidth="750.0" />
       <Circle fill="WHITE" layoutX="1474.0" layoutY="643.0" radius="9.0" stroke="BLACK" strokeType="INSIDE" />
-      <Button layoutX="1303.0" layoutY="839.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="342.0" style="-fx-background-color: Grey; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50; -fx-border-color: Orange; -fx-border-radius: 50; -fx-border-width: 4;" text="Login" textAlignment="CENTER">
+      <Button fx:id="loginButton" layoutX="1303.0" layoutY="839.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="342.0" style="-fx-background-color: Grey; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50; -fx-border-color: Orange; -fx-border-radius: 50; -fx-border-width: 4;" text="Login" textAlignment="CENTER">
          <font>
             <Font size="41.0" />
          </font>
@@ -76,13 +75,13 @@
             <Font size="22.0" />
          </font>
       </Text>
-      <PasswordField layoutX="1220.0" layoutY="394.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <PasswordField fx:id="passwordField" layoutX="1220.0" layoutY="394.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
       <Text layoutX="1220.0" layoutY="388.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password*">
          <font>
             <Font size="22.0" />
          </font>
       </Text>
-      <PasswordField layoutX="1220.0" layoutY="471.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <PasswordField fx:id="confirmPasswordField" layoutX="1220.0" layoutY="471.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
       <Text layoutX="1220.0" layoutY="465.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm Password*">
          <font>
             <Font size="22.0" />

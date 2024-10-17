@@ -10,29 +10,24 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.UserDashboardController">
    <children>
-      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="1080.0" layoutX="-19.0" stroke="BLACK" strokeType="INSIDE" width="295.0" />
-      <Button layoutX="48.0" layoutY="27.0" mnemonicParsing="false" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER">
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="1080.0" layoutX="-2.0" stroke="BLACK" strokeType="INSIDE" width="278.0" />
+      <Button fx:id="inventoryButton" layoutY="27.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-text-fill: black; -fx-effect: none; -fx-font-size: 40; -fx-background-color: clear;" text="Inventory" textAlignment="CENTER">
          <effect>
             <Bloom />
          </effect>
       </Button>
-      <Button layoutX="62.0" layoutY="102.0" mnemonicParsing="false" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Recipes" textAlignment="CENTER" />
-      <Button layoutX="81.0" layoutY="177.0" mnemonicParsing="false" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
-      <Button layoutX="33.0" layoutY="240.0" mnemonicParsing="false" prefHeight="120.0" prefWidth="209.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Browse Recipes" textAlignment="CENTER" wrapText="true" />
-      <Button layoutX="72.0" layoutY="376.0" mnemonicParsing="false" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
-      <Button layoutX="17.0" layoutY="455.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="246.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
+      <Button fx:id="recipesButton" layoutY="102.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Recipes" textAlignment="CENTER" />
+      <Button fx:id="inboxButton" layoutY="177.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
+      <Button fx:id="browseRecipesButton" layoutX="-2.0" layoutY="240.0" mnemonicParsing="false" prefHeight="147.0" prefWidth="278.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Browse Recipes" textAlignment="CENTER" wrapText="true" />
+      <Button fx:id="profileButton" layoutY="376.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
+      <Button fx:id="settingsButton" layoutY="455.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="278.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button layoutX="15.0" layoutY="570.0" mnemonicParsing="false" prefHeight="112.0" prefWidth="246.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Shopping Lists" textAlignment="CENTER" wrapText="true">
-         <font>
-            <Font size="40.0" />
-         </font>
-      </Button>
-      <Button layoutX="14.0" layoutY="693.0" mnemonicParsing="false" prefHeight="120.0" prefWidth="246.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Needed Ingredients" textAlignment="CENTER" wrapText="true">
+      <Button fx:id="neededIngredientsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="693.0" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="147.0" prefWidth="270.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="Needed Ingredients" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
          <font>
             <Font name="System Bold" size="45.0" />
          </font>
@@ -77,5 +72,10 @@
       </Text>
       <AutoCompleteTextField layoutX="808.0" layoutY="33.0" prefHeight="46.0" prefWidth="595.0" promptText="Can't Find Somthing?" style="-fx-background-color: orange; -fx-background-radius: 50;" />
       <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
+      <Button fx:id="shoppingListsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="561.0" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="147.0" prefWidth="270.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 270;" text="Shopping Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font name="System Bold" size="45.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

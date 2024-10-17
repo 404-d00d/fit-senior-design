@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gluonhq.charm.glisten.control.AutoCompleteTextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.effect.Bloom?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="112.0" layoutX="4.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1909.0" />
+      <Text layoutX="122.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="INVENTORY" wrappingWidth="321.30859375">
+         <font>
+            <Font size="56.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="951.0" layoutX="438.0" layoutY="126.0" stroke="BLACK" strokeType="INSIDE" width="1477.0" />
+      <AutoCompleteTextField layoutX="1141.0" layoutY="31.0" prefHeight="46.0" prefWidth="595.0" promptText="Can't Find Somthing?" style="-fx-background-color: orange;" />
+      <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
+      <VBox prefHeight="1080.0" prefWidth="275.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false" AnchorPane.leftAnchor="0.0">
+         <children>
+            <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" prefHeight="91.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER">
+               <effect>
+                  <Bloom />
+               </effect>
+            </Button>
+            <Button mnemonicParsing="false" prefHeight="83.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Recipes" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" prefHeight="78.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" prefHeight="149.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Browse Recipes" textAlignment="CENTER" wrapText="true" />
+            <Button mnemonicParsing="false" prefHeight="86.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" prefHeight="85.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Separator prefHeight="30.0" prefWidth="275.0" />
+            <Button mnemonicParsing="false" prefHeight="138.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Shopping Lists" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="40.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" prefHeight="120.0" prefWidth="284.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Needed Ingredients" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+            <Separator prefHeight="48.0" prefWidth="621.0" />
+         </children>
+      </VBox>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="64.0" layoutX="479.0" layoutY="22.0" stroke="#ff8100" strokeType="INSIDE" strokeWidth="4.0" width="321.0" />
+      <Text layoutX="573.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Spaces" wrappingWidth="132.56119537353516">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="64.0" layoutX="808.0" layoutY="22.0" stroke="BLACK" strokeType="INSIDE" width="321.0" />
+      <Text layoutX="895.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="All Items" wrappingWidth="164.56119537353516">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#ff8100" height="46.0" layoutX="50.0" layoutY="147.0" stroke="#ff8100" strokeType="INSIDE" strokeWidth="4.0" width="346.0" />
+      <Text layoutX="157.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Fridge" textAlignment="CENTER" wrappingWidth="132.56119537353516">
+         <font>
+            <Font name="System Bold" size="40.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="46.0" layoutX="50.0" layoutY="205.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="346.0" />
+      <Text layoutX="137.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Freezer" textAlignment="CENTER" wrappingWidth="171.56119537353516">
+         <font>
+            <Font name="System Bold" size="40.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="46.0" layoutX="50.0" layoutY="263.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="346.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="46.0" layoutX="109.0" layoutY="1007.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="228.0" />
+      <Text layoutX="121.0" layoutY="1044.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Space" textAlignment="CENTER" wrappingWidth="203.56119537353516">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Text>
+      <Text layoutX="137.0" layoutY="302.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pantry" textAlignment="CENTER" wrappingWidth="171.56119537353516">
+         <font>
+            <Font name="System Bold" size="40.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="46.0" layoutX="968.0" layoutY="142.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="346.0" />
+      <Text layoutX="977.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Ingredients" textAlignment="CENTER" wrappingWidth="333.56119537353516">
+         <font>
+            <Font name="System Bold" size="40.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="149.0" layoutX="479.0" layoutY="213.0" stroke="BLACK" strokeType="INSIDE" width="1390.0" />
+      <ScrollBar layoutX="1887.0" layoutY="178.0" orientation="VERTICAL" prefHeight="886.0" prefWidth="20.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="46.0" layoutX="479.0" layoutY="1009.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="228.0" />
+      <Text layoutX="491.0" layoutY="1046.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Place" textAlignment="CENTER" wrappingWidth="203.56119537353516">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="149.0" layoutX="479.0" layoutY="418.0" stroke="BLACK" strokeType="INSIDE" width="1390.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="149.0" layoutX="482.0" layoutY="621.0" stroke="BLACK" strokeType="INSIDE" width="1390.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="149.0" layoutX="482.0" layoutY="823.0" stroke="BLACK" strokeType="INSIDE" width="1390.0" />
+      <Text layoutX="491.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Expiring Soon" wrappingWidth="266.56119537353516">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Text>
+      <Text layoutX="491.0" layoutY="404.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dairy" wrappingWidth="266.56119537353516">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Text>
+      <Text layoutX="491.0" layoutY="606.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Meat &amp; Seafood" wrappingWidth="303.56119537353516">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Text>
+      <Text layoutX="482.0" layoutY="809.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ready To Eat" wrappingWidth="303.56119537353516">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Text>
+      <Button layoutX="34.0" layoutY="28.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
+   </children>
+</AnchorPane>

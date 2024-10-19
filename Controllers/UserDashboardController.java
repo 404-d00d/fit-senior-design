@@ -2,9 +2,8 @@ package Controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.control.PasswordField;
 import Main.Main;
+import javafx.scene.input.MouseEvent;
 
 public class UserDashboardController {
 
@@ -38,74 +37,107 @@ public class UserDashboardController {
       // Switch to Inventroy Screen
       inventoryButton.setOnAction(event -> {
          try {
-            Main.  // Switch to ...
+            Main.showInventoryScreen(); // Switch to Inventory Screen
          } catch (Exception e) {
             e.printStackTrace();
          }
       });
+
+      setHoverEffect(inventoryButton);
 
       // Switch to MyRecipes Screen
       recipesButton.setOnAction(event -> {
          try {
-            Main.  // Switch to ...
+            Main.showMyRecipesScreen();  // Switch to MyRecipes
          } catch (Exception e) {
             e.printStackTrace();
          }
       });
 
+      setHoverEffect(recipesButton);
+
       // Switch to Inbox Screen
       inboxButton.setOnAction(event -> {
          try {
-             Main.  // Switch to ...
+            //Main.  // Switch to ...
          } catch (Exception e) {
-             e.printStackTrace();
+            e.printStackTrace();
          }
       });
+
+      setHoverEffect(inboxButton);
 
       // Switch to Browse Recipes Screen
       browseRecipesButton.setOnAction(event -> {
          try {
-             Main.  // Switch to ...
+            //Main.  // Switch to ...
          } catch (Exception e) {
-             e.printStackTrace();
+            e.printStackTrace();
          }
       });
 
-      // Switch to Browse Recipes Screen
+      setHoverEffect(browseRecipesButton);
+
+      // Switch to Profile Screen
       profileButton.setOnAction(event -> {
          try {
-             Main.  // Switch to ...
+            //Main.  // Switch to ...
          } catch (Exception e) {
-             e.printStackTrace();
+            e.printStackTrace();
          }
       });
+
+      setHoverEffect(profileButton);
       
-      // Switch to Browse Recipes Screen
+      // Switch to Browse Settings Screen
       settingsButton.setOnAction(event -> {
          try {
-             Main.  // Switch to ...
+            //Main.  // Switch to ...
          } catch (Exception e) {
-             e.printStackTrace();
+            e.printStackTrace();
          }
       });
 
-      // Switch to Browse Recipes Screen
+      setHoverEffect(settingsButton);
+
+      // Switch to Shopping Lists Screen
       shoppingListsButton.setOnAction(event -> {
          try {
-             Main.  // Switch to ...
+            //Main.  // Switch to ...
          } catch (Exception e) {
-             e.printStackTrace();
+            e.printStackTrace();
          }
       });
 
-      // Switch to Browse Recipes Screen
+      setHoverEffect(shoppingListsButton);
+
+      // Switch to NeededIngredients Screen
       neededIngredientsButton.setOnAction(event -> {
          try {
-             Main.  // Switch to ...
+            //Main.  // Switch to ...
          } catch (Exception e) {
-             e.printStackTrace();
+            e.printStackTrace();
          }
       });
 
+      setHoverEffect(neededIngredientsButton);
+
+   }
+
+   private void setHoverEffect(Button button) {
+      button.setOnMouseEntered(this::handleMouseEntered);
+      button.setOnMouseExited(this::handleMouseExited);
+  }
+
+   private void handleMouseEntered(MouseEvent event) {
+      Button button = (Button) event.getSource();
+      // Change style when mouse enters
+      button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+   }
+
+   private void handleMouseExited(MouseEvent event) {
+      Button button = (Button) event.getSource();
+      // Reset style when mouse exits
+      button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
    }
 }

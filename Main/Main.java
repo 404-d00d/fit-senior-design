@@ -39,8 +39,19 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    //add more screens here...
+    // Load the inventory screen 
+    public static void showInventoryScreen() throws IOException {
+        Parent inventoryScreen = FXMLLoader.load(Main.class.getResource("/resources/InventoryDashboard.fxml"));
+        primaryStage.setScene(new Scene(inventoryScreen));
+        primaryStage.show();
+    }
 
+    // Load the MyRecipes screen 
+    public static void showMyRecipesScreen() throws IOException {
+        Parent myRecipesScreen = FXMLLoader.load(Main.class.getResource("/resources/MyRecipes.fxml"));
+        primaryStage.setScene(new Scene(myRecipesScreen));
+        primaryStage.show();
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -38,20 +38,31 @@ public class BarcodeUploadController {
 
    // Method to run the Python script and print the result to the terminal
    private void runPythonScript(String imagePath) {
-      try {
+        try {
           // Use ProcessBuilder to run the Python script with the image path
-          ProcessBuilder pb = new ProcessBuilder("C:\\Users\\cnede\\AppData\\Local\\Programs\\Python\\Python312\\python.exe", "src/BarcodeModule.py", imagePath);
-          pb.redirectErrorStream(true);  // Redirect errors to the output stream
-          Process process = pb.start();
+          // Use environment to find Python if it's in the PATH
+            ProcessBuilder pb = new ProcessBuilder(
+                "python",                      // Will use the 'python' command from PATH
+                "src/Barcode Module/BarcodeModule.py",         // Relative path to the script
+                imagePath                       // Image path passed as argument
+            );
 
-          // Capture the output from the Python script
-          BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-          String result = in.lines().collect(Collectors.joining("\n"));
-          process.waitFor();  // Wait for the process to finish
-          System.out.println(result);  // Print the result to the terminal
-      } catch (Exception e) {
-          e.printStackTrace();
-          System.out.println("Error: " + e.getMessage());
-      }
-  }
+            // Set the working directory to the project's base folder
+            pb.directory(new File(System.getProperty("user.dir"))); 
+
+            pb.redirectErrorStream(true);  // Redirect errors to the output stream
+            Process process = pb.start();
+
+            // Capture the output from the Python script
+            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String result = in.lines().collect(Collectors.joining("\n"));
+            process.waitFor();  // Wait for the process to finish
+            System.out.println(result);  // Print the result to the terminal
+        } 
+        
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
 }

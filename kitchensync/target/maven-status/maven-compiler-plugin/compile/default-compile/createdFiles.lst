@@ -1,0 +1,17 @@
+org\javafx\Main\Main.class
+org\javafx\Controllers\EditPopUpController.class
+org\javafx\App.class
+org\javafx\PrimaryController.class
+org\javafx\SecondaryController.class
+org\javafx\Controllers\AddIngredientPopUpController.class
+module-info.class
+org\javafx\Controllers\RemoveIngredientPopUpController.class
+org\javafx\Controllers\SignUpPageController.class
+org\javafx\Controllers\MyRecipesController.class
+org\javafx\Controllers\RecipeCreationScreenController.class
+org\javafx\Controllers\LoginPageController.class
+org\javafx\Controllers\UploadOptionsController.class
+org\javafx\Controllers\BarcodeUploadController.class
+org\javafx\Controllers\InventoryDashboardController.class
+org\javafx\Controllers\UserDashboardController.class
+org\javafx\Controllers\RecipeDetailScreenController.class

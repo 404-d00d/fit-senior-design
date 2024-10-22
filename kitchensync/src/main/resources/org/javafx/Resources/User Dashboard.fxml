@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gluonhq.charm.glisten.control.AutoCompleteTextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.UserDashboardController">
+   <children>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="1080.0" layoutX="-2.0" stroke="BLACK" strokeType="INSIDE" width="278.0" />
+      <Button fx:id="recipesButton" layoutY="21.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Recipes" textAlignment="CENTER" />
+      <Button fx:id="inboxButton" layoutY="177.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
+      <Button fx:id="browseRecipesButton" layoutX="-2.0" layoutY="248.0" mnemonicParsing="false" prefHeight="155.0" prefWidth="278.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Browse Recipes" textAlignment="CENTER" wrapText="true" />
+      <Button fx:id="profileButton" layoutX="2.0" layoutY="403.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
+      <Button fx:id="settingsButton" layoutX="1.0" layoutY="475.0" mnemonicParsing="false" prefHeight="62.0" prefWidth="278.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
+      <Button fx:id="neededIngredientsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="1.0" layoutY="693.0" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="147.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="Needed Ingredients" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font name="System Bold" size="45.0" />
+         </font>
+      </Button>
+      <Separator layoutX="14.0" layoutY="835.0" prefHeight="3.0" prefWidth="246.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="112.0" layoutX="296.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1619.0" />
+      <Separator layoutX="22.0" layoutY="548.0" prefHeight="3.0" prefWidth="246.0" />
+      <Text layoutX="357.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dashboard">
+         <font>
+            <Font size="56.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#a4a4a4" height="315.0" layoutX="296.0" layoutY="126.0" stroke="BLACK" strokeType="INSIDE" width="1619.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="103.0" layoutX="296.0" layoutY="466.0" stroke="BLACK" strokeType="INSIDE" width="800.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="103.0" layoutX="1115.0" layoutY="466.0" stroke="BLACK" strokeType="INSIDE" width="800.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#a4a4a4" height="487.0" layoutX="1115.0" layoutY="595.0" stroke="BLACK" strokeType="INSIDE" width="800.0" />
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#a4a4a4" height="487.0" layoutX="296.0" layoutY="595.0" stroke="BLACK" strokeType="INSIDE" width="800.0" />
+      <Text layoutX="1358.0" layoutY="536.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Shopping List">
+         <font>
+            <Font name="System Bold" size="56.0" />
+         </font>
+      </Text>
+      <Text layoutX="516.0" layoutY="535.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Notifications">
+         <font>
+            <Font name="System Bold" size="56.0" />
+         </font>
+      </Text>
+      <Text layoutX="564.0" layoutY="827.0" strokeType="OUTSIDE" strokeWidth="0.0" text="All Caught Up">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Text layoutX="1367.0" layoutY="829.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nothing Needed">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Text layoutX="935.0" layoutY="299.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Meals Planned">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <AutoCompleteTextField layoutX="808.0" layoutY="33.0" prefHeight="46.0" prefWidth="595.0" promptText="Can't Find Somthing?" style="-fx-background-color: orange; -fx-background-radius: 50;" />
+      <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
+      <Button fx:id="shoppingListsButton" alignment="CENTER" contentDisplay="CENTER" layoutX="5.0" layoutY="561.0" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="147.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 270;" text="Shopping Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+         <font>
+            <Font name="System Bold" size="45.0" />
+         </font>
+      </Button>
+      <Button fx:id="inventoryButton" layoutX="6.0" layoutY="95.0" mnemonicParsing="false" prefHeight="63.0" prefWidth="278.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER" />
+   </children>
+</AnchorPane>

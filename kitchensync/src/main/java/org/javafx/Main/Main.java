@@ -15,6 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Main.primaryStage = primaryStage;
+        primaryStage.setTitle("KitchenSync");
         showLoginScreen();  // Show the login screen on app startup
     }
 
@@ -22,6 +23,7 @@ public class Main extends Application {
     public static void showLoginScreen() throws IOException {
         Parent loginScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/LoginPage.fxml"));
         primaryStage.setScene(new Scene(loginScreen));
+        primaryStage.setResizable(true);
         primaryStage.show();
     }
 
@@ -50,6 +52,13 @@ public class Main extends Application {
     public static void showMyRecipesScreen() throws IOException {
         Parent myRecipesScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MyRecipes.fxml"));
         primaryStage.setScene(new Scene(myRecipesScreen));
+        primaryStage.show();
+    }
+
+    // Load the MyLists screen 
+    public static void showMyListsScreen() throws IOException {
+        Parent myListsScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MyLists.fxml"));
+        primaryStage.setScene(new Scene(myListsScreen));
         primaryStage.show();
     }
 

@@ -3,8 +3,10 @@
 <?import com.gluonhq.charm.glisten.control.AutoCompleteTextField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ScrollBar?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
@@ -157,7 +159,7 @@
       <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
       <Pane fx:id="uploadPane" layoutX="434.0" layoutY="253.0" prefHeight="574.0" prefWidth="1069.0" visible="false">
          <children>
-            <Button fx:id="manualButton" layoutX="55.0" layoutY="144.0" mnemonicParsing="false" onAction="#onBarcodeUpload" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Manual Entry">
+            <Button fx:id="manualButton" layoutX="55.0" layoutY="144.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Manual Entry">
                <font>
                   <Font size="45.0" />
                </font>
@@ -169,6 +171,82 @@
                   <Font size="45.0" />
                </font>
             </Button>
+         </children>
+      </Pane>
+      <Pane fx:id="addIngredientMenuPane" layoutX="560.0" layoutY="172.51953125" visible="false">
+         <children>
+            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="886.0" layoutY="2.48046875" stroke="BLACK" strokeType="INSIDE" width="690.0" />
+            <Button fx:id="closeIngredient" layoutX="566.0" layoutY="15.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="86.0" style="-fx-background-color: grey;" text="Close" />
+            <TextField fx:id="productID" layoutX="109.0" layoutY="91.0" prefHeight="38.0" prefWidth="439.0" style="-fx-background-color: darkgrey;" />
+            <Text layoutX="113.0" layoutY="45.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Product ID" wrappingWidth="230.40234375">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
+            <Text layoutX="109.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Item Identifier On Barcode" wrappingWidth="374.40234375">
+               <font>
+                  <Font size="32.0" />
+               </font>
+            </Text>
+            <TextField fx:id="productName" layoutX="109.0" layoutY="187.48046875" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: darkgrey;" />
+            <Text layoutX="109.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="What Is It?*" wrappingWidth="250.40234375">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
+            <TextField fx:id="productQuantity" layoutX="109.0" layoutY="323.48046875" prefHeight="38.0" prefWidth="238.0" style="-fx-background-color: darkgrey;" />
+            <Text layoutX="107.0" layoutY="273.0" strokeType="OUTSIDE" strokeWidth="0.0" text="How Much Do You Have?*" wrappingWidth="595.0">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
+            <Text layoutX="109.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Amount*" wrappingWidth="138.40234375">
+               <font>
+                  <Font size="32.0" />
+               </font>
+            </Text>
+            <ComboBox fx:id="productUnit" layoutX="381.0" layoutY="323.48046875" prefHeight="38.0" prefWidth="238.0" />
+            <Text layoutX="381.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Unit*" wrappingWidth="138.40234375">
+               <font>
+                  <Font size="32.0" />
+               </font>
+            </Text>
+            <Text layoutX="112.0" layoutY="409.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Where Is It?*" wrappingWidth="295.0">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
+            <ComboBox fx:id="productLoc" layoutX="109.0" layoutY="416.48046875" prefHeight="38.0" prefWidth="511.0" />
+            <DatePicker fx:id="productEXPDate" layoutX="111.0" layoutY="519.48046875" prefHeight="38.0" prefWidth="511.0" />
+            <Text layoutX="111.0" layoutY="507.0" strokeType="OUTSIDE" strokeWidth="0.0" text="When To Toss?*" wrappingWidth="334.40234375">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
+            <Text layoutX="111.0" layoutY="605.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tag It" wrappingWidth="334.40234375">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
+            <TextField fx:id="productTag" layoutX="111.0" layoutY="622.48046875" prefHeight="38.0" prefWidth="439.0" style="-fx-background-color: darkgrey;" />
+            <Button fx:id="addTagButton" layoutX="558.0" layoutY="622.48046875" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: grey;" text="Add Tag" />
+            <Text layoutX="108.0" layoutY="708.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Change Image*" wrappingWidth="461.40234375">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
+            <Button fx:id="imageSelect" layoutX="108.0" layoutY="725.48046875" mnemonicParsing="false" prefHeight="38.0" prefWidth="98.0" style="-fx-background-color: grey;" text="Image Select" />
+            <Button fx:id="saveButton" layoutX="514.0" layoutY="802.48046875" mnemonicParsing="false" prefHeight="48.0" prefWidth="138.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black;" text="Save">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Button>
+            <Button fx:id="removeButton" layoutX="42.0" layoutY="803.48046875" mnemonicParsing="false" prefHeight="65.0" prefWidth="217.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black;" text="Remove">
+               <font>
+                  <Font size="17.0" />
+               </font>
+            </Button>
+            <Button fx:id="productIDSearchButton" layoutX="558.0" layoutY="91.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: grey;" text="Search" />
          </children>
       </Pane>
    </children>

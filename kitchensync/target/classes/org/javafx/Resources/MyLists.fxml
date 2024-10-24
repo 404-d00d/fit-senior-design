@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.gluonhq.charm.glisten.control.AutoCompleteTextField?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.InventoryDashboardController">
+   <children>
+      <Rectangle fill="#727272" height="112.0" layoutX="-7.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1932.0" />
+      <Text layoutX="122.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="My Lists" wrappingWidth="321.30859375">
+         <font>
+            <Font size="56.0" />
+         </font>
+      </Text>
+      <AutoCompleteTextField layoutX="1141.0" layoutY="31.0" prefHeight="46.0" prefWidth="595.0" promptText="Can't Find Somthing?" style="-fx-background-color: orange;" />
+      <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
+      <Pane id="SpacesMenu" fx:id="spacesPane" layoutX="2.0" layoutY="118.0" prefHeight="966.0" prefWidth="1920.0">
+         <children>
+            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="951.0" layoutX="439.0" stroke="BLACK" strokeType="INSIDE" width="1477.0" />
+            <Button fx:id="neededIngredients" layoutX="22.0" layoutY="20.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="346.0" style="-fx-background-color: Orange; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Needed Ingredients" textAlignment="CENTER">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Button>
+            <Button fx:id="addList" layoutX="93.0" layoutY="876.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="204.0" style="-fx-background-color: Darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Add List" textAlignment="CENTER">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Button>
+            <ScrollBar layoutX="1886.0" layoutY="40.0" orientation="VERTICAL" prefHeight="886.0" prefWidth="20.0" />
+            <Button fx:id="addIngredientButton" layoutX="934.0" layoutY="25.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="346.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Add Ingredient" textAlignment="CENTER">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
+      <VBox fx:id="menuPane" alignment="TOP_CENTER" prefHeight="1080.0" prefWidth="406.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false" AnchorPane.leftAnchor="0.0">
+         <children>
+            <Button fx:id="inventoryButton" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" prefHeight="91.0" prefWidth="249.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER" />
+            <Button fx:id="recipesButton" mnemonicParsing="false" prefHeight="83.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Recipes" textAlignment="CENTER" />
+            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="78.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
+            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="149.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Browse Recipes" textAlignment="CENTER" wrapText="true" />
+            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="86.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
+            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Separator prefHeight="30.0" prefWidth="275.0" />
+            <Button fx:id="shoppingListsButton" mnemonicParsing="false" prefHeight="151.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Shopping Lists" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="40.0" />
+               </font>
+            </Button>
+            <Button fx:id="neededIngredientsButton" mnemonicParsing="false" prefHeight="153.0" prefWidth="284.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Needed Ingredients" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+            <Separator prefHeight="48.0" prefWidth="621.0" />
+         </children>
+      </VBox>
+      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
+   </children>
+</AnchorPane>

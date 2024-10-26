@@ -63,7 +63,7 @@ public class InventoryDashboardController {
    private Button settingsButton;
 
    @FXML
-   private Button shoppingListsButton;
+   private Button myLists;
 
    @FXML
    private Button neededIngredientsButton;
@@ -322,16 +322,16 @@ public class InventoryDashboardController {
 
       setHoverEffect(settingsButton);
 
-      // Switch to Shopping Lists Screen
-      shoppingListsButton.setOnAction(event -> {
+      // Switch to My Lists Screen
+      myLists.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showMyListsScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
       });
 
-      setHoverEffect(shoppingListsButton);
+      setHoverEffect(myLists);
 
       // Switch to NeededIngredients Screen
       neededIngredientsButton.setOnAction(event -> {

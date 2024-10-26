@@ -42,38 +42,37 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.LoginPageController">
+<AnchorPane fx:id="loginPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.LoginPageController">
    <children>
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#686868" height="1080.0" stroke="BLACK" strokeType="INSIDE" width="1920.0" />
-      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="983.0" layoutX="1084.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="756.0" />
-      <PasswordField fx:id="passwordField" layoutX="1220.0" layoutY="397.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
-      <Button fx:id="loginButton" layoutX="1389.0" layoutY="531.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="170.0" style="-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50;" text="Login" textAlignment="CENTER">
+      <Rectangle fx:id="backgroundLogin" arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="663.0" layoutX="989.0" layoutY="195.0" stroke="BLACK" strokeType="INSIDE" width="582.0" />
+      <Text fx:id="usernameTXT" layoutX="1016.0" layoutY="359.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username*">
          <font>
-            <Font size="41.0" />
+            <Font size="22.0" />
          </font>
-      </Button>
-      <TextField fx:id="usernameField" layoutX="1220.0" layoutY="304.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
-      <Separator layoutX="1087.0" layoutY="634.0" prefHeight="18.0" prefWidth="750.0" />
-      <Circle fill="WHITE" layoutX="1474.0" layoutY="643.0" radius="9.0" stroke="BLACK" strokeType="INSIDE" />
-      <Button fx:id="signUpButton" layoutX="1312.0" layoutY="893.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="342.0" style="-fx-background-color: Grey; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50; -fx-border-color: Orange; -fx-border-radius: 50; -fx-border-width: 4;" text="Sign Up" textAlignment="CENTER">
-         <font>
-            <Font size="41.0" />
-         </font>
-      </Button>
-      <Text layoutX="1422.0" layoutY="189.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+      </Text>
+      <Text fx:id="loginTXT" layoutX="1219.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
          <font>
             <Font size="50.0" />
          </font>
       </Text>
-      <Text layoutX="1220.0" layoutY="298.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username*">
+      <Text fx:id="passwordTXT" layoutX="1016.0" layoutY="502.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password*">
          <font>
             <Font size="22.0" />
          </font>
       </Text>
-      <Text layoutX="1220.0" layoutY="391.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password*">
+      <Button fx:id="loginButton" layoutX="1195.0" layoutY="580.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="170.0" style="-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50;" text="Login" textAlignment="CENTER">
          <font>
-            <Font size="22.0" />
+            <Font size="41.0" />
          </font>
-      </Text>
+      </Button>
+      <TextField fx:id="usernameField" layoutX="1016.0" layoutY="365.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <PasswordField fx:id="passwordField" layoutX="1016.0" layoutY="508.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <Button fx:id="signUpButton" layoutX="1123.0" layoutY="790.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="342.0" style="-fx-background-color: Grey; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50; -fx-border-color: Orange; -fx-border-radius: 50; -fx-border-width: 4;" text="Sign Up" textAlignment="CENTER">
+         <font>
+            <Font size="41.0" />
+         </font>
+      </Button>
+      <Separator fx:id="seperatorLogin" layoutX="989.0" layoutY="640.0" prefHeight="18.0" prefWidth="582.0" />
+      <Circle fx:id="circleLogin" fill="WHITE" layoutX="1280.0" layoutY="649.0" radius="9.0" stroke="BLACK" strokeType="INSIDE" />
    </children>
 </AnchorPane>

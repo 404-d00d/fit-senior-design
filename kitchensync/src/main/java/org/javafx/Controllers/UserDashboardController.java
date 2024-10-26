@@ -5,6 +5,8 @@ import org.javafx.Main.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.transform.Scale;
 
 public class UserDashboardController {
 
@@ -27,10 +29,13 @@ public class UserDashboardController {
    private Button settingsButton;
 
    @FXML
-   private Button shoppingListsButton;
+   private Button myLists;
 
    @FXML
    private Button neededIngredientsButton;
+
+   @FXML
+   private AnchorPane basePane;
 
    @FXML
    private void initialize() {
@@ -101,16 +106,16 @@ public class UserDashboardController {
 
       setHoverEffect(settingsButton);
 
-      // Switch to Shopping Lists Screen
-      shoppingListsButton.setOnAction(event -> {
+      // Switch to My Lists Screen
+      myLists.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showMyListsScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
       });
 
-      setHoverEffect(shoppingListsButton);
+      setHoverEffect(myLists);
 
       // Switch to NeededIngredients Screen
       neededIngredientsButton.setOnAction(event -> {

@@ -22,7 +22,7 @@ public class Main extends Application {
     // Load the login screen
     public static void showLoginScreen() throws IOException {
         Parent loginScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/LoginPage.fxml"));
-        primaryStage.setScene(new Scene(loginScreen));
+        primaryStage.setScene(new Scene(loginScreen, 1280, 720));
         primaryStage.setResizable(true);
         primaryStage.show();
     }

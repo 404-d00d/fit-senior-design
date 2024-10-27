@@ -2,10 +2,12 @@ package org.javafx.Controllers;
 
 import org.javafx.Main.Main;
 
+import java.util.ArrayList;
 import javafx.fxml.FXML;
 
 public class ListCreationController {
-    
+
+
     // Method to create list for ingredients/cooking equipment
     @FXML
     private void addItemToShoppingList(){

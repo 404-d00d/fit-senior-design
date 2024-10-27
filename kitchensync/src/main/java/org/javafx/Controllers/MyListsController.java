@@ -1,7 +1,9 @@
 package org.javafx.Controllers;
 
 import org.javafx.Main.Main;
+import org.javafx.Item.Item;
 
+import java.util.ArrayList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
@@ -33,6 +35,9 @@ public class MyListsController {
    private Button neededIngredientsButton;
 
    @FXML
+   private Button addIngredientButton;
+
+   @FXML
    private Button menuButton;
 
    @FXML
@@ -40,6 +45,8 @@ public class MyListsController {
 
    @FXML
    private void initialize() {
+
+      ArrayList<Item> ingredientList = new ArrayList<Item>();
 
       menuButton.setOnAction(event -> {
          try {
@@ -141,6 +148,22 @@ public class MyListsController {
       });
 
       setHoverEffect(neededIngredientsButton);
+
+      addIngredientButton.setOnAction(event -> {
+         try {
+            // pull up window to transfer data from that to new item class
+            Item newIngredient = new Item("Toilet Paper Moonshine", "0", 1);
+            ingredientList.add(newIngredient);
+            for (int x = 0; x < ingredientList.size(); x++) {
+               System.out.println(ingredientList.get(x).getName());
+            }
+            System.out.println("WHERE IS MY "+newIngredient.getName());
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setHoverEffect(addIngredientButton);
 
    }
 

@@ -6,7 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.transform.Scale;
 
 public class UserDashboardController {
 
@@ -39,6 +38,8 @@ public class UserDashboardController {
 
    @FXML
    private void initialize() {
+
+      Main.setScale(basePane);
 
       // Switch to Inventroy Screen
       inventoryButton.setOnAction(event -> {

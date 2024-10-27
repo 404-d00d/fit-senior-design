@@ -5,6 +5,7 @@ import org.javafx.Main.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 
 public class MyListsController {
 @FXML
@@ -32,7 +33,26 @@ public class MyListsController {
    private Button neededIngredientsButton;
 
    @FXML
+   private Button menuButton;
+
+   @FXML
+   private Pane menuPane;
+
+   @FXML
    private void initialize() {
+
+      menuButton.setOnAction(event -> {
+         try {
+            if(menuPane.isVisible()) {
+               menuPane.setVisible(false); // hide menu pane
+            }
+            else {
+               menuPane.setVisible(true); // show menu pane
+            }
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
 
       // Switch to Inventroy Screen
       inventoryButton.setOnAction(event -> {

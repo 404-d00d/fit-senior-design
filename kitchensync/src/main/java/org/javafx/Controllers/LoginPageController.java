@@ -3,7 +3,6 @@ package org.javafx.Controllers;
 import org.javafx.Main.Main;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.Separator;
@@ -12,8 +11,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
-import javafx.stage.Screen;
 
 public class LoginPageController {
 
@@ -47,32 +44,7 @@ public class LoginPageController {
    @FXML
     private void initialize() {
 
-        // Get the user's screen dimensions
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
-
-        // Define base resolution
-        double baseWidth = 1280;  // Base width used in design
-        double baseHeight = 720;  // Base height used in design
-
-        // Calculate the scale factors for both width and height
-        double scaleX = baseWidth / screenWidth;
-        double scaleY = baseHeight / screenHeight;
-
-        // Initialize a Scale transformation
-        Scale scale = new Scale();
-
-        // Set the scale based on the screen size
-        scale.setX(scaleX);
-        scale.setY(scaleY);
-
-        // Set the pivot point for scaling at the top-left (0, 0)
-        scale.setPivotX(0);
-        scale.setPivotY(0);
-
-        // Apply the scale transformation to the loginPane
-        loginPane.getTransforms().setAll(scale);
+        Main.setScale(loginPane);
 
         // Bind login button action to load the dashboard
         loginButton.setOnAction(event -> {

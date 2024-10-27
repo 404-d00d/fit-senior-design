@@ -4,8 +4,12 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.transform.Scale;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -30,7 +34,7 @@ public class Main extends Application {
     // Load the dashboard screen (user dashboard after login)
     public static void showDashboardScreen() throws IOException {
         Parent dashboardScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/User Dashboard.fxml"));
-        primaryStage.setScene(new Scene(dashboardScreen));
+        primaryStage.setScene(new Scene(dashboardScreen, 1280, 720));
         primaryStage.show();
     }
 
@@ -60,6 +64,35 @@ public class Main extends Application {
         Parent myListsScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MyLists.fxml"));
         primaryStage.setScene(new Scene(myListsScreen));
         primaryStage.show();
+    }
+
+    public static void setScale(Pane pane) {
+        // Get the user's screen dimensions
+        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+        double screenWidth = screenBounds.getWidth();
+        double screenHeight = screenBounds.getHeight();
+
+        // Define base resolution
+        double baseWidth = 1280;  // Base width used in design
+        double baseHeight = 720;  // Base height used in design
+
+        // Calculate the scale factors for both width and height
+        double scaleX = baseWidth / screenWidth;
+        double scaleY = baseHeight / screenHeight;
+
+        // Initialize a Scale transformation
+        Scale scale = new Scale();
+
+        // Set the scale based on the screen size
+        scale.setX(scaleX);
+        scale.setY(scaleY);
+
+        // Set the pivot point for scaling at the top-left (0, 0)
+        scale.setPivotX(0);
+        scale.setPivotY(0);
+
+        // Apply the scale transformation to the loginPane
+        pane.getTransforms().setAll(scale);
     }
 
     public static void main(String[] args) {

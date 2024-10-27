@@ -9,8 +9,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -55,12 +53,12 @@ public class LoginPageController {
         double screenHeight = screenBounds.getHeight();
 
         // Define base resolution
-        double baseWidth = 1920.0;  // Base width used in design
-        double baseHeight = 1080.0;  // Base height used in design
+        double baseWidth = 1280;  // Base width used in design
+        double baseHeight = 720;  // Base height used in design
 
         // Calculate the scale factors for both width and height
-        double scaleX = screenWidth / baseWidth;
-        double scaleY = screenHeight / baseHeight;
+        double scaleX = baseWidth / screenWidth;
+        double scaleY = baseHeight / screenHeight;
 
         // Initialize a Scale transformation
         Scale scale = new Scale();

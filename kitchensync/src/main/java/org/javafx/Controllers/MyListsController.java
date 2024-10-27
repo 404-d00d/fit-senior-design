@@ -26,7 +26,7 @@ public class MyListsController {
    private Button settingsButton;
 
    @FXML
-   private Button shoppingListsButton;
+   private Button myLists;
 
    @FXML
    private Button neededIngredientsButton;
@@ -101,7 +101,7 @@ public class MyListsController {
       setHoverEffect(settingsButton);
 
       // Switch to Shopping Lists Screen
-      shoppingListsButton.setOnAction(event -> {
+      myLists.setOnAction(event -> {
          try {
             //Main.  // Switch to ...
          } catch (Exception e) {
@@ -109,7 +109,7 @@ public class MyListsController {
          }
       });
 
-      setHoverEffect(shoppingListsButton);
+      setHoverEffect(myLists);
 
       // Switch to NeededIngredients Screen
       neededIngredientsButton.setOnAction(event -> {

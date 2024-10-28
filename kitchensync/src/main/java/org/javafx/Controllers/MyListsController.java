@@ -154,12 +154,12 @@ public class MyListsController {
       addIngredientButton.setOnAction(event -> {
          try {
             // pull up window to transfer data from that to new item class
-            Item newIngredient = new Item("Toilet Paper Moonshine", "0", 1);
+            Item newIngredient = new Item("Toilet Paper Moonshine", "0", 1, "gallon", "Shed in Tampa", ("2050-12-13").toString());
             ingredientList.add(newIngredient);
             for (int x = 0; x < ingredientList.size(); x++) {
                System.out.println(ingredientList.get(x).getName());
             }
-            System.out.println("WHERE IS MY "+newIngredient.getName());
+            //System.out.println("WHERE IS MY "+newIngredient.getName());
          } catch (Exception e) {
             e.printStackTrace();
          }

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
 
+import java.util.ArrayList;
+
 import org.javafx.Main.Main;
 
 import javafx.fxml.FXML;
@@ -424,6 +426,8 @@ public class InventoryDashboardController {
          // In the future, we will use these values to add to the database
          // Example: db.insertIngredient(ingredientName, quantity, unit, location, expirationDate);
          
+         
+
          addIngredientMenuPane.setVisible(false);
 
          if (spaces) {

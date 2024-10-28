@@ -4,12 +4,9 @@ import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.scene.transform.Scale;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -28,6 +25,11 @@ public class Main extends Application {
         Parent loginScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/LoginPage.fxml"));
         primaryStage.setScene(new Scene(loginScreen, 1280, 720));
         primaryStage.setResizable(true);
+
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(loginScreen);
+
         primaryStage.show();
     }
 
@@ -35,6 +37,9 @@ public class Main extends Application {
     public static void showDashboardScreen() throws IOException {
         Parent dashboardScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/User Dashboard.fxml"));
         primaryStage.setScene(new Scene(dashboardScreen, 1280, 720));
+        
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(dashboardScreen);
         primaryStage.show();
     }
 
@@ -49,6 +54,9 @@ public class Main extends Application {
     public static void showInventoryScreen() throws IOException {
         Parent inventoryScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/InventoryDashboard.fxml"));
         primaryStage.setScene(new Scene(inventoryScreen, 1280, 720));
+        
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(inventoryScreen);
         primaryStage.show();
     }
 
@@ -66,36 +74,25 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void setScale(Pane pane) {
-        // Get the user's screen dimensions
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double screenWidth = screenBounds.getWidth();
-        double screenHeight = screenBounds.getHeight();
+    public static void setScale(Parent root) {
+        // Original design dimensions (1920x1080)
+        double originalWidth = 1920;
+        double originalHeight = 1080;
 
-        // Define base resolution
-        double baseWidth = 1280;  // Base width used in design
-        double baseHeight = 720;  // Base height used in design
+        // Target dimensions (1280x720)
+        double targetWidth = 1280;
+        double targetHeight = 720;
 
-        // Calculate the scale factors for both width and height
-        double scaleX = baseWidth / screenWidth;
-        double scaleY = baseHeight / screenHeight;
+        // Calculate scale factors for width and height
+        double scaleX = targetWidth / originalWidth;
+        double scaleY = targetHeight / originalHeight;
 
-        // Initialize a Scale transformation
-        Scale scale = new Scale();
+        // Use the smaller scale factor to maintain the aspect ratio
+        double scaleFactor = Math.min(scaleX, scaleY);
 
-        // Set the scale based on the screen size
-        scale.setX(scaleX);
-        scale.setY(scaleY);
-
-        // Set the pivot point for scaling at the top-left (0, 0)
-        scale.setPivotX(0);
-        scale.setPivotY(0);
-
-        System.err.println(screenWidth/baseWidth);
-        System.err.println(scaleX);
-
-        // Apply the scale transformation to the loginPane
-        pane.getTransforms().setAll(scale);
+        // Apply the scaling transformation
+        Scale scale = new Scale(scaleFactor, scaleFactor, 0, 0);
+        root.getTransforms().setAll(scale);
     }
 
 

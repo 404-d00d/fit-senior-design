@@ -44,7 +44,7 @@ public class LoginPageController {
    @FXML
     private void initialize() {
 
-        Main.setScale(loginPane);
+        //Main.setScale(loginPane);
 
         // Bind login button action to load the dashboard
         loginButton.setOnAction(event -> {

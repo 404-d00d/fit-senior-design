@@ -39,7 +39,7 @@ public class UserDashboardController {
    @FXML
    private void initialize() {
 
-      Main.setScale(basePane);
+      //Main.setScale(basePane);
 
       // Switch to Inventroy Screen
       inventoryButton.setOnAction(event -> {

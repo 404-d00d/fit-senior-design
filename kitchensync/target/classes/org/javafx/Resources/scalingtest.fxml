@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Copyright (c) 2015, 2019, Gluon and/or its affiliates.
+  All rights reserved. Use is subject to license terms.
+
+  This file is available and licensed under the following license:
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions
+  are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in
+    the documentation and/or other materials provided with the distribution.
+  - Neither the name of Oracle Corporation nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="loginPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: transparent;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.LoginPageController">
+   <children>
+      <Rectangle fx:id="backgroundLogin1" fill="#c4c4c4" height="1080.0" layoutX="3.0" layoutY="2.0" stroke="BLACK" strokeType="INSIDE" width="1920.0" />
+      <Rectangle fx:id="backgroundLogin" arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="663.0" layoutX="989.0" layoutY="195.0" stroke="BLACK" strokeType="INSIDE" width="582.0" />
+      <Text fx:id="usernameTXT" layoutX="1016.0" layoutY="359.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username*">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Text>
+      <Text fx:id="loginTXT" layoutX="1219.0" layoutY="270.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Text>
+      <Text fx:id="passwordTXT" layoutX="1016.0" layoutY="502.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password*">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Text>
+      <Button fx:id="loginButton" layoutX="1195.0" layoutY="580.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="170.0" style="-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50;" text="Login" textAlignment="CENTER">
+         <font>
+            <Font size="41.0" />
+         </font>
+      </Button>
+      <TextField fx:id="usernameField" layoutX="1016.0" layoutY="365.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <PasswordField fx:id="passwordField" layoutX="1016.0" layoutY="508.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
+      <Button fx:id="signUpButton" layoutX="1123.0" layoutY="790.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="342.0" style="-fx-background-color: Grey; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50; -fx-border-color: Orange; -fx-border-radius: 50; -fx-border-width: 4;" text="Sign Up" textAlignment="CENTER">
+         <font>
+            <Font size="41.0" />
+         </font>
+      </Button>
+      <Separator fx:id="seperatorLogin" layoutX="989.0" layoutY="640.0" prefHeight="18.0" prefWidth="582.0" />
+      <Circle fx:id="circleLogin" fill="WHITE" layoutX="1280.0" layoutY="649.0" radius="9.0" stroke="BLACK" strokeType="INSIDE" />
+   </children>
+</AnchorPane>

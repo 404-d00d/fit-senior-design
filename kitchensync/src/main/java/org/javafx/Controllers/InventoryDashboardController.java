@@ -143,7 +143,7 @@ public class InventoryDashboardController {
    @FXML
    private void initialize() {
 
-      Main.setScale(inventoryPane);
+      //Main.setScale(inventoryPane);
 
       productUnit.getItems().addAll("kg", "g", "l", "ml", "oz", "lbs");
       productLoc.getItems().addAll("Fridge", "Freezer", "Pantry", "Cabinet");
@@ -439,6 +439,7 @@ public class InventoryDashboardController {
          ingredientInventory.add(newIngredient);
 
          for (int j = 0; j < ingredientInventory.size(); j++) {
+
             System.out.println(ingredientInventory.get(j).getName()+", "+ingredientInventory.get(j).getQuantity()+" of "+ingredientInventory.get(j).getUnit());
          }
 

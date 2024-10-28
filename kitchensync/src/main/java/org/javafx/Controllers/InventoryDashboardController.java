@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.time.LocalDate;
 
 import java.util.ArrayList;
+import org.javafx.Item.Item;
 
 import org.javafx.Main.Main;
 
@@ -135,6 +136,8 @@ public class InventoryDashboardController {
    @FXML
    private ListView<String> tagsListView; // To display added tags
    private ObservableList<String> tags = FXCollections.observableArrayList();
+
+   private ArrayList<Item> ingredientInventory = new ArrayList<Item>();
 
    @FXML
    private void initialize() {
@@ -414,6 +417,7 @@ public class InventoryDashboardController {
          String unit = productUnit.getValue();
          String location = productLoc.getValue();
          LocalDate expirationDate = productEXPDate.getValue();
+         String convertedDate = expirationDate.toString();
 
          // Print the values to the terminal for testing
          System.out.println("Ingredient Name: " + ingredientName);
@@ -426,7 +430,13 @@ public class InventoryDashboardController {
          // In the future, we will use these values to add to the database
          // Example: db.insertIngredient(ingredientName, quantity, unit, location, expirationDate);
          
-         
+         Item newIngredient = new Item(ingredientName, "0", Integer.parseInt(quantity), unit, location, convertedDate);
+
+         ingredientInventory.add(newIngredient);
+
+         for (int j = 0; j < ingredientInventory.size(); j++) {
+            System.out.println(ingredientInventory.get(j).getName()+", "+ingredientInventory.get(j).getQuantity()+" of "+ingredientInventory.get(j).getUnit());
+         }
 
          addIngredientMenuPane.setVisible(false);
 

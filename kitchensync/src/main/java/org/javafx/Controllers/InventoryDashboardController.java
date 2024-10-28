@@ -120,7 +120,7 @@ public class InventoryDashboardController {
    private Pane spacesPane;
 
    @FXML
-   private Pane placesPane;
+   private Pane placesPane, inventoryPane;
 
    @FXML
    private Pane addIngredientMenuPane;
@@ -136,6 +136,8 @@ public class InventoryDashboardController {
 
    @FXML
    private void initialize() {
+
+      Main.setScale(inventoryPane);
 
       productUnit.getItems().addAll("kg", "g", "l", "ml", "oz", "lbs");
       productLoc.getItems().addAll("Fridge", "Freezer", "Pantry", "Cabinet");

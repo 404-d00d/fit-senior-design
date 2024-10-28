@@ -44,28 +44,28 @@ public class Main extends Application {
     // Load the sign-up screen
     public static void showSignUpScreen() throws IOException {
         Parent signUpScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/Signuppage.fxml"));
-        primaryStage.setScene(new Scene(signUpScreen));
+        primaryStage.setScene(new Scene(signUpScreen, 1280, 720));
         primaryStage.show();
     }
 
     // Load the inventory screen 
     public static void showInventoryScreen() throws IOException {
         Parent inventoryScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/InventoryDashboard.fxml"));
-        primaryStage.setScene(new Scene(inventoryScreen));
+        primaryStage.setScene(new Scene(inventoryScreen, 1280, 720));
         primaryStage.show();
     }
 
     // Load the MyRecipes screen 
     public static void showMyRecipesScreen() throws IOException {
         Parent myRecipesScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MyRecipes.fxml"));
-        primaryStage.setScene(new Scene(myRecipesScreen));
+        primaryStage.setScene(new Scene(myRecipesScreen, 1280, 720));
         primaryStage.show();
     }
 
     // Load the MyLists screen 
     public static void showMyListsScreen() throws IOException {
         Parent myListsScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MyLists.fxml"));
-        primaryStage.setScene(new Scene(myListsScreen));
+        primaryStage.setScene(new Scene(myListsScreen, 1280, 720));
         primaryStage.show();
     }
 
@@ -101,7 +101,7 @@ public class Main extends Application {
         pane.getTransforms().setAll(scale);
     }
 
-    
+
 
     public static void main(String[] args) {
         launch(args);

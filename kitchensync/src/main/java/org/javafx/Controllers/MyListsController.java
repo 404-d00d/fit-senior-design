@@ -41,12 +41,14 @@ public class MyListsController {
    private Button menuButton;
 
    @FXML
-   private Pane menuPane;
+   private Pane menuPane, myListsPane;
 
    @FXML
    private void initialize() {
 
       ArrayList<Item> ingredientList = new ArrayList<Item>();
+
+      Main.setScale(myListsPane);
 
       menuButton.setOnAction(event -> {
          try {

@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 
 public class SignUpPageController {
 
@@ -28,7 +29,13 @@ public class SignUpPageController {
    private Button loginButton;
 
    @FXML
+   private Pane signUpPane;
+
+   @FXML
     private void initialize() {
+
+        Main.setScale(signUpPane);
+
         // Bind login button action to load the login page
         loginButton.setOnAction(event -> {
             try {

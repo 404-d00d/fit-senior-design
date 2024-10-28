@@ -1,14 +1,22 @@
 package org.javafx.Item;
 
+import java.time.LocalDate;
+
 public class Item {
     private String name;
     private String ID;
     private Integer quantity;
+    private String location;
+    private String expirDate;
+    private String unit;
 
-    public Item(String name, String ID, Integer quantity){
+    public Item(String name, String ID, Integer quantity, String unit, String location, String expirDate){
         this.name = name;
         this.ID = ID;
         this.quantity = quantity;
+        this.unit = unit;
+        this.location = location;
+        this.expirDate = expirDate;
     }
 
     public String getName(){
@@ -21,6 +29,18 @@ public class Item {
 
     public Integer getQuantity(){
         return this.quantity;
+    }
+
+    public String getUnit(){
+        return this.unit;
+    }
+
+    public String getLocation(){
+        return this.location;
+    }
+
+    public String getExpirDate(){
+        return this.expirDate;
     }
 
     public void modifyQuantity(Integer newValue) {

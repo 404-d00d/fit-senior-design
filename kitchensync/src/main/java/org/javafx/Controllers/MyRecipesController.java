@@ -8,66 +8,55 @@ import org.javafx.Main.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class MyRecipesController {
 
    @FXML
-   private Button menuButton;
+   private Button menuButton, inventoryButton, recipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton, shoppingListsButton,
+                  closeCreateButton, addRecipeButton, closeRecipeButton, addTag, recipeAddIngredient, imageSelect, saveButton, neededIngredientsButton,
+                  nextStep, prevStep;
 
    @FXML
    private VBox menuPane;
 
    @FXML
-   private Button inventoryButton;
-
-   @FXML
-   private Button recipesButton;
-
-   @FXML
-   private Button inboxButton;
-
-   @FXML
-   private Button browseRecipesButton;
-
-   @FXML
-   private Button profileButton;
-
-   @FXML
-   private Button settingsButton;
-
-   @FXML
-   private Button shoppingListsButton;
-
-   @FXML
-   private Button neededIngredientsButton;
-
-   @FXML
-   private Button addRecipeButton;
-
-   @FXML
-   private Button closeCreateButton, closeRecipeButton, addTag, recipeAddIngredient, imageSelect, saveButton;
-
-   @FXML
-   private TextField recipeName, recipeTag, recipeIngredients, recipePreparationSteps, recipeETA;
+   private TextField recipeName, recipeTag, recipeIngredients, recipePreparationSteps, recipeETA, recipeETAPrep;
    
    @FXML
    private ComboBox<String> recipeCategory;
 
    @FXML
-   private Pane recipeDetailsPane, addRecipePane, myRecipesPane;
+   private static Pane recipeDetailsPane;
+
+   @FXML
+   private Pane addRecipePane;
+
+   @FXML
+   private Pane myRecipesPane;
 
    private File selectedImageFile;
+
+   private static TextArea ingredientsArea, stepArea;
+   private static Text yieldTXT, prepTXT, cookTXT, totalTXT, estCostTXT, specialEquipmentTXT, stepOfTXT, recipeNameTXT;
+   private static ImageView recipeImages;
+   private FlowPane recipeFlowPane;
 
    @FXML
    private ListView<String> tagsListView; // To display added tags
@@ -79,45 +68,10 @@ public class MyRecipesController {
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
 
-      addTag.setOnAction(event -> {
-         try {
-            String tag = recipeTag.getText().trim();
-            if (!tag.isEmpty()) {
-               tags.add(tag);  // Add the tag to the list
-               recipeTag.clear();  // Clear the input field after adding the tag
-            }
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
-      recipeAddIngredient.setOnAction(event -> {
-         try {
-            String ingredient = recipeIngredients.getText().trim();
-            if (!ingredient.isEmpty()) {
-               ingredients.add(ingredient);  // Add the tag to the list
-               recipeIngredients.clear();  // Clear the input field after adding the tag
-            }
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
-      imageSelect.setOnAction(event -> {
-         try {
-            SelectImage();
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
-      saveButton.setOnAction(event -> {
-         try {
-            saveIngredient();
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
+      addTag.setOnAction(event -> addTag());
+      recipeAddIngredient.setOnAction(event -> addIngredient());
+      imageSelect.setOnAction(event -> SelectImage());
+      saveButton.setOnAction(event -> saveRecipe());
    
       menuButton.setOnAction(event -> {
          try {
@@ -248,6 +202,22 @@ public class MyRecipesController {
       setHoverEffect(neededIngredientsButton);
    }
 
+   private void addTag() {
+      String tag = recipeTag.getText().trim();
+      if (!tag.isEmpty()) {
+         tags.add(tag);
+         recipeTag.clear();
+      }
+   }
+
+   private void addIngredient() {
+      String ingredient = recipeIngredients.getText().trim();
+      if (!ingredient.isEmpty()) {
+         ingredients.add(ingredient);
+         recipeIngredients.clear();
+      }
+   }
+
    private void setHoverEffect(Button button) {
       button.setOnMouseEntered(this::handleMouseEntered);
       button.setOnMouseExited(this::handleMouseExited);
@@ -265,7 +235,7 @@ public class MyRecipesController {
       button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
    }
 
-   private void saveIngredient() {
+   private void saveRecipe() {
 
       if (isFormValid()) {
          // Get values from input fields
@@ -273,20 +243,47 @@ public class MyRecipesController {
          String Category = recipeCategory.getValue();
          String PrepSteps = recipePreparationSteps.getText();
          String CookTime = recipeETA.getText();
+         String PrepTime = recipeETAPrep.getText();
 
+         //get num of entries in db and then add 1
+         int id = 0;
 
          // Print the values to the terminal for testing
          System.out.println("Recipe's Name: " + Name);
          System.out.println("Category: " + Category);
          System.out.println("Tags: " + tags);
          System.out.println("Ingredients: " + ingredients);
-         System.out.println("PrepSteps: " + CookTime);
+         System.out.println("PrepSteps: " + PrepSteps);
          System.out.println("ETA for Cooking: " + CookTime);
-         //System.out.println("Selected Image: " + selectedImageFile.getAbsolutePath());
+         System.out.println("ETA for Prep: " + PrepTime);
+         System.out.println("Selected Image: " + selectedImageFile.getAbsolutePath());
 
          // In the future, we will use these values to add to the database
          // Example: db.insertIngredient(ingredientName, quantity, unit, location, expirationDate);
          
+         try { 
+            // Load the RecipeCard FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
+            VBox recipeCard = loader.load();
+
+            // Get the controller and set the recipe data
+            RecipeCardController controller = loader.getController();
+
+            //something like db.getDetails(id)
+            //either conver image to type Image or convert the data to be File
+            controller.setRecipeData(id, Name, null);
+
+            // Add a click event to display the details when the card is clicked
+            recipeCard.setOnMouseClicked(event -> showRecipeDetails(id, Name, null));
+
+            // Add the recipe card to the FlowPane
+            recipeFlowPane.getChildren().add(recipeCard);
+
+         
+         } catch (Exception e) {
+         e.printStackTrace();
+         }
+      
          addRecipePane.setVisible(false);
          myRecipesPane.setVisible(true);
       }
@@ -324,5 +321,23 @@ public class MyRecipesController {
       if (selectedImageFile != null) {
          // process or store the selected image
       }
+   }
+
+   public static void showRecipeDetails(int recipeId, String name, Image image) {
+      recipeDetailsPane.setVisible(true);
+      recipeNameTXT.setText(name);
+      recipeImages.setImage(image);
+
+      //create ref using the recipe id to populate the other information
+      yieldTXT.setText("Yield: " + "");
+      prepTXT.setText("Prep Time: " + "" + "Minutes");
+      cookTXT.setText("Cook Time: " + "" + "Minutes");
+
+      int totalTime = 0; // add the prep and cook times
+
+      totalTXT.setText("Total: " + totalTime + "Minutes");
+      estCostTXT.setText("EST Cost: $" + ""); //add a cost calculator ref
+      specialEquipmentTXT.setText("Special Equipment: " + "");
+      stepOfTXT.setText("Step " + "" + " of " + "");
    }
 }

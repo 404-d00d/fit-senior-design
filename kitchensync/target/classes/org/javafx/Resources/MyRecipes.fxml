@@ -6,7 +6,9 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
@@ -68,6 +70,7 @@
                   <Font size="25.0" />
                </font>
             </Button>
+            <FlowPane fx:id="recipeFlowPane" layoutX="412.0" layoutY="72.0" prefHeight="853.0" prefWidth="1101.0" />
          </children>
       </Pane>
       <VBox fx:id="menuPane" alignment="TOP_CENTER" layoutX="1.0" prefHeight="1080.0" prefWidth="386.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false" AnchorPane.leftAnchor="1.0">
@@ -105,7 +108,7 @@
                   <Font size="24.0" />
                </font>
             </Button>
-            <TextField fx:id="recipeName" layoutX="34.0" layoutY="96.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: darkgrey;" />
+            <TextField fx:id="recipeName" layoutX="34.0" layoutY="96.0" prefHeight="38.0" prefWidth="589.0" style="-fx-background-color: darkgrey;" />
             <Text layoutX="34.0" layoutY="83.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Name*" wrappingWidth="250.40234375">
                <font>
                   <Font name="System Bold" size="44.0" />
@@ -116,93 +119,107 @@
                   <Font name="System Bold" size="44.0" />
                </font>
             </Text>
-            <ComboBox fx:id="recipeCategory" layoutX="29.0" layoutY="198.0" prefHeight="38.0" prefWidth="511.0" />
+            <ComboBox fx:id="recipeCategory" layoutX="29.0" layoutY="198.0" prefHeight="38.0" prefWidth="589.0" />
             <Text layoutX="29.0" layoutY="283.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tag It" wrappingWidth="334.40234375">
                <font>
                   <Font name="System Bold" size="44.0" />
                </font>
             </Text>
-            <TextField fx:id="recipeTag" layoutX="32.0" layoutY="300.0" prefHeight="38.0" prefWidth="439.0" style="-fx-background-color: darkgrey;" />
-            <Button fx:id="addTag" layoutX="479.0" layoutY="300.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: grey;" text="Add Tag" />
+            <TextField fx:id="recipeTag" layoutX="32.0" layoutY="300.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: darkgrey;" />
+            <Button fx:id="addTag" layoutX="556.0" layoutY="300.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: grey;" text="Add Tag" />
             <Text layoutX="30.0" layoutY="385.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ingredients*" wrappingWidth="334.40234375">
                <font>
                   <Font name="System Bold" size="44.0" />
                </font>
             </Text>
-            <TextField fx:id="recipeIngredients" layoutX="33.0" layoutY="402.0" prefHeight="38.0" prefWidth="390.0" style="-fx-background-color: darkgrey;" />
-            <Button fx:id="recipeAddIngredient" layoutX="432.0" layoutY="402.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="115.0" style="-fx-background-color: grey;" text="Add Ingredient" />
-            <TextField fx:id="recipePreparationSteps" layoutX="34.0" layoutY="504.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: darkgrey;" />
+            <TextField fx:id="recipeIngredients" layoutX="33.0" layoutY="402.0" prefHeight="38.0" prefWidth="461.0" style="-fx-background-color: darkgrey;" />
+            <Button fx:id="recipeAddIngredient" layoutX="508.0" layoutY="402.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="115.0" style="-fx-background-color: grey;" text="Add Ingredient" />
+            <TextField fx:id="recipePreparationSteps" layoutX="34.0" layoutY="504.0" prefHeight="38.0" prefWidth="589.0" style="-fx-background-color: darkgrey;" />
             <Text layoutX="31.0" layoutY="489.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preparation Steps*" wrappingWidth="409.40234375">
                <font>
                   <Font name="System Bold" size="44.0" />
                </font>
             </Text>
-            <TextField fx:id="recipeETA" layoutX="36.0" layoutY="672.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: darkgrey;" />
-            <Text layoutX="31.0" layoutY="590.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Estimated Cook Time* (In Minutes)" wrappingWidth="463.0000000000002">
+            <TextField fx:id="recipeETA" layoutX="41.0" layoutY="707.0" prefHeight="38.0" prefWidth="589.0" style="-fx-background-color: darkgrey;" />
+            <Text layoutX="32.0" layoutY="696.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ETA Cook Time* (In Minutes)" wrappingWidth="606.0000000000002">
                <font>
                   <Font name="System Bold" size="44.0" />
                </font>
             </Text>
-            <Text layoutX="34.0" layoutY="761.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Image(s)*" wrappingWidth="461.40234375">
+            <Text layoutX="33.0" layoutY="826.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Image*" wrappingWidth="461.40234375">
                <font>
                   <Font name="System Bold" size="44.0" />
                </font>
             </Text>
-            <Button fx:id="imageSelect" layoutX="37.0" layoutY="778.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="98.0" style="-fx-background-color: grey;" text="Image Select" />
+            <Button fx:id="imageSelect" layoutX="34.0" layoutY="851.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="98.0" style="-fx-background-color: grey;" text="Image Select" />
             <Button fx:id="saveButton" layoutX="542.0" layoutY="870.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="126.0" style="-fx-background-color: grey;" text="Save">
                <font>
                   <Font size="24.0" />
                </font>
             </Button>
+            <TextField fx:id="recipeETAPrep" layoutX="34.0" layoutY="608.0" prefHeight="38.0" prefWidth="589.0" style="-fx-background-color: darkgrey;" />
+            <Text layoutX="32.0" layoutY="590.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ETA Prep Time* (In Minutes)" wrappingWidth="606.0000000000002">
+               <font>
+                  <Font name="System Bold" size="44.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
       <Pane fx:id="recipeDetailsPane" layoutX="44.0" layoutY="146.0" visible="false">
          <children>
             <Rectangle fill="#727272" height="917.0" stroke="BLACK" strokeType="INSIDE" width="589.0" />
-            <Text layoutX="121.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Ingredients" wrappingWidth="321.30859375">
+            <Text layoutX="134.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Ingredients" wrappingWidth="321.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text layoutX="607.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Yield: -" wrappingWidth="205.30859375">
+            <Text fx:id="yieldTXT" layoutX="607.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Yield: -" wrappingWidth="205.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text layoutX="607.0" layoutY="142.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Prep Time: -" wrappingWidth="328.30859375">
+            <Text fx:id="prepTXT" layoutX="607.0" layoutY="142.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Prep Time: -" wrappingWidth="328.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text layoutX="607.0" layoutY="225.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Cook Time: -" wrappingWidth="353.30859375">
+            <Text fx:id="cookTXT" layoutX="607.0" layoutY="225.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Cook Time: -" wrappingWidth="353.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text layoutX="607.0" layoutY="308.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Total Time: -" wrappingWidth="353.30859375">
+            <Text fx:id="totalTXT" layoutX="607.0" layoutY="308.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Total Time: -" wrappingWidth="353.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text layoutX="607.0" layoutY="391.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Est Cost: -" wrappingWidth="353.30859375">
+            <Text fx:id="estCostTXT" layoutX="607.0" layoutY="391.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Est Cost: -" wrappingWidth="353.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text layoutX="607.0" layoutY="541.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Special Equipment:" textAlignment="CENTER" wrappingWidth="312.30859375">
+            <Text fx:id="specialEquipmentTXT" layoutX="607.0" layoutY="541.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Special Equipment:" textAlignment="CENTER" wrappingWidth="312.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
             <Rectangle fill="#727272" height="409.0" layoutX="1147.0" stroke="BLACK" strokeType="INSIDE" width="589.0" />
-            <Text layoutX="1268.0" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Step * of *" wrappingWidth="321.30859375">
+            <Text fx:id="stepOfTXT" layoutX="1268.0" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Step * of *" wrappingWidth="321.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
             <Button fx:id="closeRecipeButton" layoutX="1806.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
-            <Button layoutX="1590.0" layoutY="451.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
-            <TextArea layoutX="1001.0" layoutY="533.0" prefHeight="367.0" prefWidth="835.0" />
+            <Button fx:id="nextStep" layoutX="1590.0" layoutY="451.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
+            <TextArea fx:id="stepArea" layoutX="1001.0" layoutY="533.0" prefHeight="367.0" prefWidth="835.0" />
+            <ImageView fx:id="recipeImages" fitHeight="409.0" fitWidth="596.0" layoutX="1143.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
+            <TextArea fx:id="ingredientsArea" layoutX="24.0" layoutY="216.0" prefHeight="686.0" prefWidth="542.0" style="-fx-background-color: transparent;" />
+            <Button fx:id="prevStep" layoutX="1192.0" layoutY="451.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
+            <Text fx:id="recipeNameTXT" layoutX="77.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="56.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
    </children>

@@ -3,27 +3,28 @@ package org.javafx.Controllers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
 
 import org.javafx.Main.Main;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.control.DatePicker;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 
 
 
@@ -413,12 +414,15 @@ public class InventoryDashboardController {
          String location = productLoc.getValue();
          LocalDate expirationDate = productEXPDate.getValue();
 
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd"); // Define your desired date pattern
+         String expirationDateString = expirationDate.format(formatter); // Convert LocalDate to String
+
          // Print the values to the terminal for testing
          System.out.println("Ingredient Name: " + ingredientName);
          System.out.println("Quantity: " + quantity);
          System.out.println("Unit: " + unit);
          System.out.println("Location: " + location);
-         System.out.println("Expiration Date: " + expirationDate);
+         System.out.println("Expiration Date: " + expirationDateString);
          //System.out.println("Selected Image: " + selectedImageFile.getAbsolutePath());
 
          // In the future, we will use these values to add to the database

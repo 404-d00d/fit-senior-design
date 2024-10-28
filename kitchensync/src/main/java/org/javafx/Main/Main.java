@@ -2,8 +2,6 @@ package org.javafx.Main;
 
 import java.io.IOException;
 
-import org.javafx.Controllers.MyRecipesController;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -17,7 +15,6 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     private static Stage primaryStage;
-    private static MyRecipesController myRecipesController;
 
     @Override
     public void start(Stage primaryStage) throws Exception {

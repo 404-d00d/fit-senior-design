@@ -34,7 +34,7 @@ public class SignUpPageController {
    @FXML
     private void initialize() {
 
-        Main.setScale(signUpPane);
+        //Main.setScale(signUpPane);
 
         // Bind login button action to load the login page
         loginButton.setOnAction(event -> {

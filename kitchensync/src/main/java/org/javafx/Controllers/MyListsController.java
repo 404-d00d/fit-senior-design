@@ -48,7 +48,7 @@ public class MyListsController {
 
       ArrayList<Item> ingredientList = new ArrayList<Item>();
 
-      Main.setScale(myListsPane);
+      //Main.setScale(myListsPane);
 
       menuButton.setOnAction(event -> {
          try {

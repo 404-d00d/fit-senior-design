@@ -10,28 +10,8 @@ import javafx.scene.layout.AnchorPane;
 public class UserDashboardController {
 
    @FXML
-   private Button inventoryButton;
-
-   @FXML
-   private Button recipesButton;
-
-   @FXML
-   private Button inboxButton;
-
-   @FXML
-   private Button browseRecipesButton;
-
-   @FXML
-   private Button profileButton;
-
-   @FXML
-   private Button settingsButton;
-
-   @FXML
-   private Button myLists;
-
-   @FXML
-   private Button neededIngredientsButton;
+   private Button userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
+                  inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton;
 
    @FXML
    private AnchorPane basePane;
@@ -53,7 +33,7 @@ public class UserDashboardController {
       setHoverEffect(inventoryButton);
 
       // Switch to MyRecipes Screen
-      recipesButton.setOnAction(event -> {
+      myRecipesButton.setOnAction(event -> {
          try {
             Main.showMyRecipesScreen();  // Switch to MyRecipes
          } catch (Exception e) {
@@ -61,7 +41,7 @@ public class UserDashboardController {
          }
       });
 
-      setHoverEffect(recipesButton);
+      setHoverEffect(myRecipesButton);
 
       // Switch to Inbox Screen
       inboxButton.setOnAction(event -> {
@@ -108,7 +88,7 @@ public class UserDashboardController {
       setHoverEffect(settingsButton);
 
       // Switch to My Lists Screen
-      myLists.setOnAction(event -> {
+      myListsButton.setOnAction(event -> {
          try {
             Main.showMyListsScreen();
          } catch (Exception e) {
@@ -116,18 +96,7 @@ public class UserDashboardController {
          }
       });
 
-      setHoverEffect(myLists);
-
-      // Switch to NeededIngredients Screen
-      neededIngredientsButton.setOnAction(event -> {
-         try {
-            //Main.  // Switch to ...
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
-      setHoverEffect(neededIngredientsButton);
+      setHoverEffect(myListsButton);
 
    }
 

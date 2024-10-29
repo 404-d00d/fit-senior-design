@@ -29,7 +29,6 @@ public class Main extends Application {
 
         // Apply the scaling transformation to fit 1920x1080 content into 1280x720
         setScale(loginScreen);
-
         primaryStage.show();
     }
 
@@ -47,6 +46,9 @@ public class Main extends Application {
     public static void showSignUpScreen() throws IOException {
         Parent signUpScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/Signuppage.fxml"));
         primaryStage.setScene(new Scene(signUpScreen, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(signUpScreen);
         primaryStage.show();
     }
 
@@ -64,6 +66,9 @@ public class Main extends Application {
     public static void showMyRecipesScreen() throws IOException {
         Parent myRecipesScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MyRecipes.fxml"));
         primaryStage.setScene(new Scene(myRecipesScreen, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(myRecipesScreen);
         primaryStage.show();
     }
 
@@ -71,6 +76,9 @@ public class Main extends Application {
     public static void showMyListsScreen() throws IOException {
         Parent myListsScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MyLists.fxml"));
         primaryStage.setScene(new Scene(myListsScreen, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(myListsScreen);
         primaryStage.show();
     }
 

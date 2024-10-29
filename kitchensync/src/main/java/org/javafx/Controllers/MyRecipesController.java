@@ -66,7 +66,7 @@ public class MyRecipesController {
    @FXML
    private void initialize() {
 
-      Main.setScale(myRecipeMainPane);
+      //Main.setScale(myRecipeMainPane);
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
 

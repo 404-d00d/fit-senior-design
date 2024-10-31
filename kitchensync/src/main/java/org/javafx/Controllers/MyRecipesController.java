@@ -29,9 +29,9 @@ import javafx.stage.Stage;
 public class MyRecipesController {
 
    @FXML
-   private Button menuButton, inventoryButton, recipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton, shoppingListsButton,
-                  closeCreateButton, addRecipeButton, closeRecipeButton, addTag, recipeAddIngredient, imageSelect, saveButton, neededIngredientsButton,
-                  nextStep, prevStep;
+   private Button menuButton, inventoryButton, myRecipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton,
+                  closeCreateButton, addRecipeButton, closeRecipeButton, addTag, recipeAddIngredient, imageSelect, saveButton,
+                  nextStep, prevStep, userDashboardButton, mealPlannerButton, myListsButton;
 
    @FXML
    private VBox menuPane;
@@ -127,7 +127,7 @@ public class MyRecipesController {
       setHoverEffect(inventoryButton);
 
       // Switch to MyRecipes Screen
-      recipesButton.setOnAction(event -> {
+      myRecipesButton.setOnAction(event -> {
          try {
             Main.showMyRecipesScreen();  // Switch to MyRecipes
          } catch (Exception e) {
@@ -135,7 +135,7 @@ public class MyRecipesController {
          }
       });
 
-      setHoverEffect(recipesButton);
+      setHoverEffect(myRecipesButton);
 
       // Switch to Inbox Screen
       inboxButton.setOnAction(event -> {
@@ -181,27 +181,36 @@ public class MyRecipesController {
 
       setHoverEffect(settingsButton);
 
-      // Switch to Shopping Lists Screen
-      shoppingListsButton.setOnAction(event -> {
+      // Switch to My Lists Screen
+      myListsButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showMyListsScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
       });
 
-      setHoverEffect(shoppingListsButton);
+      setHoverEffect(myListsButton);
 
-      // Switch to NeededIngredients Screen
-      neededIngredientsButton.setOnAction(event -> {
+      // Switch to userDashboard Screen
+      userDashboardButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+
          } catch (Exception e) {
             e.printStackTrace();
          }
       });
 
-      setHoverEffect(neededIngredientsButton);
+      setHoverEffect(userDashboardButton);
+
+      // Switch to mealPlanner Screen
+      mealPlannerButton.setOnAction(event -> {
+         try {
+
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
    }
 
    private void addTag() {

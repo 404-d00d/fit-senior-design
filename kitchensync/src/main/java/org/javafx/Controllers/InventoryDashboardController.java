@@ -34,67 +34,13 @@ import javafx.stage.Stage;
 public class InventoryDashboardController {
 
    @FXML
-   private Button addIngredientButton;
-
-   @FXML
-   private Button spacesButton;
-
-   @FXML
-   private Button placesButton;
-
-   @FXML
-   private Button menuButton;
+   private Button addIngredientButton, spacesButton, placesButton, menuButton, inventoryButton, myRecipesButton, inboxButton,
+                  browseRecipesButton, profileButton, settingsButton, myListsButton, cancelButton, manualButton, closeIngredient, 
+                  addTagButton, imageSelect, removeButton, saveButton, productIDSearchButton,
+                  userDashboardButton, mealPlannerButton;
 
    @FXML
    private VBox menuPane;
-
-   @FXML
-   private Button inventoryButton;
-
-   @FXML
-   private Button recipesButton;
-
-   @FXML
-   private Button inboxButton;
-
-   @FXML
-   private Button browseRecipesButton;
-
-   @FXML
-   private Button profileButton;
-
-   @FXML
-   private Button settingsButton;
-
-   @FXML
-   private Button myLists;
-
-   @FXML
-   private Button neededIngredientsButton;
-
-   @FXML
-   private Button cancelButton;
-
-   @FXML
-   private Button manualButton;
-
-   @FXML
-   private Button closeIngredient;
-
-   @FXML
-   private Button addTagButton;
-   
-   @FXML
-   private Button imageSelect;
-   
-   @FXML
-   private Button removeButton;
-   
-   @FXML
-   private Button saveButton;
-
-   @FXML
-   private Button productIDSearchButton;
 
    @FXML
    private TextField productID; // Field to enter UPC
@@ -129,8 +75,8 @@ public class InventoryDashboardController {
    @FXML
    private Pane addIngredientMenuPane;
 
-   private boolean spaces;
-   private boolean places;
+   private boolean spaces = true;
+   private boolean places = false;
 
    private File selectedImageFile;
 
@@ -222,6 +168,34 @@ public class InventoryDashboardController {
          }
       });
 
+      spacesButton.setOnAction(event -> {
+         try {
+         placesPane.setVisible(false);
+         places = false;
+
+         spacesPane.setVisible(true);
+         spaces = true;
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setClickEffect(spacesButton);
+
+      placesButton.setOnAction(event -> {
+         try {
+         spacesPane.setVisible(false);
+         spaces = false;
+
+         placesPane.setVisible(true);
+         places = true;
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setClickEffect(placesButton);
+
       manualButton.setOnAction(event -> {
          try {
             uploadPane.setVisible(false);
@@ -276,7 +250,7 @@ public class InventoryDashboardController {
       setHoverEffect(inventoryButton);
 
       // Switch to MyRecipes Screen
-      recipesButton.setOnAction(event -> {
+      myRecipesButton.setOnAction(event -> {
          try {
             Main.showMyRecipesScreen();  // Switch to MyRecipes
          } catch (Exception e) {
@@ -284,7 +258,7 @@ public class InventoryDashboardController {
          }
       });
 
-      setHoverEffect(recipesButton);
+      setHoverEffect(myRecipesButton);
 
       // Switch to Inbox Screen
       inboxButton.setOnAction(event -> {
@@ -331,7 +305,7 @@ public class InventoryDashboardController {
       setHoverEffect(settingsButton);
 
       // Switch to My Lists Screen
-      myLists.setOnAction(event -> {
+      myListsButton.setOnAction(event -> {
          try {
             Main.showMyListsScreen();
          } catch (Exception e) {
@@ -339,18 +313,29 @@ public class InventoryDashboardController {
          }
       });
 
-      setHoverEffect(myLists);
+      setHoverEffect(myListsButton);
 
-      // Switch to NeededIngredients Screen
-      neededIngredientsButton.setOnAction(event -> {
+      // Switch to userDashboard Screen
+      userDashboardButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+
          } catch (Exception e) {
             e.printStackTrace();
          }
       });
 
-      setHoverEffect(neededIngredientsButton);
+      setHoverEffect(userDashboardButton);
+
+      // Switch to mealPlanner Screen
+      mealPlannerButton.setOnAction(event -> {
+         try {
+
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setHoverEffect(mealPlannerButton);
    }
 
    private void setHoverEffect(Button button) {
@@ -368,6 +353,26 @@ public class InventoryDashboardController {
       Button button = (Button) event.getSource();
       // Reset style when mouse exits
       button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+   }
+
+   private void setClickEffect(Button button) {
+      button.setOnMouseClicked(this::handleMouseClicked);
+   }
+
+   private void handleMouseClicked(MouseEvent event) {
+
+      if(spaces) {
+
+         spacesButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         placesButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+
+      } else {
+
+         spacesButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         placesButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+      }
+
+      
    }
 
    //create the py script to get the product details similar to the barcode scanner script

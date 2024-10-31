@@ -10,29 +10,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 public class MyListsController {
-@FXML
-   private Button inventoryButton;
 
    @FXML
-   private Button recipesButton;
-
-   @FXML
-   private Button inboxButton;
-
-   @FXML
-   private Button browseRecipesButton;
-
-   @FXML
-   private Button profileButton;
-
-   @FXML
-   private Button settingsButton;
-
-   @FXML
-   private Button myLists;
-
-   @FXML
-   private Button neededIngredientsButton;
+   private Button userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
+                  inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton;
 
    @FXML
    private Button addIngredientButton;
@@ -47,8 +28,6 @@ public class MyListsController {
    private void initialize() {
 
       ArrayList<Item> ingredientList = new ArrayList<Item>();
-
-      //Main.setScale(myListsPane);
 
       menuButton.setOnAction(event -> {
          try {
@@ -75,7 +54,7 @@ public class MyListsController {
       setHoverEffect(inventoryButton);
 
       // Switch to MyRecipes Screen
-      recipesButton.setOnAction(event -> {
+      myRecipesButton.setOnAction(event -> {
          try {
             Main.showMyRecipesScreen();  // Switch to MyRecipes
          } catch (Exception e) {
@@ -83,7 +62,7 @@ public class MyListsController {
          }
       });
 
-      setHoverEffect(recipesButton);
+      setHoverEffect(myRecipesButton);
 
       // Switch to Inbox Screen
       inboxButton.setOnAction(event -> {
@@ -130,7 +109,7 @@ public class MyListsController {
       setHoverEffect(settingsButton);
 
       // Switch to Shopping Lists Screen
-      myLists.setOnAction(event -> {
+      myListsButton.setOnAction(event -> {
          try {
             //Main.  // Switch to ...
          } catch (Exception e) {
@@ -138,18 +117,7 @@ public class MyListsController {
          }
       });
 
-      setHoverEffect(myLists);
-
-      // Switch to NeededIngredients Screen
-      neededIngredientsButton.setOnAction(event -> {
-         try {
-            //Main.  // Switch to ...
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
-      setHoverEffect(neededIngredientsButton);
+      setHoverEffect(myListsButton);
 
       addIngredientButton.setOnAction(event -> {
          try {
@@ -166,6 +134,28 @@ public class MyListsController {
       });
 
       setHoverEffect(addIngredientButton);
+
+      // Switch to userDashboard Screen
+      userDashboardButton.setOnAction(event -> {
+         try {
+
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setHoverEffect(userDashboardButton);
+
+      // Switch to mealPlanner Screen
+      mealPlannerButton.setOnAction(event -> {
+         try {
+
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setHoverEffect(mealPlannerButton);
 
    }
 

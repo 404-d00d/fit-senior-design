@@ -19,7 +19,27 @@ public class UserDashboardController {
    @FXML
    private void initialize() {
 
-      //Main.setScale(basePane);
+      // Switch to userDashboard Screen
+      userDashboardButton.setOnAction(event -> {
+         try {
+
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setHoverEffect(userDashboardButton);
+
+      // Switch to mealPlanner Screen
+      mealPlannerButton.setOnAction(event -> {
+         try {
+
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      setHoverEffect(mealPlannerButton);
 
       // Switch to Inventroy Screen
       inventoryButton.setOnAction(event -> {
@@ -103,7 +123,7 @@ public class UserDashboardController {
    private void setHoverEffect(Button button) {
       button.setOnMouseEntered(this::handleMouseEntered);
       button.setOnMouseExited(this::handleMouseExited);
-  }
+   }
 
    private void handleMouseEntered(MouseEvent event) {
       Button button = (Button) event.getSource();

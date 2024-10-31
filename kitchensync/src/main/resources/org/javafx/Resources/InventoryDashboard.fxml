@@ -5,7 +5,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.ScrollBar?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
@@ -103,60 +102,32 @@
                   <Font size="25.0" />
                </font>
             </Button>
-            <Text layoutX="87.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Toggle View" textAlignment="CENTER" wrappingWidth="180.341796875">
+            <Text layoutX="94.0" layoutY="141.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Toggle View" textAlignment="CENTER" wrappingWidth="180.341796875">
                <font>
                   <Font size="30.0" />
                </font>
             </Text>
-            <Button layoutX="4.099998474121094" layoutY="131.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black;" text="Grid">
+            <Button layoutX="2.0" layoutY="158.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black;" text="Grid">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button layoutX="199.0999984741211" layoutY="131.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black; -fx-border-color: orange; -fx-border-radius: 50; -fx-border-width: 4;" text="List">
+            <Button layoutX="197.0" layoutY="158.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black; -fx-border-color: orange; -fx-border-radius: 50; -fx-border-width: 4;" text="List">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <Button layoutX="4.099998474121094" layoutY="211.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="346.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black;" text="All Filters">
+            <Button layoutX="4.0" layoutY="266.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="346.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black;" text="All Filters">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <ComboBox layoutX="4.099998474121094" layoutY="287.0" prefHeight="36.0" prefWidth="346.0" promptText="Location" />
-            <ComboBox layoutX="4.099998474121094" layoutY="337.0" prefHeight="36.0" prefWidth="346.0" promptText="Category" />
-            <ComboBox layoutX="4.099998474121094" layoutY="389.0" prefHeight="36.0" prefWidth="346.0" promptText="Tags" />
-            <AutoCompleteTextField layoutX="823.0999984741211" layoutY="27.0" prefHeight="46.0" prefWidth="595.0" promptText="Search Ingredients" style="-fx-background-color: orange;" />
+            <ComboBox layoutX="4.0" layoutY="360.0" prefHeight="36.0" prefWidth="346.0" promptText="Location" />
+            <ComboBox layoutX="4.0" layoutY="410.0" prefHeight="36.0" prefWidth="346.0" promptText="Category" />
+            <ComboBox layoutX="4.0" layoutY="462.0" prefHeight="36.0" prefWidth="346.0" promptText="Tags" />
             <ComboBox layoutX="501.0999984741211" layoutY="32.0" prefHeight="36.0" prefWidth="229.0" promptText="Sort By" />
          </children>
       </Pane>
-      <VBox fx:id="menuPane" alignment="TOP_CENTER" prefHeight="1080.0" prefWidth="406.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false" AnchorPane.leftAnchor="0.0">
-         <children>
-            <Button fx:id="inventoryButton" alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" prefHeight="91.0" prefWidth="249.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER" />
-            <Button fx:id="recipesButton" mnemonicParsing="false" prefHeight="83.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Recipes" textAlignment="CENTER" />
-            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="78.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
-            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="149.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Browse Recipes" textAlignment="CENTER" wrapText="true" />
-            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="86.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
-            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="85.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Button>
-            <Separator prefHeight="30.0" prefWidth="275.0" />
-            <Button fx:id="myLists" mnemonicParsing="false" prefHeight="151.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="My Lists" textAlignment="CENTER" wrapText="true">
-               <font>
-                  <Font size="40.0" />
-               </font>
-            </Button>
-            <Button fx:id="neededIngredientsButton" mnemonicParsing="false" prefHeight="153.0" prefWidth="284.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Needed Ingredients" textAlignment="CENTER" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="45.0" />
-               </font>
-            </Button>
-            <Separator prefHeight="48.0" prefWidth="621.0" />
-         </children>
-      </VBox>
-      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
       <Pane fx:id="uploadPane" layoutX="434.0" layoutY="253.0" prefHeight="574.0" prefWidth="1069.0" visible="false">
          <children>
             <Button fx:id="manualButton" layoutX="55.0" layoutY="144.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Manual Entry">
@@ -249,5 +220,35 @@
             <Button fx:id="productIDSearchButton" layoutX="558.0" layoutY="91.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: grey;" text="Search" />
          </children>
       </Pane>
+      <VBox fx:id="menuPane" alignment="CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false">
+         <children>
+            <Button fx:id="userDashboardButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="User Dashboard" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+            <Button fx:id="mealPlannerButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="Meal Planner" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+            <Button fx:id="myRecipesButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="My Recipes" textAlignment="CENTER" />
+            <Button fx:id="inventoryButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER" />
+            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
+            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Find Recipes" textAlignment="CENTER" wrapText="true" />
+            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
+            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Button fx:id="myListsButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 270;" text="My Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
    </children>
 </AnchorPane>

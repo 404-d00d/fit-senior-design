@@ -26,6 +26,9 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MyRecipesController {
 
    @FXML
@@ -43,7 +46,7 @@ public class MyRecipesController {
    private ComboBox<String> recipeCategory;
 
    @FXML
-   private static Pane recipeDetailsPane;
+   private Pane recipeDetailsPane;
 
    @FXML
    private Pane addRecipePane;
@@ -53,15 +56,28 @@ public class MyRecipesController {
 
    private File selectedImageFile;
 
-   private static TextArea ingredientsArea, stepArea;
-   private static Text yieldTXT, prepTXT, cookTXT, totalTXT, estCostTXT, specialEquipmentTXT, stepOfTXT, recipeNameTXT;
-   private static ImageView recipeImages;
+   @FXML
+   private TextArea ingredientsArea, stepArea;
+   
+   @FXML
+   private Text noRecipesTXT, recipeNameTXT;
+
+   @FXML
+   private Text yieldTXT, prepTXT, cookTXT, totalTXT, estCostTXT, specialEquipmentTXT, stepOfTXT;
+
+   @FXML
+   private  ImageView recipeImages;
+
+   private Image selectedImage;
+
+   @FXML
    private FlowPane recipeFlowPane;
 
    @FXML
    private ListView<String> tagsListView; // To display added tags
    private ObservableList<String> tags = FXCollections.observableArrayList();
    private ObservableList<String> ingredients = FXCollections.observableArrayList();
+   private Map<Integer, VBox> recipeWidgets = new HashMap<>();
 
    @FXML
    private void initialize() {
@@ -88,14 +104,14 @@ public class MyRecipesController {
          }
       });
 
-      //closeRecipeButton.setOnAction(event -> {
-         //try {
-            //myRecipesPane.setVisible(true);
-            //recipeDetailsPane.setVisible(false);
-         //} catch (Exception e) {
-            //e.printStackTrace();
-         //}
-      //});
+      closeRecipeButton.setOnAction(event -> {
+         try {
+            myRecipesPane.setVisible(true);
+            recipeDetailsPane.setVisible(false);
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
 
       closeCreateButton.setOnAction(event -> {
          try {
@@ -195,7 +211,7 @@ public class MyRecipesController {
       // Switch to userDashboard Screen
       userDashboardButton.setOnAction(event -> {
          try {
-
+            Main.showUserDashboardScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -211,6 +227,8 @@ public class MyRecipesController {
             e.printStackTrace();
          }
       });
+
+      setHoverEffect(mealPlannerButton);
    }
 
    private void addTag() {
@@ -267,7 +285,7 @@ public class MyRecipesController {
          System.out.println("PrepSteps: " + PrepSteps);
          System.out.println("ETA for Cooking: " + CookTime);
          System.out.println("ETA for Prep: " + PrepTime);
-         System.out.println("Selected Image: " + selectedImageFile.getAbsolutePath());
+         //System.out.println("Selected Image: " + selectedImageFile.getAbsolutePath());
 
          // In the future, we will use these values to add to the database
          // Example: db.insertIngredient(ingredientName, quantity, unit, location, expirationDate);
@@ -277,19 +295,28 @@ public class MyRecipesController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
             VBox recipeCard = loader.load();
 
-            // Get the controller and set the recipe data
-            RecipeCardController controller = loader.getController();
-
             //something like db.getDetails(id)
-            //either conver image to type Image or convert the data to be File
-            controller.setRecipeData(id, Name, null);
-
-            // Add a click event to display the details when the card is clicked
-            recipeCard.setOnMouseClicked(event -> showRecipeDetails(id, Name, null));
+            // Get the RecipeCardController and pass `this` as MyRecipesController
+            RecipeCardController controller = loader.getController();
+            controller.setRecipeData(id, Name, selectedImage, this); // Pass this instance
 
             // Add the recipe card to the FlowPane
             recipeFlowPane.getChildren().add(recipeCard);
 
+            recipeWidgets.put(id, recipeCard);  // Store the card with its ID
+
+            if(noRecipesTXT.isVisible()) {
+               noRecipesTXT.setVisible(false);
+            }
+
+            recipeName.clear();
+            recipeCategory.setValue(null);
+            tags.clear();
+            ingredients.clear();
+            recipePreparationSteps.clear();
+            recipeETA.clear();
+            recipeETAPrep.clear();
+            selectedImageFile = null;
          
          } catch (Exception e) {
          e.printStackTrace();
@@ -330,11 +357,13 @@ public class MyRecipesController {
       selectedImageFile = fileChooser.showOpenDialog(stage);
 
       if (selectedImageFile != null) {
-         // process or store the selected image
+         // Convert file to Image
+        selectedImage = new Image(selectedImageFile.toURI().toString());
       }
    }
 
-   public static void showRecipeDetails(int recipeId, String name, Image image) {
+   public void showRecipeDetails(int recipeId, String name, Image image) {
+      myRecipesPane.setVisible(false);
       recipeDetailsPane.setVisible(true);
       recipeNameTXT.setText(name);
       recipeImages.setImage(image);
@@ -350,5 +379,28 @@ public class MyRecipesController {
       estCostTXT.setText("EST Cost: $" + ""); //add a cost calculator ref
       specialEquipmentTXT.setText("Special Equipment: " + "");
       stepOfTXT.setText("Step " + "" + " of " + "");
+   }
+
+   // Method to open the edit form with the recipe's current details
+   public void openEditRecipe(int recipeId) {
+      // Logic to open edit pane and load recipe details by ID
+      System.out.println("Edit recipe with ID: " + recipeId);
+
+
+   }
+
+   // Method to delete the recipe by ID
+   public void deleteRecipe(int recipeId) {
+      // Logic to remove the recipe from data source and refresh UI
+      System.out.println("Delete recipe with ID: " + recipeId);
+
+      // Remove from database, then remove from frontend
+
+      // Access and remove the recipe card widget
+      VBox recipeCard = recipeWidgets.get(recipeId);
+      if (recipeCard != null) {
+          recipeFlowPane.getChildren().remove(recipeCard);
+          recipeWidgets.remove(recipeId);  // Clean up from the map
+      }
    }
 }

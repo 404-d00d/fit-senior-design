@@ -2,6 +2,8 @@ package org.javafx.Main;
 
 import java.io.IOException;
 
+import org.javafx.Controllers.MyRecipesController;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -79,6 +81,16 @@ public class Main extends Application {
 
         // Apply the scaling transformation to fit 1920x1080 content into 1280x720
         setScale(myListsScreen);
+        primaryStage.show();
+    }
+
+    // Load the UserDashboard screen 
+    public static void showUserDashboardScreen() throws IOException {
+        Parent userDashboardScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/User Dashboard.fxml"));
+        primaryStage.setScene(new Scene(userDashboardScreen, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(userDashboardScreen);
         primaryStage.show();
     }
 

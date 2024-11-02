@@ -58,7 +58,7 @@
             </Button>
             <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#bfbfbf" height="940.0" layoutX="397.0" stroke="BLACK" strokeType="INSIDE" width="1147.0" />
             <ScrollBar layoutX="1518.0" layoutY="6.0" orientation="VERTICAL" prefHeight="917.0" prefWidth="14.0" />
-            <Text layoutX="898.0" layoutY="482.7060546875" strokeType="OUTSIDE" strokeWidth="0.0" text="No Recipes">
+            <Text fx:id="noRecipesTXT" layoutX="898.0" layoutY="482.7060546875" strokeType="OUTSIDE" strokeWidth="0.0" text="No Recipes">
                <font>
                   <Font size="29.0" />
                </font>
@@ -68,7 +68,7 @@
                   <Font size="25.0" />
                </font>
             </Button>
-            <FlowPane fx:id="recipeFlowPane" layoutX="412.0" layoutY="8.0" prefHeight="917.0" prefWidth="1101.0" />
+            <FlowPane fx:id="recipeFlowPane" layoutX="458.0" layoutY="12.0" prefHeight="917.0" prefWidth="1000.0" style="-fx-vgap: 5;" />
          </children>
       </Pane>
       <Pane fx:id="addRecipePane" layoutX="641.0" layoutY="130.0" visible="false">
@@ -144,32 +144,32 @@
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text fx:id="yieldTXT" layoutX="607.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Yield: -" wrappingWidth="205.30859375">
+            <Text fx:id="yieldTXT" layoutX="607.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Yield: -" wrappingWidth="528.30859375">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text fx:id="prepTXT" layoutX="607.0" layoutY="142.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Prep Time: -" wrappingWidth="328.30859375">
+            <Text fx:id="prepTXT" layoutX="607.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Prep Time: -" wrappingWidth="528.3085937500001">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text fx:id="cookTXT" layoutX="607.0" layoutY="225.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Cook Time: -" wrappingWidth="353.30859375">
+            <Text fx:id="cookTXT" layoutX="607.0" layoutY="226.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Cook Time: -" wrappingWidth="528.3085937500001">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text fx:id="totalTXT" layoutX="607.0" layoutY="308.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Total Time: -" wrappingWidth="353.30859375">
+            <Text fx:id="totalTXT" layoutX="607.0" layoutY="300.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Total Time: -" wrappingWidth="528.3085937500001">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text fx:id="estCostTXT" layoutX="607.0" layoutY="391.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Est Cost: -" wrappingWidth="353.30859375">
+            <Text fx:id="estCostTXT" layoutX="607.0" layoutY="374.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Est Cost: -" wrappingWidth="528.3085937500001">
                <font>
                   <Font size="56.0" />
                </font>
             </Text>
-            <Text fx:id="specialEquipmentTXT" layoutX="607.0" layoutY="541.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Special Equipment:" textAlignment="CENTER" wrappingWidth="312.30859375">
+            <Text fx:id="specialEquipmentTXT" layoutX="607.0" layoutY="544.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Special Equipment:" textAlignment="CENTER" wrappingWidth="312.30859375">
                <font>
                   <Font size="56.0" />
                </font>
@@ -180,7 +180,10 @@
                   <Font size="56.0" />
                </font>
             </Text>
-            <Button fx:id="closeRecipeButton" layoutX="1806.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
+            <Button fx:id="closeRecipeButton" layoutX="1750.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Back">
+               <font>
+                  <Font size="24.0" />
+               </font></Button>
             <Button fx:id="nextStep" layoutX="1590.0" layoutY="451.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
             <TextArea fx:id="stepArea" layoutX="1001.0" layoutY="533.0" prefHeight="367.0" prefWidth="835.0" />
             <ImageView fx:id="recipeImages" fitHeight="409.0" fitWidth="596.0" layoutX="1143.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />

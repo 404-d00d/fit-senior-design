@@ -318,7 +318,7 @@ public class InventoryDashboardController {
       // Switch to userDashboard Screen
       userDashboardButton.setOnAction(event -> {
          try {
-
+            Main.showUserDashboardScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -442,6 +442,13 @@ public class InventoryDashboardController {
          Item newIngredient = new Item(ingredientName, "0", Integer.parseInt(quantity), unit, location, convertedDate);
 
          ingredientInventory.add(newIngredient);
+
+         productName.clear();
+         productQuantity.clear();
+         productUnit.setValue(null);
+         productLoc.setValue(null);
+         productEXPDate.setValue(null);
+         selectedImageFile = null;
 
          for (int j = 0; j < ingredientInventory.size(); j++) {
 

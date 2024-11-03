@@ -1,10 +1,12 @@
 package org.javafx.Controllers;
 
 import java.io.File;
+import javafx.scene.control.Label;
 import java.time.LocalDate;
 
 import org.javafx.Main.Main;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,71 +15,89 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MyRecipesController {
 
    @FXML
    private Button menuButton, inventoryButton, myRecipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton,
-                  closeCreateButton, addRecipeButton, closeRecipeButton, addTag, recipeAddIngredient, imageSelect, saveButton,
-                  nextStep, prevStep, userDashboardButton, mealPlannerButton, myListsButton;
+                  closeCreateButton, addRecipeButton, closeRecipeButton, addTagButton, addIngredientButton, imageSelectButton, saveButton,
+                  nextStep, prevStep, userDashboardButton, mealPlannerButton, myListsButton, addEquipmentButton, prevStepButton, nextStepButton,
+                  addStepButton;
 
    @FXML
    private VBox menuPane;
 
    @FXML
-   private TextField recipeName, recipeTag, recipeIngredients, recipePreparationSteps, recipeETA, recipeETAPrep;
+   private TextField recipeName, recipeTag, ingredientEntry, recipeETA, recipeETAPrep, recipeYield, amountEntry, equipmentEntry;
    
    @FXML
-   private ComboBox<String> recipeCategory;
+   private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry;
 
    @FXML
-   private Pane recipeDetailsPane;
-
-   @FXML
-   private Pane addRecipePane;
-
-   @FXML
-   private Pane myRecipesPane, myRecipeMainPane;
+   private Pane myRecipesPane, myRecipeMainPane, addRecipePane, recipeDetailsPane;
 
    private File selectedImageFile;
 
    @FXML
-   private TextArea ingredientsArea, stepArea;
-   
-   @FXML
-   private Text noRecipesTXT, recipeNameTXT;
+   private TextArea prepStepField;
 
    @FXML
-   private Text yieldTXT, prepTXT, cookTXT, totalTXT, estCostTXT, specialEquipmentTXT, stepOfTXT;
+   private Text yieldTXT, prepTXT, cookTXT, totalTXT, estCostTXT, specialEquipmentTXT, stepOfTXT, noRecipesTXT, recipeNameTXT, stepIndex;
 
    @FXML
-   private  ImageView recipeImages;
+   private ImageView recipeImages, imagePreview;
 
    private Image selectedImage;
 
    @FXML
-   private FlowPane recipeFlowPane;
+   private FlowPane recipeFlowPane, chipPreview;
 
    @FXML
-   private ListView<String> tagsListView; // To display added tags
+   private TableView<Ingredient> ingredientTable;
+
+   @FXML
+   private TableView<String> equipmentTable;
+
+   @FXML
+   private TableColumn<String, String> equipmentList;
+
+   @FXML
+   private TableColumn<Ingredient, String> ingredientList;
+
+   @FXML
+   private TableColumn<Ingredient, String> amountList;
+
+   @FXML
    private ObservableList<String> tags = FXCollections.observableArrayList();
-   private ObservableList<String> ingredients = FXCollections.observableArrayList();
+   private ObservableList<Ingredient> ingredients = FXCollections.observableArrayList();
    private Map<Integer, VBox> recipeWidgets = new HashMap<>();
+   private ObservableList<String> equipment = FXCollections.observableArrayList();
+   private List<String> preparationSteps = new ArrayList<>();
+   private int currentStep = 0;
 
    @FXML
    private void initialize() {
@@ -85,11 +105,61 @@ public class MyRecipesController {
       //Main.setScale(myRecipeMainPane);
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
+      ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
 
-      addTag.setOnAction(event -> addTag());
-      recipeAddIngredient.setOnAction(event -> addIngredient());
-      imageSelect.setOnAction(event -> SelectImage());
+      // Set up TableView columns for ingredients
+      ingredientList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+      amountList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAmount() + " " + data.getValue().getUnit()));
+      ingredientTable.setItems(ingredients);
+
+      // Enable table editing
+      ingredientTable.setEditable(true);
+      ingredientList.setCellFactory(TextFieldTableCell.forTableColumn());
+      amountList.setCellFactory(TextFieldTableCell.forTableColumn());
+
+         // Context menu for deletion
+      ingredientTable.setRowFactory(tv -> {
+         TableRow<Ingredient> row = new TableRow<>();
+         ContextMenu contextMenu = new ContextMenu();
+         MenuItem deleteItem = new MenuItem("Delete");
+         deleteItem.setOnAction(event -> ingredients.remove(row.getItem()));
+         contextMenu.getItems().add(deleteItem);
+         row.setContextMenu(contextMenu);
+         return row;
+      });
+
+      // Set up TableView for equipment
+      equipmentList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue()));
+      equipmentTable.setItems(equipment);
+
+      // Enable table editing
+      equipmentTable.setEditable(true);
+      equipmentList.setCellFactory(TextFieldTableCell.forTableColumn());
+
+         // Context menu for deletion
+         equipmentTable.setRowFactory(tv -> {
+         TableRow<String> row = new TableRow<>();
+         ContextMenu contextMenu = new ContextMenu();
+         MenuItem deleteItem = new MenuItem("Delete");
+         deleteItem.setOnAction(event -> equipment.remove(row.getItem()));
+         contextMenu.getItems().add(deleteItem);
+         row.setContextMenu(contextMenu);
+         return row;
+      });
+
+      addTagButton.setOnAction(event -> addTag());
+      addIngredientButton.setOnAction(event -> addIngredient());
+      imageSelectButton.setOnAction(event -> SelectImage());
       saveButton.setOnAction(event -> saveRecipe());
+      addStepButton.setOnAction(event -> addStep());
+      prevStepButton.setOnAction(event -> navigateStep(-1));
+      nextStepButton.setOnAction(event -> navigateStep(1));
+      addEquipmentButton.setOnAction(event -> addEquipment());
+
+      // Initialize the first step
+      preparationSteps.add("");
+      currentStep = 0;
+      updateStepView();
    
       menuButton.setOnAction(event -> {
          try {
@@ -231,20 +301,101 @@ public class MyRecipesController {
       setHoverEffect(mealPlannerButton);
    }
 
-   private void addTag() {
-      String tag = recipeTag.getText().trim();
-      if (!tag.isEmpty()) {
-         tags.add(tag);
-         recipeTag.clear();
+   // Add ingredient to table
+   private void addIngredient() {
+      String name = ingredientEntry.getText().trim();
+      String amount = amountEntry.getText().trim();
+      String unit = ingredientUnitEntry.getValue();
+
+      if (!name.isEmpty() && !amount.isEmpty() && unit != null) {
+          ingredients.add(new Ingredient(name, amount, unit));
+          ingredientEntry.clear();
+          amountEntry.clear();
+          ingredientUnitEntry.setValue(null);
+      }
+  }
+
+   // Add a new step to the steps list
+   private void addStep() {
+      // Save current step text before adding a new step
+      if (currentStep >= 0 && currentStep < preparationSteps.size()) {
+         preparationSteps.set(currentStep, prepStepField.getText().trim());
+      }
+
+      // Add a new blank step
+      preparationSteps.add("");
+      currentStep = preparationSteps.size() - 1;
+      updateStepView();
+   }
+
+   // Navigate between steps
+   private void navigateStep(int direction) {
+      // Save the current step text before navigating
+      if (currentStep >= 0 && currentStep < preparationSteps.size()) {
+         preparationSteps.set(currentStep, prepStepField.getText().trim());
+      }
+
+      // Calculate new step index
+      int newStep = currentStep + direction;
+      if (newStep >= 0 && newStep < preparationSteps.size()) {
+         currentStep = newStep;
+         updateStepView();
       }
    }
 
-   private void addIngredient() {
-      String ingredient = recipeIngredients.getText().trim();
-      if (!ingredient.isEmpty()) {
-         ingredients.add(ingredient);
-         recipeIngredients.clear();
+   // Update TextArea and stepIndex label to display the current step
+   private void updateStepView() {
+      if (preparationSteps.isEmpty()) {
+         prepStepField.setText("");
+         stepIndex.setText("Step 1 of 1");
+      } else {
+         prepStepField.setText(preparationSteps.get(currentStep));
+         stepIndex.setText("Step " + (currentStep + 1) + " of " + preparationSteps.size());
       }
+   }
+
+   // Add equipment to table
+   private void addEquipment() {
+      String equipmentName = equipmentEntry.getText().trim();
+      if (!equipmentName.isEmpty()) {
+          equipment.add(equipmentName);
+          equipmentEntry.clear();
+      }
+   }
+
+    // Add tag as a chip in FlowPane
+    private void addTag() {
+      String tag = recipeTag.getText().trim();
+      if (!tag.isEmpty() && !tags.contains(tag)) {
+          tags.add(tag);
+          recipeTag.clear();
+          updateTagView();
+      }
+   }
+
+   // Update FlowPane to display chips
+   private void updateTagView() {
+      chipPreview.getChildren().clear();
+      for (String tag : tags) {
+         HBox chip = createTagChip(tag);
+         chipPreview.getChildren().add(chip);
+      }
+   }
+
+   // Create a chip with a delete option for each tag
+   private HBox createTagChip(String tagText) {
+      Label tagLabel = new Label(tagText);
+      Button removeButton = new Button("X");
+      
+      removeButton.setOnAction(event -> {
+          tags.remove(tagText);
+          updateTagView();
+      });
+
+      HBox tagChip = new HBox(tagLabel, removeButton);
+      tagChip.setSpacing(5);
+      tagChip.setStyle("-fx-background-color: #e0e0e0; -fx-padding: 5 10; -fx-border-radius: 10; -fx-background-radius: 10;");
+      return tagChip;
    }
 
    private void setHoverEffect(Button button) {
@@ -268,24 +419,25 @@ public class MyRecipesController {
 
       if (isFormValid()) {
          // Get values from input fields
-         String Name = recipeName.getText();
-         String Category = recipeCategory.getValue();
-         String PrepSteps = recipePreparationSteps.getText();
-         String CookTime = recipeETA.getText();
-         String PrepTime = recipeETAPrep.getText();
+        String Name = recipeName.getText();
+        String Category = recipeCategory.getValue();
+        String CookTime = recipeETA.getText();
+        String PrepTime = recipeETAPrep.getText();
 
          //get num of entries in db and then add 1
          int id = 0;
 
-         // Print the values to the terminal for testing
-         System.out.println("Recipe's Name: " + Name);
-         System.out.println("Category: " + Category);
-         System.out.println("Tags: " + tags);
-         System.out.println("Ingredients: " + ingredients);
-         System.out.println("PrepSteps: " + PrepSteps);
-         System.out.println("ETA for Cooking: " + CookTime);
-         System.out.println("ETA for Prep: " + PrepTime);
-         //System.out.println("Selected Image: " + selectedImageFile.getAbsolutePath());
+         // Concatenate all preparation steps
+        String PrepSteps = String.join("\n", preparationSteps);
+
+        // Print the values to the terminal for testing
+        System.out.println("Recipe's Name: " + Name);
+        System.out.println("Category: " + Category);
+        System.out.println("Tags: " + tags);
+        System.out.println("Ingredients: " + ingredients);
+        System.out.println("PrepSteps:\n" + PrepSteps);
+        System.out.println("ETA for Cooking: " + CookTime);
+        System.out.println("ETA for Prep: " + PrepTime);
 
          // In the future, we will use these values to add to the database
          // Example: db.insertIngredient(ingredientName, quantity, unit, location, expirationDate);
@@ -309,21 +461,26 @@ public class MyRecipesController {
                noRecipesTXT.setVisible(false);
             }
 
+            // Clear form inputs
             recipeName.clear();
             recipeCategory.setValue(null);
             tags.clear();
             ingredients.clear();
-            recipePreparationSteps.clear();
+            preparationSteps.clear();
+            prepStepField.clear();
             recipeETA.clear();
             recipeETAPrep.clear();
             selectedImageFile = null;
+
+            updateTagView();
+            updateStepView();
+
+            addRecipePane.setVisible(false);
+            myRecipesPane.setVisible(true);
          
          } catch (Exception e) {
          e.printStackTrace();
          }
-      
-         addRecipePane.setVisible(false);
-         myRecipesPane.setVisible(true);
       }
 
          else {
@@ -338,10 +495,7 @@ public class MyRecipesController {
 
    private boolean isFormValid() {
       // Check if required fields are filled
-      return !recipeName.getText().trim().isEmpty() &&
-             !ingredients.isEmpty() &&
-             !recipePreparationSteps.getText().trim().isEmpty() &&
-             !recipeETA.getText().trim().isEmpty();
+      return !recipeName.getText().trim().isEmpty();
    }
 
    private void SelectImage() {
@@ -353,7 +507,7 @@ public class MyRecipesController {
          new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
       );
 
-      Stage stage = (Stage) imageSelect.getScene().getWindow();  // Get the current stage
+      Stage stage = (Stage) imageSelectButton.getScene().getWindow();  // Get the current stage
       selectedImageFile = fileChooser.showOpenDialog(stage);
 
       if (selectedImageFile != null) {
@@ -404,3 +558,21 @@ public class MyRecipesController {
       }
    }
 }
+
+// Custom classes to manage ingredients and steps
+class Ingredient {
+   private String name;
+   private String amount;
+   private String unit;
+
+   public Ingredient(String name, String amount, String unit) {
+       this.name = name;
+       this.amount = amount;
+       this.unit = unit;
+   }
+
+   public String getName() { return name; }
+   public String getAmount() { return amount; }
+   public String getUnit() { return unit; }
+}
+

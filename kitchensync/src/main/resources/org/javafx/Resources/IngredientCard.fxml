@@ -4,7 +4,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="ingredientCardPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="ingredientCardPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.IngredientCardController">
    <children>
       <ImageView fx:id="ingredientImage" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
       <Label fx:id="ingredientName" prefHeight="50.0" prefWidth="200.0" style="-fx-alignment: center; -fx-font-size: 20; -fx-background-color: white;" text="Label" textAlignment="CENTER" />

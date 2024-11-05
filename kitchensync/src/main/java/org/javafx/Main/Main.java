@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 
 public class Main extends Application {
 

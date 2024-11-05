@@ -2,6 +2,7 @@ module org.javafx {
     requires transitive javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
+    requires com.google.gson;
 
     // Opens for reflection and FXML loading
     opens org.javafx.Controllers to javafx.fxml;

@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.javafx.Item.Item;
 
@@ -110,7 +111,7 @@ public class InventoryDashboardController {
    private Map<String, Map<String, FlowPane>> spacesCategories = new HashMap<>();
    private Map<String, List<String>> defaultCategories; // Map to hold categories for each space
 
-       private List<String> customSpaces = new ArrayList<>();
+   private List<String> customSpaces = new ArrayList<>();
 
    private Image selectedImage;
 
@@ -125,7 +126,11 @@ public class InventoryDashboardController {
    private void initialize() {
 
       setupDefaultCategories();
+
       loadPersistedSpacesAndCategories(); // Load spaces and categories from JSON
+      loadCategoriesForSpace("Fridge");
+      loadCategoriesForSpace("Freezer");
+      loadCategoriesForSpace("Pantry");
 
       // Set current space to default (e.g., "Fridge")
       currentSpace = "Fridge";
@@ -138,18 +143,33 @@ public class InventoryDashboardController {
       fridgeButton.setOnAction(event -> {
          loadCategoriesForSpace("Fridge");
          styleActiveButton(fridgeButton);
+         currentSpace = "Fridge";
       });
       freezerButton.setOnAction(event -> {
             loadCategoriesForSpace("Freezer");
             styleActiveButton(freezerButton);
+            currentSpace = "Freezer";
       });
       pantryButton.setOnAction(event -> {
             loadCategoriesForSpace("Pantry");
             styleActiveButton(pantryButton);
+            currentSpace = "Pantry";
       });
 
       productUnit.getItems().addAll("kg", "g", "l", "ml", "oz", "lbs");
-      productLoc.getItems().addAll("Fridge", "Freezer", "Pantry");
+
+      // Add the space to the productLoc ComboBox
+      if (!productLoc.getItems().contains("Fridge")) {
+         productLoc.getItems().add("Fridge");
+      }
+
+      if (!productLoc.getItems().contains("Freezer")) {
+         productLoc.getItems().add("Freezer");
+      }
+
+      if (!productLoc.getItems().contains("Pantry")) {
+         productLoc.getItems().add("Pantry");
+      }
 
       // Set up event listeners for add buttons
       addSpace.setOnAction(event -> addSpace());
@@ -737,6 +757,9 @@ public class InventoryDashboardController {
             FlowPane newCategoryPane = createCategoryPane(categoryName);
             categoriesWrapper[0].put(categoryName, newCategoryPane);
 
+            // Remove placeholder if it exists
+            categoryContainer.getChildren().removeIf(node -> node instanceof Text && ((Text) node).getText().equals("No categories available. Please add categories."));
+
             // Update UI
             Text categoryHeader = new Text(categoryName);
             categoryHeader.setFont(new Font("System Bold", 36));
@@ -793,58 +816,65 @@ public class InventoryDashboardController {
 
    private void loadPersistedSpacesAndCategories() {
       File file = new File(SPACES_FILE_PATH);
-      if (file.exists()) {
-         try (Reader reader = new FileReader(file)) {
-            JsonElement jsonElement = JsonParser.parseReader(reader);
-            if (jsonElement.isJsonObject()) {
+      boolean isFileValid = file.exists() && file.length() > 0;
+  
+      if (isFileValid) {
+          try (Reader reader = new FileReader(file)) {
+              JsonElement jsonElement = JsonParser.parseReader(reader);
+              if (jsonElement.isJsonObject()) {
                   JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-                  // Load custom and default spaces
+  
+                  // Load spaces (custom and default)
                   JsonArray spacesArray = jsonObject.getAsJsonArray("spaces");
+
+                  System.out.println(productLoc.getItems());
+
                   for (JsonElement spaceElement : spacesArray) {
                      String spaceName = spaceElement.getAsString();
-                     
-                     // Only add the space if it doesn't exist in the UI
+  
+                     // Add the space if it doesn't exist
+                     if (!spacesCategories.containsKey(spaceName)) {
+                        spacesCategories.put(spaceName, new HashMap<>());
+                     }
+
+                     if (!customSpaces.contains(spaceName) && !spaceName.equals("Fridge") && !spaceName.equals("Freezer") && !spaceName.equals("Pantry")) {
+                        customSpaces.add(spaceName);
+                     }
+  
                      if (!spaceExists(spaceName)) {
                         addSpaceButton(spaceName);
                      }
 
-                     if (spacesCategories.containsKey(spaceName)) {
-                        continue; // Skip if already loaded
-                     }
-
-                     if (defaultCategories.containsKey(spaceName)) {
-                        // Add default categories for the default spaces
-                        Map<String, FlowPane> defaultCats = new HashMap<>();
-                        for (String category : defaultCategories.get(spaceName)) {
-                              defaultCats.put(category, createCategoryPane(category));
-                        }
-                        spacesCategories.put(spaceName, defaultCats);
-                     } else {
-                        // Custom space, initialize with empty categories
-                        spacesCategories.put(spaceName, new HashMap<>());
+                     // Add the space to the productLoc ComboBox
+                     if (!productLoc.getItems().contains(spaceName)) {
+                        productLoc.getItems().add(spaceName);
                      }
                   }
-
+  
                   // Load categories for each space
                   JsonObject categoriesObject = jsonObject.getAsJsonObject("categories");
                   for (Map.Entry<String, JsonElement> entry : categoriesObject.entrySet()) {
                      String spaceName = entry.getKey();
                      JsonArray categoriesArray = entry.getValue().getAsJsonArray();
-                     Map<String, FlowPane> categories = spacesCategories.getOrDefault(spaceName, new HashMap<>());
+                     // Ensure categories map exists for the given space
+                     Map<String, FlowPane> categories = spacesCategories.computeIfAbsent(spaceName, k -> new HashMap<>());
+  
+                     // Ensure categories are only loaded once to avoid duplicates
                      for (JsonElement categoryElement : categoriesArray) {
                         String categoryName = categoryElement.getAsString();
-                        categories.putIfAbsent(categoryName, createCategoryPane(categoryName));
+                        if (!categories.containsKey(categoryName)) {
+                           categories.put(categoryName, createCategoryPane(categoryName));
+                        }
                      }
-                     spacesCategories.put(spaceName, categories);
                   }
-            }
-         } catch (IOException e) {
-            e.printStackTrace();
-         }
+              }
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
       } else {
-         // If file doesn't exist, load default spaces and categories
-         setupDefaultSpacesAndCategories();
+          // If the file doesn't exist or is empty, set up default spaces and categories
+          setupDefaultSpacesAndCategories();
+          savePersistedSpacesAndCategories(); // Save defaults after initialization
       }
    }
 
@@ -869,23 +899,38 @@ public class InventoryDashboardController {
           customSpaces.stream().filter(space -> !orderedSpaces.contains(space)).forEach(spacesArray::add);
           jsonObject.add("spaces", spacesArray);
   
-          // Save categories for each space
+          // Save categories for each space in correct order
           JsonObject categoriesObject = new JsonObject();
           for (Map.Entry<String, Map<String, FlowPane>> entry : spacesCategories.entrySet()) {
               String spaceName = entry.getKey();
+              Map<String, FlowPane> categoriesMap = entry.getValue();
+  
+              // Ensure "All Items" and "Expiring Soon" are first
               JsonArray categoriesArray = new JsonArray();
-              entry.getValue().keySet().forEach(categoriesArray::add);
+              if (categoriesMap.containsKey("All Items")) {
+                  categoriesArray.add("All Items");
+              }
+              if (categoriesMap.containsKey("Expiring Soon")) {
+                  categoriesArray.add("Expiring Soon");
+              }
+  
+              // Add remaining categories in alphabetical order (or original order)
+              categoriesMap.keySet().stream()
+                  .filter(category -> !category.equals("All Items") && !category.equals("Expiring Soon"))
+                  .forEach(categoriesArray::add);
+  
               categoriesObject.add(spaceName, categoriesArray);
           }
           jsonObject.add("categories", categoriesObject);
   
+          // Write to the file
           Gson gson = new GsonBuilder().setPrettyPrinting().create();
           gson.toJson(jsonObject, writer);
   
       } catch (IOException e) {
           e.printStackTrace();
       }
-  }  
+  } 
 
    private void setupDefaultCategories() {
       defaultCategories = new HashMap<>();
@@ -894,73 +939,91 @@ public class InventoryDashboardController {
       defaultCategories.put("Fridge", List.of("All Items", "Expiring Soon", "Ready to Eat", "Dairy", "Meat & Seafood"));
       defaultCategories.put("Freezer", List.of("All Items","Expiring Soon", "Frozen Foods", "Meat & Seafood", "Vegetables"));
       defaultCategories.put("Pantry", List.of("All Items", "Expiring Soon", "Canned Goods", "Dry Foods", "Condiments"));
-  }
+   }
 
    private void loadCategoriesForSpace(String space) {
       // Clear existing categories in the VBox
       categoryContainer.getChildren().clear();
-
+  
       // Retrieve or initialize categories for the specified space
       Map<String, FlowPane> categories = spacesCategories.get(space);
+      
+      // If no categories are loaded for this space, initialize them with defaults if applicable
       if (categories == null) {
-         categories = new HashMap<>();
-         for (String category : defaultCategories.getOrDefault(space, List.of())) {
-            categories.put(category, createCategoryPane(category));
-         }
-         spacesCategories.put(space, categories);
+          categories = new LinkedHashMap<>(); // Use LinkedHashMap to maintain order
+          for (String category : defaultCategories.getOrDefault(space, List.of())) {
+              categories.put(category, createCategoryPane(category));
+          }
+          spacesCategories.put(space, categories);
+          // Save changes to keep things consistent
+          savePersistedSpacesAndCategories();
       }
-
-      // Iterate over each category to create and add UI elements
-      for (Map.Entry<String, FlowPane> entry : categories.entrySet()) {
-         String categoryName = entry.getKey();
-         FlowPane categoryPane = entry.getValue();
-
-         // Create a header for the category
-         Text categoryHeader = new Text(categoryName);
-         categoryHeader.setFont(new Font("System Bold", 36));
-         categoryHeader.setStyle("-fx-fill: #333;");
-
-         // Add context menu for deletion
-         categoryHeader.setOnContextMenuRequested(event -> {
-            Alert alert = new Alert(AlertType.CONFIRMATION);
-            alert.setTitle("Delete Category");
-            alert.setHeaderText("Are you sure you want to delete this category?");
-            alert.setContentText(categoryName);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
+  
+      // Create a list of category names in the correct order
+      List<String> orderedCategories = new ArrayList<>();
+      if (categories.containsKey("All Items")) {
+          orderedCategories.add("All Items");
+      }
+      if (categories.containsKey("Expiring Soon")) {
+          orderedCategories.add("Expiring Soon");
+      }
+      // Add remaining categories in their natural order or as specified in the defaultCategories
+      for (String category : categories.keySet()) {
+          if (!category.equals("All Items") && !category.equals("Expiring Soon")) {
+              orderedCategories.add(category);
+          }
+      }
+  
+      // Add each category to the UI in the correct order
+      for (String categoryName : orderedCategories) {
+          FlowPane categoryPane = categories.get(categoryName);
+  
+          // Create a header for the category
+          Text categoryHeader = new Text(categoryName);
+          categoryHeader.setFont(new Font("System Bold", 36));
+          categoryHeader.setStyle("-fx-fill: #333;");
+  
+          // Add context menu for deletion
+          categoryHeader.setOnContextMenuRequested(event -> {
+              Alert alert = new Alert(AlertType.CONFIRMATION);
+              alert.setTitle("Delete Category");
+              alert.setHeaderText("Are you sure you want to delete this category?");
+              alert.setContentText(categoryName);
+              Optional<ButtonType> result = alert.showAndWait();
+              if (result.isPresent() && result.get() == ButtonType.OK) {
                   deleteCategory(space, categoryName);
-            }
-         });
-
-         // Add the header and FlowPane to the VBox container
-         categoryContainer.getChildren().addAll(categoryHeader, categoryPane);
+              }
+          });
+  
+          // Add the header and FlowPane to the VBox container
+          categoryContainer.getChildren().addAll(categoryHeader, categoryPane);
       }
-
+  
       // If no categories were found, add a placeholder message
       if (categories.isEmpty()) {
-         Text placeholder = new Text("No categories available. Please add categories.");
-         placeholder.setFont(new Font("System Bold", 24));
-         placeholder.setStyle("-fx-fill: #777;");
-         categoryContainer.getChildren().add(placeholder);
+          Text placeholder = new Text("No categories available. Please add categories.");
+          placeholder.setFont(new Font("System Bold", 24));
+          placeholder.setStyle("-fx-fill: #777;");
+          categoryContainer.getChildren().add(placeholder);
       }
-   }
-
+  }
+   
    // Method to delete a category
    private void deleteCategory(String spaceName, String categoryName) {
       // Retrieve the categories for the given space
       Map<String, FlowPane> categories = spacesCategories.get(spaceName);
-      
-      if (categories != null) {
+  
+      if (categories != null && categories.containsKey(categoryName)) {
          // Remove the category from the map
          categories.remove(categoryName);
-         
+
          // Persist changes by saving the updated JSON
          savePersistedSpacesAndCategories();
-         
+
          // Refresh the UI after deletion
          loadCategoriesForSpace(spaceName);
       }
-   }
+  }
 
    private FlowPane createCategoryPane(String categoryName) {
       FlowPane categoryPane = new FlowPane();
@@ -975,15 +1038,17 @@ public class InventoryDashboardController {
          String spaceName = entry.getKey();
          List<String> categoriesList = entry.getValue();
 
-         // Add space button
-         addSpaceButton(spaceName);
+         // Add space button if it doesn't exist already
+         if (!spaceExists(spaceName)) {
+               addSpaceButton(spaceName);
 
-         // Add default categories for the space
-         Map<String, FlowPane> categories = new HashMap<>();
-         for (String category : categoriesList) {
-            categories.put(category, createCategoryPane(category));
+               // Use LinkedHashMap to ensure order is maintained
+               Map<String, FlowPane> categories = new LinkedHashMap<>();
+               for (String category : categoriesList) {
+                  categories.put(category, createCategoryPane(category));
+               }
+               spacesCategories.put(spaceName, categories);
          }
-         spacesCategories.put(spaceName, categories);
       }
    }
 

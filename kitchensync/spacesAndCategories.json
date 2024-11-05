@@ -2,14 +2,34 @@
   "spaces": [
     "Fridge",
     "Freezer",
-    "Pantry"
+    "Pantry",
+    "test"
   ],
   "categories": {
-    "Fridge": [
-      "Ready to Eat",
+    "Freezer": [
+      "All Items",
+      "Expiring Soon",
+      "Frozen Foods",
       "Meat \u0026 Seafood",
-      "Dairy",
+      "Vegetables"
+    ],
+    "Pantry": [
+      "All Items",
+      "Expiring Soon",
+      "Canned Goods",
+      "Dry Foods",
+      "Condiments"
+    ],
+    "test": [
+      "All Items",
       "Expiring Soon"
+    ],
+    "Fridge": [
+      "All Items",
+      "Expiring Soon",
+      "Ready to Eat",
+      "Dairy",
+      "Meat \u0026 Seafood"
     ]
   }
 }

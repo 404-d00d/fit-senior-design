@@ -109,7 +109,7 @@ def basic_process(image_path):
 
 if __name__ == "__main__":
     # Define the relative path to the resources folder
-    resources_folder = os.path.join(os.path.dirname(__file__), '../resources')
+    resources_folder = os.path.join(os.path.dirname(__file__), '')
     # Path to a specific receipt image in the resources folder
     # receipt_image_path = os.path.join(resources_folder, 'Target.jpg')
 

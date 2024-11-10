@@ -2,9 +2,13 @@ module org.javafx {
     requires transitive javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
+
     // requires software.amazon.awssdk.dynamodb;
     requires software.amazon.awssdk.auth;
     requires com.google.gson;
+
+    // AWS SDK DynamoDB
+    requires software.amazon.awssdk.services.dynamodb;
 
     // Opens for reflection and FXML loading
     opens org.javafx.Controllers to javafx.fxml;

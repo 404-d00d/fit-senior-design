@@ -1,5 +1,7 @@
 package org.javafx.Controllers;
 
+import org.javafx.Recipe.Recipe;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -10,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.input.MouseButton;
 
 public class RecipeCardController {
+
+   private Recipe recipe;
 
    @FXML
    private ImageView recipeImage;
@@ -24,10 +28,11 @@ public class RecipeCardController {
 
    
 
-   public void setRecipeData(int id, String name, Image image, MyRecipesController controller) {
-      this.recipeId = id;
+   public void setRecipeData(Recipe newRecipe, Image image, MyRecipesController controller) {
+      this.recipe = newRecipe;
+      this.recipeId = newRecipe.getID();
       this.myRecipesController = controller; 
-      recipeName.setText(name);
+      recipeName.setText(newRecipe.getName());
       recipeImage.setImage(image);
    }
 

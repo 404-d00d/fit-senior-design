@@ -5,6 +5,7 @@ import javafx.scene.control.Label;
 import java.time.LocalDate;
 
 import org.javafx.Main.Main;
+import org.javafx.Recipe.Recipe;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -44,26 +45,26 @@ public class MyRecipesController {
 
    @FXML
    private Button menuButton, inventoryButton, myRecipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton,
-                  closeCreateButton, addRecipeButton, closeRecipeButton, addTagButton, addIngredientButton, imageSelectButton, saveButton,
+                  closeP1Button, closeP2Button, addRecipeButton, closeRecipeButton, addTagButton, addIngredientButton, imageSelectButton, saveButton,
                   nextStep, prevStep, userDashboardButton, mealPlannerButton, myListsButton, addEquipmentButton, prevStepButton, nextStepButton,
-                  addStepButton;
+                  addStepButton, backButton, nextButton;
 
    @FXML
    private VBox menuPane;
 
    @FXML
-   private TextField recipeName, recipeTag, ingredientEntry, recipeETA, recipeETAPrep, recipeYield, amountEntry, equipmentEntry;
+   private TextField recipeName, recipeTag, ingredientEntry, recipeETAPassive, recipeETA, recipeETAPrep, recipeYield, amountEntry, equipmentEntry;
    
    @FXML
    private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry;
 
    @FXML
-   private Pane myRecipesPane, myRecipeMainPane, addRecipePane, recipeDetailsPane;
+   private Pane myRecipesPane, myRecipeMainPane, addRecipePaneP1, addRecipePaneP2, recipeDetailsPane, recipeCookingPane;
 
    private File selectedImageFile;
 
    @FXML
-   private TextArea prepStepField;
+   private TextArea prepStepField, recipeDescription;
 
    @FXML
    private Text yieldTXT, prepTXT, cookTXT, totalTXT, estCostTXT, specialEquipmentTXT, stepOfTXT, noRecipesTXT, recipeNameTXT, stepIndex;
@@ -90,6 +91,9 @@ public class MyRecipesController {
 
    @FXML
    private TableColumn<Ingredient, String> amountList;
+
+   @FXML
+   private ListView<String> ingredientsArea;
 
    @FXML
    private ObservableList<String> tags = FXCollections.observableArrayList();
@@ -183,10 +187,39 @@ public class MyRecipesController {
          }
       });
 
-      closeCreateButton.setOnAction(event -> {
+      closeP1Button.setOnAction(event -> {
          try {
             myRecipesPane.setVisible(true);
-            addRecipePane.setVisible(false);
+            addRecipePaneP1.setVisible(false);
+            clearForms();
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      closeP2Button.setOnAction(event -> {
+         try {
+            myRecipesPane.setVisible(true);
+            addRecipePaneP2.setVisible(false);
+            clearForms();
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      backButton.setOnAction(event -> {
+         try {
+            addRecipePaneP2.setVisible(false);
+            addRecipePaneP1.setVisible(true);
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      nextButton.setOnAction(event -> {
+         try {
+            addRecipePaneP1.setVisible(false);
+            addRecipePaneP2.setVisible(true);
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -195,7 +228,7 @@ public class MyRecipesController {
       addRecipeButton.setOnAction(event -> {
          try {
             myRecipesPane.setVisible(false);
-            addRecipePane.setVisible(true);
+            addRecipePaneP1.setVisible(true);
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -367,9 +400,9 @@ public class MyRecipesController {
     private void addTag() {
       String tag = recipeTag.getText().trim();
       if (!tag.isEmpty() && !tags.contains(tag)) {
-          tags.add(tag);
-          recipeTag.clear();
-          updateTagView();
+         tags.add(tag);
+         recipeTag.clear();
+         updateTagView();
       }
    }
 
@@ -417,40 +450,47 @@ public class MyRecipesController {
 
    private void saveRecipe() {
 
-      if (isFormValid()) {
-         // Get values from input fields
-        String Name = recipeName.getText();
-        String Category = recipeCategory.getValue();
-        String CookTime = recipeETA.getText();
-        String PrepTime = recipeETAPrep.getText();
+      // Get values from input fields
+      String name = recipeName.getText(); //Required
+      String category = recipeCategory.getValue(); //Required
+      String collection = recipeCollection.getValue();
+      int servings = Integer.parseInt(recipeYield.getText()); //Required
+      String description = recipeDescription.getText(); //Required
+      int prepTime = Integer.parseInt(recipeETAPrep.getText()); //Required
+      int passiveTime = Integer.parseInt(recipeETAPassive.getText()); //Required
+      int cookTime = Integer.parseInt(recipeETA.getText()); //Required
+      int complexity = calculateRecipeComplexity(); 
+      String[] tagsArray = tags.toArray(new String[0]); 
+      String[] equipmentArray = equipment.toArray(new String[0]);
+      // Convert ingredients to a string array representation
+      String[] ingredientsArray = ingredients.stream()
+       .map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit())
+       .toArray(String[]::new);
+      String[] stepsArray = preparationSteps.toArray(new String[0]); //Required
 
-         //get num of entries in db and then add 1
-         int id = 0;
+      //get num of entries in db and then add 1
+      int id = 0;
+
+      // Create a new Recipe object with all required fields
+      Recipe newRecipe = new Recipe(id, name, category, collection, description, prepTime, passiveTime, cookTime, complexity, servings, tagsArray, ingredientsArray, equipmentArray, stepsArray);
+
+      // Save recipe to database or use it as needed
+      // Example: addRecipeToDatabase(newRecipe);
+
+
+      if (isFormValid(name, category, recipeYield.getText(), description, recipeETAPrep.getText(), recipeETAPassive.getText(), recipeETA.getText(), ingredientsArray, stepsArray)) {
 
          // Concatenate all preparation steps
         String PrepSteps = String.join("\n", preparationSteps);
-
-        // Print the values to the terminal for testing
-        System.out.println("Recipe's Name: " + Name);
-        System.out.println("Category: " + Category);
-        System.out.println("Tags: " + tags);
-        System.out.println("Ingredients: " + ingredients);
-        System.out.println("PrepSteps:\n" + PrepSteps);
-        System.out.println("ETA for Cooking: " + CookTime);
-        System.out.println("ETA for Prep: " + PrepTime);
-
-         // In the future, we will use these values to add to the database
-         // Example: db.insertIngredient(ingredientName, quantity, unit, location, expirationDate);
          
          try { 
             // Load the RecipeCard FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
             VBox recipeCard = loader.load();
 
-            //something like db.getDetails(id)
             // Get the RecipeCardController and pass `this` as MyRecipesController
             RecipeCardController controller = loader.getController();
-            controller.setRecipeData(id, Name, selectedImage, this); // Pass this instance
+            controller.setRecipeData(newRecipe, selectedImage, this); // Pass the new Recipe object
 
             // Add the recipe card to the FlowPane
             recipeFlowPane.getChildren().add(recipeCard);
@@ -461,41 +501,130 @@ public class MyRecipesController {
                noRecipesTXT.setVisible(false);
             }
 
-            // Clear form inputs
-            recipeName.clear();
-            recipeCategory.setValue(null);
-            tags.clear();
-            ingredients.clear();
-            preparationSteps.clear();
-            prepStepField.clear();
-            recipeETA.clear();
-            recipeETAPrep.clear();
-            selectedImageFile = null;
+            clearForms();
 
             updateTagView();
             updateStepView();
 
-            addRecipePane.setVisible(false);
+            addRecipePaneP2.setVisible(false);
             myRecipesPane.setVisible(true);
          
          } catch (Exception e) {
-         e.printStackTrace();
+            e.printStackTrace();
          }
-      }
-
-         else {
-         // Show alert if the form is not valid
-         Alert alert = new Alert(AlertType.ERROR);
-         alert.setTitle("Form Error");
-         alert.setHeaderText(null);
-         alert.setContentText("Please fill in all required fields.");
-         alert.showAndWait();
       }
    }
 
-   private boolean isFormValid() {
-      // Check if required fields are filled
-      return !recipeName.getText().trim().isEmpty();
+   private int calculateRecipeComplexity() {
+      int complexity = 1; // Start with a base complexity
+  
+      // Increase complexity based on the number of ingredients
+      if (ingredients.size() > 10) {
+          complexity += 2;
+      } else if (ingredients.size() > 5) {
+          complexity += 1;
+      }
+  
+      // Increase complexity based on the total prep and cook time
+      int totalTime = Integer.parseInt(recipeETA.getText()) + Integer.parseInt(recipeETAPrep.getText());
+      if (totalTime > 60) {
+          complexity += 2;
+      } else if (totalTime > 30) {
+          complexity += 1;
+      }
+  
+      // Increase complexity based on the number of steps
+      if (preparationSteps.size() > 10) {
+          complexity += 2;
+      } else if (preparationSteps.size() > 5) {
+          complexity += 1;
+      }
+  
+      return complexity;
+   }
+
+  private String getComplexityLabel(int complexity) {
+      if (complexity <= 3) {
+         return "Very Easy";
+      } else if (complexity <= 6) {
+         return "Easy";
+      }else if (complexity <= 9) {
+         return "Medium";
+      }else if (complexity <= 12) {
+         return "Hard";
+      } else {
+         return "Very hard";
+      }
+   }
+
+   private void clearForms(){
+
+      // Clear form inputs
+      recipeName.clear();
+      recipeCategory.setValue(null);
+      tags.clear();
+      ingredients.clear();
+      preparationSteps.clear();
+      prepStepField.clear();
+      recipeETA.clear();
+      recipeETAPrep.clear();
+      selectedImageFile = null;
+   }
+
+   private boolean isFormValid(String name, String category, String servings, String decsription, String prepTime, String passiveTime, String cookTime, String[] ingredientsArray, String[] stepsArray) {
+      if (name == null || name.isEmpty()) {
+         showAlert("Error", "Missing Ingredient Name", "Please enter a valid recipe name.");
+         return false;
+      }
+      if (category == null || category.isEmpty()) {
+         showAlert("Error", "Missing Category", "Please select a valid category.");
+         return false;
+      }
+      try {
+         Integer.parseInt(servings);
+      } catch (NumberFormatException e) {
+         showAlert("Error", "Invalid Serving Amount", "Servings must be a number.");
+         return false;
+      }
+      if (decsription == null || decsription.isEmpty()) {
+         showAlert("Error", "Missing Decsription", "Please add a decsription.");
+         return false;
+      }
+      try {
+         Integer.parseInt(prepTime);
+      } catch (NumberFormatException e) {
+         showAlert("Error", "Invalid Prep Time", "Prep time must be a number.");
+         return false;
+      }
+      try {
+         Integer.parseInt(passiveTime);
+      } catch (NumberFormatException e) {
+         showAlert("Error", "Invalid Passive Time", "Passive time must be a number.");
+         return false;
+      }
+      try {
+         Integer.parseInt(cookTime);
+      } catch (NumberFormatException e) {
+         showAlert("Error", "Invalid Cook Time", "Cook time must be a number.");
+         return false;
+      }
+      if (ingredientsArray == null) {
+         showAlert("Error", "Missing Ingredients", "Please add ingredients.");
+         return false;
+      }
+      if (stepsArray == null) {
+         showAlert("Error", "Missing Steps", "Please add steps.");
+         return false;
+      }
+      return true;
+   }
+
+   private void showAlert(String title, String header, String content) {
+      Alert alert = new Alert(AlertType.ERROR);
+      alert.setTitle(title);
+      alert.setHeaderText(header);
+      alert.setContentText(content);
+      alert.showAndWait();
    }
 
    private void SelectImage() {
@@ -513,6 +642,7 @@ public class MyRecipesController {
       if (selectedImageFile != null) {
          // Convert file to Image
         selectedImage = new Image(selectedImageFile.toURI().toString());
+        imagePreview.setImage(selectedImage);
       }
    }
 
@@ -566,9 +696,9 @@ class Ingredient {
    private String unit;
 
    public Ingredient(String name, String amount, String unit) {
-       this.name = name;
-       this.amount = amount;
-       this.unit = unit;
+      this.name = name;
+      this.amount = amount;
+      this.unit = unit;
    }
 
    public String getName() { return name; }

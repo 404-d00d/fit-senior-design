@@ -39,12 +39,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -58,55 +62,48 @@ import java.util.Optional;
 public class InventoryDashboardController {
 
    @FXML
-   private Button addIngredientButton, spacesButton, placesButton, menuButton, inventoryButton, myRecipesButton, inboxButton,
-                  browseRecipesButton, profileButton, settingsButton, myListsButton, cancelButton, manualButton, closeIngredient, 
-                  addTagButton, imageSelect, removeButton, saveButton, productIDSearchButton, addSpace, addCategory,
-                  userDashboardButton, mealPlannerButton, fridgeButton, freezerButton, pantryButton;
+   private Button addIngredientSpacesButton, addIngredientPlacesButton, spacesButton, placesButton, menuButton, inventoryButton, myRecipesButton, inboxButton,
+                  browseRecipesButton, profileButton, settingsButton, myListsButton, cancelButton, manualButton, closeIngredient, addTagButton, imageSelect, 
+                  removeButton, saveButton, productIDSearchButton, addSpace, addCategory, userDashboardButton, mealPlannerButton, fridgeButton, freezerButton, 
+                  pantryButton, gridViewButton, listViewButton, allFiltersButton;
 
    @FXML
-   private VBox menuPane;
+   private VBox menuPane, categoryContainer, spacesButtons;
 
    @FXML
-   private TextField productID; // Field to enter UPC
-   
-   @FXML
-   private TextField productName;   
-   
-   @FXML
-   private TextField productQuantity;   
-   
-   @FXML
-   private TextField productTag;      
+   private TextField productID, productName, productQuantity, productTag;
 
    @FXML
-   private ComboBox<String> productUnit;
-
-   @FXML
-   private ComboBox<String> productLoc;
+   private ComboBox<String> productUnit, productLoc, locationFilter, categoryFilter, tagsFilter, sortByFilter;
 
    @FXML
    private DatePicker productEXPDate;
 
    @FXML
-   private Pane uploadPane;
+   private Pane uploadPane, spacesPane, placesPane, inventoryPane, addIngredientMenuPane;
 
    @FXML
-   private Pane spacesPane;
+   private FlowPane ingredientGrid, chipPreview;
 
    @FXML
-   private Pane placesPane, inventoryPane;
+   private ScrollPane gridPane;
 
    @FXML
-   private Pane addIngredientMenuPane;
+   private ImageView imagePreview;
+
+   @FXML
+   private ListView<String> ingredientList;
 
    private boolean spaces = true;
    private boolean places = false;
+   private boolean placesGrid = false; 
+   private boolean placesList = true;
 
    private File selectedImageFile;
 
    private ObservableList<String> tags = FXCollections.observableArrayList();
 
-   private ArrayList<Item> ingredientInventory = new ArrayList<Item>();
+   private ArrayList<Item> ingredientInventory = new ArrayList<Item>(); //ingredient interface 
 
    private Map<String, Map<String, FlowPane>> spacesCategories = new HashMap<>();
    private Map<String, List<String>> defaultCategories; // Map to hold categories for each space
@@ -114,9 +111,6 @@ public class InventoryDashboardController {
    private List<String> customSpaces = new ArrayList<>();
 
    private Image selectedImage;
-
-   @FXML
-   private VBox categoryContainer, spacesButtons;
 
    private String currentSpace; // Track the currently selected space
 
@@ -145,11 +139,13 @@ public class InventoryDashboardController {
          styleActiveButton(fridgeButton);
          currentSpace = "Fridge";
       });
+
       freezerButton.setOnAction(event -> {
             loadCategoriesForSpace("Freezer");
             styleActiveButton(freezerButton);
             currentSpace = "Freezer";
       });
+
       pantryButton.setOnAction(event -> {
             loadCategoriesForSpace("Pantry");
             styleActiveButton(pantryButton);
@@ -171,34 +167,35 @@ public class InventoryDashboardController {
          productLoc.getItems().add("Pantry");
       }
 
-      // Set up event listeners for add buttons
       addSpace.setOnAction(event -> addSpace());
+
       addCategory.setOnAction(event -> addCategory());
-      
-      // Link the list of tags to the ListView for display
-      //tagsListView.setItems(tags);
+
+      gridViewButton.setOnAction(event -> {
+         ingredientList.setVisible(false);
+         placesGrid = true;
+         gridPane.setVisible(true);
+         placesList = false;
+
+         updateIngredientGrid(fetchIngredientsFromDatabase());
+      });
+      setClickEffect(gridViewButton);
+
+      listViewButton.setOnAction(event -> {
+         gridPane.setVisible(false);
+         placesGrid = false;
+         ingredientList.setVisible(true);
+         placesList = true;
+
+         updateIngredientList(fetchIngredientsFromDatabase());
+      });
+      setClickEffect(listViewButton);
 
       //<ListView fx:id="tagsListView" /> this can be added to see them in the ui
       //Later, we can replace the ListView with a more visually appealing UI (e.g., chips or tags).
-      addTagButton.setOnAction(event -> {
-         try {
-            String tag = productTag.getText().trim();
-            if (!tag.isEmpty()) {
-               tags.add(tag);  // Add the tag to the list
-               productTag.clear();  // Clear the input field after adding the tag
-            }
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
+      addTagButton.setOnAction(event -> addTag());
 
-      imageSelect.setOnAction(event -> {
-         try {
-            SelectImage();
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
+      imageSelect.setOnAction(event -> SelectImage());
 
       saveButton.setOnAction(event -> {
          try {
@@ -229,62 +226,45 @@ public class InventoryDashboardController {
          }
       });
 
-      addIngredientButton.setOnAction(event -> {
-         try {
-
-            if(spacesPane.isVisible()) {
-               spacesPane.setVisible(false);
-               spaces = true;
-            }
-            else if(placesPane.isVisible()) {
-               placesPane.setVisible(false);
-               places = true;
-            }
-
-            uploadPane.setVisible(true);
-
-
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
+      addIngredientPlacesButton.setOnAction(event -> {
+         placesPane.setVisible(false);
+         places = true;
+         uploadPane.setVisible(true);
+      });
+      
+      addIngredientSpacesButton.setOnAction(event -> {
+         spacesPane.setVisible(false);
+         spaces = true;
+         uploadPane.setVisible(true);
       });
 
       spacesButton.setOnAction(event -> {
-         try {
          placesPane.setVisible(false);
          places = false;
-
          spacesPane.setVisible(true);
          spaces = true;
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
       });
 
       setClickEffect(spacesButton);
 
       placesButton.setOnAction(event -> {
-         try {
          spacesPane.setVisible(false);
          spaces = false;
-
          placesPane.setVisible(true);
          places = true;
-         } catch (Exception e) {
-            e.printStackTrace();
+
+         if (placesGrid) {
+            updateIngredientGrid(fetchIngredientsFromDatabase());
+         } else {
+            updateIngredientList(fetchIngredientsFromDatabase());
          }
       });
 
       setClickEffect(placesButton);
 
       manualButton.setOnAction(event -> {
-         try {
-            uploadPane.setVisible(false);
-            addIngredientMenuPane.setVisible(true);
-
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
+         uploadPane.setVisible(false);
+         addIngredientMenuPane.setVisible(true);
       });
 
       closeIngredient.setOnAction(event -> {
@@ -417,6 +397,22 @@ public class InventoryDashboardController {
       });
 
       setHoverEffect(mealPlannerButton);
+
+      ingredientList.setCellFactory(listView -> {
+         return new ListCell<String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                  super.updateItem(item, empty);
+                  if (empty || item == null) {
+                     setText(null);
+                  } else {
+                     setText(item);
+                     setStyle("-fx-font-size: 30px;"); // Set the desired font size for placeListView
+                  }
+            }
+         };
+      });
+      
    }
 
    // Utility method to show an alert
@@ -451,17 +447,98 @@ public class InventoryDashboardController {
    private void handleMouseClicked(MouseEvent event) {
 
       if(spaces) {
-
          spacesButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
          placesButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
-
-      } else {
-
+      
+      } else if (places) {
          spacesButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
          placesButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
-      }
-
       
+      } 
+      
+      if (placesList) {
+         gridViewButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         listViewButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+
+      } else if (placesGrid) {
+         gridViewButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         listViewButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+      
+      }
+   }
+
+   // Add tag as a chip in FlowPane
+   private void addTag() {
+      String tag = productTag.getText().trim();
+      if (!tag.isEmpty() && !tags.contains(tag)) {
+         tags.add(tag);
+         productTag.clear();
+         updateTagView();
+      }
+   }
+
+   // Update FlowPane to display chips
+   private void updateTagView() {
+      chipPreview.getChildren().clear();
+      for (String tag : tags) {
+         HBox chip = createTagChip(tag);
+         chipPreview.getChildren().add(chip);
+      }
+   }
+
+   // Create a chip with a delete option for each tag
+   private HBox createTagChip(String tagText) {
+      Label tagLabel = new Label(tagText);
+      Button removeButton = new Button("X");
+      
+      removeButton.setOnAction(event -> {
+          tags.remove(tagText);
+          updateTagView();
+      });
+
+      HBox tagChip = new HBox(tagLabel, removeButton);
+      tagChip.setSpacing(5);
+      tagChip.setStyle("-fx-background-color: #e0e0e0; -fx-padding: 5 10; -fx-border-radius: 10; -fx-background-radius: 10;");
+      return tagChip;
+   }
+
+   private void updateIngredientGrid(List<Item> ingredients) {
+      // Clear the existing ingredient cards to prevent duplicates
+      ingredientGrid.getChildren().clear();
+  
+      // Add each ingredient as a card to the FlowPane
+      for (Item ingredient : ingredients) {
+          try {
+              // Load the FXML for the ingredient card
+              FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/ingredientCard.fxml"));
+              VBox ingredientCard = loader.load();
+  
+              // Set ingredient card details
+              IngredientCardController controller = loader.getController();
+              controller.setIngredientData(
+                  Integer.parseInt(ingredient.getID()),
+                  ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
+                  null, // we need to add a image ref to the ingredients
+                  this
+              );
+  
+              // Add the card to the FlowPane
+              ingredientGrid.getChildren().add(ingredientCard);
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+      }
+  }
+
+   private void updateIngredientList(List<Item> ingredients) {
+      ObservableList<String> ingredientItems = FXCollections.observableArrayList();
+  
+      // Add each ingredient to the list
+      for (Item ingredient : ingredients) {
+          ingredientItems.add(ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit());
+      }
+  
+      ingredientList.setItems(ingredientItems); // Set items to ListView
    }
 
    //create the py script to get the product details similar to the barcode scanner script
@@ -535,7 +612,7 @@ public class InventoryDashboardController {
 
          // Create new ingredient item and add to inventory
          Item newIngredient = new Item(ingredientName, "0", Integer.parseInt(quantity), unit, location, convertedDate);
-         ingredientInventory.add(newIngredient);
+         addIngredientToDatabase(newIngredient);
 
          try {
             // Load the FXML for the ingredient card
@@ -600,8 +677,6 @@ public class InventoryDashboardController {
          alert.setContentText("Please fill in all required fields.");
          alert.showAndWait();
      }
-
-
    }
 
    // Helper method to duplicate the ingredient card
@@ -648,6 +723,7 @@ public class InventoryDashboardController {
       if (selectedImageFile != null) {
          // Convert file to Image
         selectedImage = new Image(selectedImageFile.toURI().toString());
+        imagePreview.setImage(selectedImage);
       }
    }
 
@@ -1052,5 +1128,16 @@ public class InventoryDashboardController {
       }
    }
 
+   private void addIngredientToDatabase(Item item) {
+      // Placeholder for adding the ingredient to a database
+      ingredientInventory.add(item);
+      // In the future, replace this with an actual database call.
+   }
+  
+  private List<Item> fetchIngredientsFromDatabase() {
+      // Placeholder for fetching ingredients from a database
+      // Populate the ingredientInventory array with the db data
+      return ingredientInventory;
+   }
 
 }

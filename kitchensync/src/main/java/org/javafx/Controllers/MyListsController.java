@@ -133,10 +133,10 @@ public class MyListsController {
 
       setHoverEffect(settingsButton);
 
-      // Switch to Shopping Lists Screen
+      // Switch to Lists Screen
       myListsButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showMyListsScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }

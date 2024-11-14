@@ -41,6 +41,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+
+
 public class MyRecipesController {
 
    @FXML
@@ -105,8 +112,15 @@ public class MyRecipesController {
    private List<String> preparationSteps = new ArrayList<>();
    private int currentStep = 0;
 
+   private DynamoDbClient database;
+   private Map<String, AttributeValue> item = new HashMap<>();
+
    @FXML
    private void initialize() {
+      Region region = Region.US_EAST_1;
+      database = DynamoDbClient.builder()
+      .region(region)
+      .build();
 
       //Main.setScale(myRecipeMainPane);
 
@@ -489,11 +503,13 @@ public class MyRecipesController {
       String[] stepsArray = preparationSteps.toArray(new String[0]); //Required
 
       //get num of entries in db and then add 1
-      int id = 0;
+      Integer id = 0;
 
       // Create a new Recipe object with all required fields
       Recipe newRecipe = new Recipe(id, name, category, collection, description, prepTime, passiveTime, cookTime, complexity, servings, tagsArray, ingredientsArray, equipmentArray, stepsArray);
-
+      item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
+      PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
+      database.putItem(request);
       // Save recipe to database or use it as needed
       // Example: addRecipeToDatabase(newRecipe);
 

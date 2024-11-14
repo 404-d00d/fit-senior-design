@@ -9,6 +9,7 @@ module org.javafx {
 
     // AWS SDK DynamoDB
     requires software.amazon.awssdk.services.dynamodb;
+    requires software.amazon.awssdk.regions;
 
     // Opens for reflection and FXML loading
     opens org.javafx.Controllers to javafx.fxml;

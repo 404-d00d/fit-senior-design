@@ -94,6 +94,26 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    // Load the MealPlanner screen 
+    public static void showMealPlannerScreen() throws IOException {
+        Parent MealPlannerScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/MealPlanner.fxml"));
+        primaryStage.setScene(new Scene(MealPlannerScreen, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(MealPlannerScreen);
+        primaryStage.show();
+    }
+
+    // Load the CommunityRecipes screen 
+    public static void showCommunityRecipesScreen() throws IOException {
+        Parent CommunityRecipesScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/CommunityRecipes.fxml"));
+        primaryStage.setScene(new Scene(CommunityRecipesScreen, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(CommunityRecipesScreen);
+        primaryStage.show();
+    }
+
     public static void setScale(Parent root) {
         // Original design dimensions (1920x1080)
         double originalWidth = 1920;

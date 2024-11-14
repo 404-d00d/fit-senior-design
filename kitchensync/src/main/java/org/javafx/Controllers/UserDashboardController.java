@@ -22,7 +22,7 @@ public class UserDashboardController {
       // Switch to userDashboard Screen
       userDashboardButton.setOnAction(event -> {
          try {
-
+            Main.showUserDashboardScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -33,7 +33,7 @@ public class UserDashboardController {
       // Switch to mealPlanner Screen
       mealPlannerButton.setOnAction(event -> {
          try {
-
+            Main.showMealPlannerScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -77,7 +77,7 @@ public class UserDashboardController {
       // Switch to Browse Recipes Screen
       browseRecipesButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showCommunityRecipesScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }

@@ -217,7 +217,7 @@ public class MyListsController {
    private void setHoverEffect(Button button) {
       button.setOnMouseEntered(this::handleMouseEntered);
       button.setOnMouseExited(this::handleMouseExited);
-  }
+   }
 
    private void handleMouseEntered(MouseEvent event) {
       Button button = (Button) event.getSource();

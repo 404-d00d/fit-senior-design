@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
@@ -93,7 +94,7 @@
                   <Font size="56.0" />
                </font>
             </Text>
-            <Button fx:id="closeRecipeButton" layoutX="1750.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Back">
+            <Button fx:id="closeRecipeButton" layoutX="1750.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Close">
                <font>
                   <Font size="24.0" />
                </font></Button>
@@ -104,7 +105,7 @@
                </font></TextArea>
             <ImageView fx:id="recipeImages" fitHeight="409.0" fitWidth="596.0" layoutX="856.0" pickOnBounds="true" preserveRatio="true" />
             <Button fx:id="prevStep" layoutX="929.0" layoutY="448.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
-            <Text fx:id="recipeNameTXT" layoutX="77.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="434.30859375">
+            <Text fx:id="recipeCookingNameTXT" layoutX="77.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="434.30859375">
                <font>
                   <Font size="56.0" />
                </font>
@@ -384,6 +385,78 @@
                   <Font size="24.0" />
                </font>
             </Button>
+         </children>
+      </Pane>
+      <Pane fx:id="recipeDetailsPane" layoutX="35.0" layoutY="124.0" visible="false">
+         <children>
+            <Rectangle fill="#727272" height="421.0" stroke="BLACK" strokeType="INSIDE" width="589.0" />
+            <Text layoutX="134.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Ingredients" textAlignment="CENTER" wrappingWidth="321.30859375">
+               <font>
+                  <Font size="48.0" />
+               </font>
+            </Text>
+            <Rectangle fill="#727272" height="421.0" layoutX="1148.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="589.0" />
+            <Button fx:id="closeRecipeDetailsButton" layoutX="1750.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Close">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <ImageView fx:id="recipeDetailsImages" fitHeight="421.0" fitWidth="596.0" layoutX="1144.0" pickOnBounds="true" preserveRatio="true" />
+            <Text fx:id="recipeNameTXT" layoutX="657.0" layoutY="71.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="48.0" />
+               </font>
+            </Text>
+            <ListView fx:id="recipeIngredients" layoutX="23.0" layoutY="69.0" prefHeight="342.0" prefWidth="544.0" />
+            <Text fx:id="recipePrepTimeTXT" layoutX="601.0" layoutY="173.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Prep Time:" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text fx:id="recipeServingsTXT" layoutX="601.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Servings:" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text fx:id="recipePassiveTimeTXT" layoutX="601.0" layoutY="226.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Passive Time:" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text fx:id="recipeCookTimeTXT" layoutX="601.0" layoutY="279.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Cook Time:" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text fx:id="recipeTotalTimeTXT" layoutX="601.0" layoutY="332.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Total Time:" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text fx:id="recipeComplexityTXT" layoutX="601.0" layoutY="385.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Complexity:" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <PieChart fx:id="recipeCalories" layoutX="6.0" layoutY="459.0" prefHeight="437.0" prefWidth="578.0" />
+            <TextArea fx:id="recipeDescription" layoutX="1148.0" layoutY="478.0" prefHeight="421.0" prefWidth="589.0" />
+            <Button fx:id="cookItButton" layoutX="1750.0" layoutY="845.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Cook It">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <FlowPane fx:id="recipeTagFlowPane" layoutX="589.0" layoutY="712.0" prefHeight="183.0" prefWidth="533.0" />
+            <ListView fx:id="specialEquipmentTXTArea" layoutX="589.0" layoutY="478.0" prefHeight="183.0" prefWidth="533.0" />
+            <Text layoutX="702.0" layoutY="472.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Special Equipment" wrappingWidth="321.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text layoutX="702.0" layoutY="701.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Tags" textAlignment="CENTER" wrappingWidth="321.30859375">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
    </children>

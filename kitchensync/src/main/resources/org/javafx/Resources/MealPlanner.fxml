@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MealPlannerController">
+   <children>
+      <Rectangle fill="#727272" height="112.0" layoutX="-23.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1944.0" />
+      <Text layoutX="118.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Meal Planner" wrappingWidth="409.40234375">
+         <font>
+            <Font size="56.0" />
+         </font>
+      </Text>
+      <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
+      <TextField layoutX="1170.0" layoutY="28.0" prefHeight="53.0" prefWidth="551.0" promptText="Can't Find Somthing?" style="-fx-background-color: Orange; -fx-background-radius: 50;" />
+      <VBox fx:id="menuPane" alignment="CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false">
+         <children>
+            <Button fx:id="userDashboardButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="User Dashboard" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+            <Button fx:id="mealPlannerButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="Meal Planner" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+            <Button fx:id="myRecipesButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="My Recipes" textAlignment="CENTER" />
+            <Button fx:id="inventoryButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER" />
+            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
+            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Find Recipes" textAlignment="CENTER" wrapText="true" />
+            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
+            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Button fx:id="myListsButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 270;" text="My Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
+      <Pane fx:id="addMealButton" layoutX="18.0" layoutY="127.0" prefHeight="934.0" prefWidth="1881.0">
+         <children>
+            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="934.0" layoutX="434.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="1449.0" />
+            <Button fx:id="addMealButton" layoutX="449.0" layoutY="14.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="Add Meal">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <ComboBox fx:id="calanderViewDropdown" layoutX="1657.0" layoutY="14.0" prefHeight="44.0" prefWidth="210.0" promptText="Week" style="-fx-background-color: darkgrey; -fx-background-radius: 50;" />
+            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="934.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="409.0" />
+            <DatePicker layoutX="55.0" layoutY="69.0" prefHeight="25.0" prefWidth="300.0" promptText="datePicker" />
+            <Text layoutX="85.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Daily Summery" textAlignment="CENTER">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text layoutX="158.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Meals" textAlignment="CENTER">
+               <font>
+                  <Font size="36.0" />
+               </font>
+            </Text>
+            <Text fx:id="breakfastMeal" layoutX="34.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Breakfast:" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text fx:id="lunchMeal" layoutX="34.0" layoutY="245.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lunch:" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text fx:id="dinnerMeal" layoutX="34.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dinner:" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text fx:id="snacksMeal" layoutX="34.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Snacks:" textAlignment="CENTER">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text layoutX="20.0" layoutY="584.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Daily Nutritional Breakdown" textAlignment="CENTER">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Text>
+            <ComboBox fx:id="nutritionalMeals" layoutX="147.0" layoutY="592.0" prefHeight="25.0" prefWidth="114.0" promptText="Meal" style="-fx-background-color: darkgrey; -fx-background-radius: 50;" />
+            <PieChart layoutX="36.0" layoutY="630.0" prefHeight="269.0" prefWidth="336.0" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

@@ -47,7 +47,7 @@ public class MyRecipesController {
    private Button menuButton, inventoryButton, myRecipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton,
                   closeP1Button, closeP2Button, addRecipeButton, closeRecipeButton, addTagButton, addIngredientButton, imageSelectButton, saveButton,
                   nextStep, prevStep, userDashboardButton, mealPlannerButton, myListsButton, addEquipmentButton, prevStepButton, nextStepButton,
-                  addStepButton, backButton, nextButton;
+                  addStepButton, backButton, nextButton, cookItButton, closeRecipeDetailsButton;
 
    @FXML
    private VBox menuPane;
@@ -67,15 +67,17 @@ public class MyRecipesController {
    private TextArea prepStepField, recipeDescription;
 
    @FXML
-   private Text yieldTXT, prepTXT, cookTXT, totalTXT, estCostTXT, specialEquipmentTXT, stepOfTXT, noRecipesTXT, recipeNameTXT, stepIndex;
+   private Text   yieldTXT, recipePrepTimeTXT, recipePassiveTimeTXT, recipeCookTimeTXT, recipeTotalTimeTXT, 
+                  recipeComplexityTXT, specialEquipmentTXT, stepOfTXT, noRecipesTXT, recipeNameTXT, stepIndex, 
+                  recipeServingsTXT, recipeCookingNameTXT;
 
    @FXML
-   private ImageView recipeImages, imagePreview;
+   private ImageView recipeImages, imagePreview, recipeDetailsImages;
 
    private Image selectedImage;
 
    @FXML
-   private FlowPane recipeFlowPane, chipPreview;
+   private FlowPane recipeFlowPane, chipPreview, recipeTagFlowPane;
 
    @FXML
    private TableView<Ingredient> ingredientTable;
@@ -93,7 +95,7 @@ public class MyRecipesController {
    private TableColumn<Ingredient, String> amountList;
 
    @FXML
-   private ListView<String> ingredientsArea;
+   private ListView<String> ingredientsArea, specialEquipmentTXTArea, recipeIngredients;
 
    @FXML
    private ObservableList<String> tags = FXCollections.observableArrayList();
@@ -178,9 +180,27 @@ public class MyRecipesController {
          }
       });
 
+      closeRecipeDetailsButton.setOnAction(event -> {
+         try {
+            myRecipesPane.setVisible(true);
+            recipeDetailsPane.setVisible(false);
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
       closeRecipeButton.setOnAction(event -> {
          try {
             myRecipesPane.setVisible(true);
+            recipeCookingPane.setVisible(false);
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+      });
+
+      cookItButton.setOnAction(event -> {
+         try {
+            recipeCookingPane.setVisible(true);
             recipeDetailsPane.setVisible(false);
          } catch (Exception e) {
             e.printStackTrace();
@@ -654,13 +674,13 @@ public class MyRecipesController {
 
       //create ref using the recipe id to populate the other information
       yieldTXT.setText("Yield: " + "");
-      prepTXT.setText("Prep Time: " + "" + "Minutes");
-      cookTXT.setText("Cook Time: " + "" + "Minutes");
+      recipePrepTimeTXT.setText("Prep Time: " + "" + "Minutes");
+      recipePassiveTimeTXT.setText("Passive Time: " + "" + "Minutes");
+      recipeCookTimeTXT.setText("Cook Time: " + "" + "Minutes");
 
       int totalTime = 0; // add the prep and cook times
 
-      totalTXT.setText("Total: " + totalTime + "Minutes");
-      estCostTXT.setText("EST Cost: $" + ""); //add a cost calculator ref
+      recipeTotalTimeTXT.setText("Total: " + totalTime + "Minutes");
       specialEquipmentTXT.setText("Special Equipment: " + "");
       stepOfTXT.setText("Step " + "" + " of " + "");
    }

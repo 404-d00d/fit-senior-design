@@ -1,11 +1,20 @@
 package org.javafx.Controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.javafx.Main.Main;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 public class CommunityRecipesController {
 
@@ -19,8 +28,28 @@ public class CommunityRecipesController {
    @FXML
    private Pane menuPane;
 
+   private DynamoDbClient database;
+   private Map<String, AttributeValue> item = new HashMap<>();
+
+   private void initializeDatabase() {
+      try {
+          Region region = Region.US_EAST_1;
+          database = DynamoDbClient.builder()
+              .region(region)
+              .credentialsProvider(DefaultCredentialsProvider.create())
+              .build();
+      } catch (Exception e) {
+          System.err.println("Failed to initialize DynamoDB client: " + e.getMessage());
+          e.printStackTrace();
+      }
+   }
+
    @FXML
    private void initialize() {
+
+      item.put(Integer.toString(0), AttributeValue.builder().s("test").build());
+      PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
+      database.putItem(request);
       
       menuButton.setOnAction(event -> {
          try {

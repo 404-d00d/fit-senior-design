@@ -335,7 +335,7 @@ public class InventoryDashboardController {
       // Switch to Browse Recipes Screen
       browseRecipesButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showCommunityRecipesScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -390,7 +390,7 @@ public class InventoryDashboardController {
       // Switch to mealPlanner Screen
       mealPlannerButton.setOnAction(event -> {
          try {
-
+            Main.showMealPlannerScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }

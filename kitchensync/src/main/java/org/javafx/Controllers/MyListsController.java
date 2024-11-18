@@ -2,9 +2,18 @@ package org.javafx.Controllers;
 
 import org.javafx.Main.Main;
 import org.javafx.Item.Item;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.ArrayList;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,17 +21,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 public class MyListsController {
 
    @FXML
    private Button userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
                   inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton,
-                  addIngredientButton, menuButton, closeButton, saveButton, addListButton;
+                  addIngredientButton, menuButton, closeButton, saveButton, addListButton, neededIngredients;
 
    @FXML
    private Pane menuPane, myListsPane, addIngredientPane;
@@ -34,14 +47,48 @@ public class MyListsController {
    private ComboBox<String> productUnit;
 
    @FXML
-   private ListView<Item> myListsView;  // ListView to display ingredients
+   private ListView<Item> myListsView; // ListView to display ingredients in the selected list
+
+   private ObservableList<String> lists = FXCollections.observableArrayList(); // Observable list to store list names
+   private Map<String, ObservableList<Item>> ingredientsMap = new HashMap<>(); // Map to store ingredients for each list
+
+   private static final String LISTS_JSON_FILE = "lists.json"; // JSON file for saving lists
+
+   @FXML
+   private VBox listPane;
+
+   private Button currentSelectedButton = null;
 
    @FXML
    private void initialize() {
+      // Load lists from JSON file
+      loadListsFromJson();
+
+      listPane.setSpacing(10);  // Add 10 pixels of vertical space between buttons
+
+      // Ensure "Needed Ingredients" exists as a default list
+      if (!lists.contains("Needed Ingredients")) {
+         lists.add("Needed Ingredients");
+         ingredientsMap.put("Needed Ingredients", FXCollections.observableArrayList());
+         saveListsToJson(); // Save changes to JSON to persist the default list
+      }
+
+      // Set action for the Needed Ingredients button
+      neededIngredients.setOnAction(event -> {
+         myListsView.setItems(ingredientsMap.get("Needed Ingredients"));
+         highlightSelectedButton(neededIngredients);
+      });
+
+      // Set the Needed Ingredients button as selected by default
+      highlightSelectedButton(neededIngredients);
+      myListsView.setItems(ingredientsMap.get("Needed Ingredients"));
+
+      // Set the listener to add a new list using a dialog instead of a text field
+      addListButton.setOnAction(event -> {
+         addNewListWithDialog();
+      });
 
       myListsView.setCellFactory(param -> new IngredientCell());
-
-      ArrayList<Item> ingredientList = new ArrayList<Item>();
 
       productUnit.getItems().addAll("kg", "g", "l", "ml", "oz", "lbs");
 
@@ -103,7 +150,7 @@ public class MyListsController {
       // Switch to Browse Recipes Screen
       browseRecipesButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showCommunityRecipesScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -157,36 +204,40 @@ public class MyListsController {
 
       saveButton.setOnAction(event -> {
          try {
-
-            //use these to store the info from the form
-            //also will need a way to know which list to add this to
-            String name = ingredientName.getText();
-            String quantity = productQuantity.getText();
-            String unit = productUnit.getValue();
-
-            if (isInputValid(name, quantity, unit)) {
-               // Create a new item and add it to the list
-               Item newIngredient = new Item(name, quantity, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13");
-               myListsView.getItems().add(newIngredient);
-
-               ingredientName.clear();
-               productQuantity.clear();
-               productUnit.setValue(null);
-
-               // Close the input pane and display the list pane
-               myListsPane.setVisible(true);
-               addIngredientPane.setVisible(false);
-            }
-
-            // pull up window to transfer data from that to new item class
-            //Item newIngredient = new Item("Toilet Paper Moonshine", "0", 1, "gallon", "Shed in Tampa", ("2050-12-13").toString());
-            //ingredientList.add(newIngredient);
-            //for (int x = 0; x < ingredientList.size(); x++) {
-               //System.out.println(ingredientList.get(x).getName());
-            //}
-            //System.out.println("WHERE IS MY "+newIngredient.getName());
+             String name = ingredientName.getText();
+             String quantity = productQuantity.getText();
+             String unit = productUnit.getValue();
+     
+             if (isInputValid(name, quantity, unit)) {
+                 String selectedList = getSelectedListFromPane();
+     
+                 if (selectedList != null) {
+                     ObservableList<Item> ingredientList = ingredientsMap.get(selectedList);
+                     if (ingredientList != null) {
+                         Item newIngredient = new Item(name, quantity, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13");
+     
+                         ingredientList.add(newIngredient);
+                         myListsView.setItems(ingredientList);
+     
+                         saveListsToJson();  // Save changes to JSON after adding the ingredient
+     
+                         ingredientName.clear();
+                         productQuantity.clear();
+                         productUnit.setValue(null);
+     
+                         // Close the input pane and display the list pane
+                         myListsPane.setVisible(true);
+                         addIngredientPane.setVisible(false);
+                     } else {
+                         showAlert("Error", "List Not Found", "Please select a valid list to add the ingredient.");
+                     }
+                 } else {
+                     showAlert("Error", "No List Selected", "Please select a list to add the ingredient.");
+                 }
+             }
          } catch (Exception e) {
-            e.printStackTrace();
+             e.printStackTrace();
+             showAlert("Error", "Save Failed", "An unexpected error occurred while saving the ingredient.");
          }
       });
 
@@ -204,7 +255,7 @@ public class MyListsController {
       // Switch to mealPlanner Screen
       mealPlannerButton.setOnAction(event -> {
          try {
-
+            Main.showMealPlannerScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -260,4 +311,115 @@ public class MyListsController {
       alert.setContentText(content);
       alert.showAndWait();
    }
+
+   private void loadListsFromJson() {
+      try (FileReader reader = new FileReader(LISTS_JSON_FILE)) {
+          Gson gson = new Gson();
+          Type type = new TypeToken<Map<String, ArrayList<Item>>>() {}.getType();
+          Map<String, ArrayList<Item>> savedLists = gson.fromJson(reader, type);
+          if (savedLists != null) {
+              savedLists.forEach((key, value) -> {
+                  lists.add(key);
+                  ingredientsMap.put(key, FXCollections.observableArrayList(value));
+                  addListButtonToPane(key); // Add button for each loaded list
+              });
+          }
+      } catch (IOException e) {
+          System.err.println("Could not load lists: " + e.getMessage());
+          // Initialize an empty JSON file if not found
+          saveListsToJson();
+      }
+  }
+
+   private void saveListsToJson() {
+      try (FileWriter writer = new FileWriter(LISTS_JSON_FILE)) {
+         Gson gson = new Gson();
+         Map<String, ArrayList<Item>> savedLists = new HashMap<>();
+         ingredientsMap.forEach((key, value) -> savedLists.put(key, new ArrayList<>(value)));
+         gson.toJson(savedLists, writer);
+      } catch (IOException e) {
+         System.err.println("Could not save lists: " + e.getMessage());
+      }
+   }
+
+   private void addListButtonToPane(String listName) {
+
+      // Check if the button already exists
+      if (listPane.getChildren().stream().anyMatch(node -> node instanceof Button && ((Button) node).getText().equals(listName))) {
+         return; // The button already exists, so do not add it again
+      }
+
+      Button listButton = new Button(listName);
+      listButton.setStyle("-fx-background-color: Grey; -fx-pref-width: 346px; -fx-pref-height: 60px; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black; -fx-text-alignment: center;");
+      
+      listButton.setOnAction(event -> {
+          highlightSelectedButton(listButton);
+          
+          // If a list is selected (i.e., not deselected), update the list view
+          if (currentSelectedButton == listButton) {
+              myListsView.setItems(ingredientsMap.get(listName));
+          }
+      });
+  
+      // Add context menu for deleting lists using setOnContextMenuRequested
+      ContextMenu contextMenu = new ContextMenu();
+      MenuItem deleteItem = new MenuItem("Delete List");
+      deleteItem.setOnAction(event -> {
+          lists.remove(listName);
+          ingredientsMap.remove(listName);
+          listPane.getChildren().remove(listButton);
+          saveListsToJson(); // Save changes to JSON
+      });
+      contextMenu.getItems().add(deleteItem);
+  
+      // Set the event to display the context menu on right-click
+      listButton.setOnContextMenuRequested(event -> {
+          contextMenu.show(listButton, event.getScreenX(), event.getScreenY());
+      });
+  
+      listPane.getChildren().add(listButton);
+   }
+
+   private String getSelectedListFromPane() {
+      if (currentSelectedButton != null) {
+          return currentSelectedButton.getText();
+      }
+      return null;
+  }
+
+   private void highlightSelectedButton(Button selectedButton) {
+      // Reset the style for the previously selected button if there is one
+      if (currentSelectedButton != null) {
+         currentSelectedButton.setStyle("-fx-background-color: Grey; -fx-pref-width: 346px; -fx-pref-height: 60px; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black; -fx-text-alignment: center;");
+      }
+
+      // Set the new selected button and change its style
+      selectedButton.setStyle("-fx-background-color: Orange; -fx-pref-width: 346px; -fx-pref-height: 60px; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black; -fx-text-alignment: center;");
+      currentSelectedButton = selectedButton;
+   }
+
+   private void addNewListWithDialog() {
+      TextInputDialog dialog = new TextInputDialog();
+      dialog.setTitle("Add New List");
+      dialog.setHeaderText("Enter the name for the new list:");
+      dialog.setContentText("List Name:");
+
+      Optional<String> result = dialog.showAndWait();
+      result.ifPresent(name -> {
+         String listName = name.trim();
+         if (!listName.isEmpty() && !lists.contains(listName)) {
+               lists.add(listName);
+               ingredientsMap.put(listName, FXCollections.observableArrayList());
+               addListButtonToPane(listName); // Add button to VBox for the new list
+               saveListsToJson(); // Save changes to JSON
+         } else {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Invalid List");
+            alert.setHeaderText(null);
+            alert.setContentText("List already exists or name is empty.");
+            alert.showAndWait();
+         }
+      });
+   }
+
 }

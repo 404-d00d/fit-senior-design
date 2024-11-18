@@ -47,8 +47,8 @@ public class RecipeCardController {
       contextMenu.getItems().addAll(editItem, deleteItem);
 
       // Add event handlers for Edit and Delete, linking to MyRecipesController
-      editItem.setOnAction(e -> myRecipesController.openEditRecipe(recipeId));
-      deleteItem.setOnAction(e -> myRecipesController.deleteRecipe(recipeId));
+      editItem.setOnAction(e -> myRecipesController.openEditRecipe(recipe));
+      deleteItem.setOnAction(e -> myRecipesController.deleteRecipe(recipe));
 
 
       // Handle right-click for context menu and left-click for details
@@ -57,7 +57,7 @@ public class RecipeCardController {
          if (event.getButton() == MouseButton.SECONDARY) {
             contextMenu.show(recipeCardPane, event.getScreenX(), event.getScreenY());
          } else if (event.getButton() == MouseButton.PRIMARY) {
-            myRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage());
+            myRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
          }
       });
    }

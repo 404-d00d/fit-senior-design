@@ -41,11 +41,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+//import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+//import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+//import software.amazon.awssdk.regions.Region;
+//import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+//import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 
 public class MyRecipesController {
@@ -71,7 +71,7 @@ public class MyRecipesController {
    private File selectedImageFile;
 
    @FXML
-   private TextArea prepStepField, recipeDescription;
+   private TextArea prepStepField, stepArea, recipeDetailDescription, recipeDescription;
 
    @FXML
    private Text   yieldTXT, recipePrepTimeTXT, recipePassiveTimeTXT, recipeCookTimeTXT, recipeTotalTimeTXT, 
@@ -111,18 +111,17 @@ public class MyRecipesController {
    private ObservableList<String> equipment = FXCollections.observableArrayList();
    private List<String> preparationSteps = new ArrayList<>();
    private int currentStep = 0;
+   private int displayStep = 0;
 
-   private DynamoDbClient database;
-   private Map<String, AttributeValue> item = new HashMap<>();
+   //private DynamoDbClient database;
+   //private Map<String, AttributeValue> item = new HashMap<>();
 
    @FXML
    private void initialize() {
-      Region region = Region.US_EAST_1;
-      database = DynamoDbClient.builder()
-      .region(region)
-      .build();
-
-      //Main.setScale(myRecipeMainPane);
+      //Region region = Region.US_EAST_1;
+      //database = DynamoDbClient.builder()
+      //.region(region)
+      //.build();
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
       ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
@@ -137,7 +136,7 @@ public class MyRecipesController {
       ingredientList.setCellFactory(TextFieldTableCell.forTableColumn());
       amountList.setCellFactory(TextFieldTableCell.forTableColumn());
 
-         // Context menu for deletion
+      // Context menu for deletion
       ingredientTable.setRowFactory(tv -> {
          TableRow<Ingredient> row = new TableRow<>();
          ContextMenu contextMenu = new ContextMenu();
@@ -175,10 +174,13 @@ public class MyRecipesController {
       prevStepButton.setOnAction(event -> navigateStep(-1));
       nextStepButton.setOnAction(event -> navigateStep(1));
       addEquipmentButton.setOnAction(event -> addEquipment());
+      prevStep.setOnAction(event -> detailsSteps(-1));
+      nextStep.setOnAction(event -> detailsSteps(1));
 
       // Initialize the first step
       preparationSteps.add("");
       currentStep = 0;
+      displayStep = 0;
       updateStepView();
    
       menuButton.setOnAction(event -> {
@@ -261,6 +263,7 @@ public class MyRecipesController {
 
       addRecipeButton.setOnAction(event -> {
          try {
+            clearForms();
             myRecipesPane.setVisible(false);
             addRecipePaneP1.setVisible(true);
          } catch (Exception e) {
@@ -304,7 +307,7 @@ public class MyRecipesController {
       // Switch to Browse Recipes Screen
       browseRecipesButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showCommunityRecipesScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -359,7 +362,7 @@ public class MyRecipesController {
       // Switch to mealPlanner Screen
       mealPlannerButton.setOnAction(event -> {
          try {
-
+            Main.showMealPlannerScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -384,9 +387,15 @@ public class MyRecipesController {
 
    // Add a new step to the steps list
    private void addStep() {
+
+      if (currentStep == 0 && preparationSteps.size() == 0) {
+         preparationSteps.add(currentStep, prepStepField.getText().trim());
+      }
+
       // Save current step text before adding a new step
       if (currentStep >= 0 && currentStep < preparationSteps.size()) {
          preparationSteps.set(currentStep, prepStepField.getText().trim());
+         System.out.println(preparationSteps.get(currentStep));
       }
 
       // Add a new blank step
@@ -397,6 +406,7 @@ public class MyRecipesController {
 
    // Navigate between steps
    private void navigateStep(int direction) {
+      
       // Save the current step text before navigating
       if (currentStep >= 0 && currentStep < preparationSteps.size()) {
          preparationSteps.set(currentStep, prepStepField.getText().trim());
@@ -418,6 +428,32 @@ public class MyRecipesController {
       } else {
          prepStepField.setText(preparationSteps.get(currentStep));
          stepIndex.setText("Step " + (currentStep + 1) + " of " + preparationSteps.size());
+      }
+   }
+
+   // Navigate between steps
+   private void detailsSteps(int direction) {
+      // Save the current step text before navigating
+      if (displayStep >= 0 && displayStep < preparationSteps.size()) {
+         preparationSteps.set(displayStep, stepArea.getText().trim());
+      }
+
+      // Calculate new step index
+      int newStep = displayStep + direction;
+      if (newStep >= 0 && newStep < preparationSteps.size()) {
+         displayStep = newStep;
+         updateDetailsStepView();
+      }
+   }
+
+   // Update TextArea and stepIndex label to display the current step
+   private void updateDetailsStepView() {
+      if (preparationSteps.isEmpty()) {
+         stepArea.setText("");
+         stepOfTXT.setText("Step 1 of 1");
+      } else {
+         stepArea.setText(preparationSteps.get(displayStep));
+         stepOfTXT.setText("Step " + (displayStep + 1) + " of " + preparationSteps.size());
       }
    }
 
@@ -484,6 +520,11 @@ public class MyRecipesController {
 
    private void saveRecipe() {
 
+      //check if last step was saved
+      if (preparationSteps.get(currentStep).isEmpty() && prepStepField.getText() != "") {
+         preparationSteps.set(currentStep, prepStepField.getText().trim());
+      }
+
       // Get values from input fields
       String name = recipeName.getText(); //Required
       String category = recipeCategory.getValue(); //Required
@@ -493,9 +534,9 @@ public class MyRecipesController {
       int prepTime = Integer.parseInt(recipeETAPrep.getText()); //Required
       int passiveTime = Integer.parseInt(recipeETAPassive.getText()); //Required
       int cookTime = Integer.parseInt(recipeETA.getText()); //Required
-      int complexity = calculateRecipeComplexity(); 
       String[] tagsArray = tags.toArray(new String[0]); 
       String[] equipmentArray = equipment.toArray(new String[0]);
+
       // Convert ingredients to a string array representation
       String[] ingredientsArray = ingredients.stream()
        .map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit())
@@ -505,11 +546,13 @@ public class MyRecipesController {
       //get num of entries in db and then add 1
       Integer id = 0;
 
+      int complexity = calculateRecipeComplexity(); 
+
       // Create a new Recipe object with all required fields
       Recipe newRecipe = new Recipe(id, name, category, collection, description, prepTime, passiveTime, cookTime, complexity, servings, tagsArray, ingredientsArray, equipmentArray, stepsArray);
-      item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
-      PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
-      database.putItem(request);
+      //item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
+      //PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
+      //database.putItem(request);
       // Save recipe to database or use it as needed
       // Example: addRecipeToDatabase(newRecipe);
 
@@ -519,23 +562,40 @@ public class MyRecipesController {
          // Concatenate all preparation steps
         String PrepSteps = String.join("\n", preparationSteps);
          
-         try { 
-            // Load the RecipeCard FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
-            VBox recipeCard = loader.load();
+         try {
+            VBox recipeCard = null;
 
-            // Get the RecipeCardController and pass `this` as MyRecipesController
-            RecipeCardController controller = loader.getController();
-            controller.setRecipeData(newRecipe, selectedImage, this); // Pass the new Recipe object
-
-            // Add the recipe card to the FlowPane
-            recipeFlowPane.getChildren().add(recipeCard);
-
-            recipeWidgets.put(id, recipeCard);  // Store the card with its ID
-
-            if(noRecipesTXT.isVisible()) {
-               noRecipesTXT.setVisible(false);
+            if (recipeWidgets.containsKey(id)) {
+               // Update the existing recipe card with new details
+               recipeCard = recipeWidgets.get(id);
+               RecipeCardController controller = (RecipeCardController) recipeCard.getUserData();
+               if (controller != null) {
+                  controller.setRecipeData(newRecipe, selectedImage, this); // Update the existing card with new data
+               }
             }
+            else {
+               // Otherwise, create a new recipe card
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
+               recipeCard = loader.load();
+
+               // Get the RecipeCardController and pass `this` as MyRecipesController
+               RecipeCardController controller = loader.getController();
+               controller.setRecipeData(newRecipe, selectedImage, this); // Pass the new Recipe object
+
+               // Add the recipe card to the FlowPane
+               recipeFlowPane.getChildren().add(recipeCard);
+
+               // Store the card and its controller in recipeWidgets for future updates
+               recipeWidgets.put(id, recipeCard);
+               recipeCard.setUserData(controller); // Store the controller for easy retrieval later
+
+               if (noRecipesTXT.isVisible()) {
+                   noRecipesTXT.setVisible(false);
+               }
+            }
+
+            // Apply hover effect for short recipe details
+            applyHoverEffect(recipeCard, newRecipe);
 
             clearForms();
 
@@ -598,11 +658,13 @@ public class MyRecipesController {
       // Clear form inputs
       recipeName.clear();
       recipeCategory.setValue(null);
+      recipeCollection.setValue(null);
       tags.clear();
       ingredients.clear();
       preparationSteps.clear();
       prepStepField.clear();
       recipeETA.clear();
+      recipeETAPassive.clear();
       recipeETAPrep.clear();
       selectedImageFile = null;
    }
@@ -622,7 +684,7 @@ public class MyRecipesController {
          showAlert("Error", "Invalid Serving Amount", "Servings must be a number.");
          return false;
       }
-      if (decsription == null || decsription.isEmpty()) {
+      if (decsription == null) {
          showAlert("Error", "Missing Decsription", "Please add a decsription.");
          return false;
       }
@@ -682,48 +744,159 @@ public class MyRecipesController {
       }
    }
 
-   public void showRecipeDetails(int recipeId, String name, Image image) {
+   public void showRecipeDetails(int recipeId, String name, Image image, Recipe recipe) {
+
+      displayStep = 0;
+
       myRecipesPane.setVisible(false);
       recipeDetailsPane.setVisible(true);
       recipeNameTXT.setText(name);
-      recipeImages.setImage(image);
+      recipeDetailsImages.setImage(image);
 
-      //create ref using the recipe id to populate the other information
-      yieldTXT.setText("Yield: " + "");
-      recipePrepTimeTXT.setText("Prep Time: " + "" + "Minutes");
-      recipePassiveTimeTXT.setText("Passive Time: " + "" + "Minutes");
-      recipeCookTimeTXT.setText("Cook Time: " + "" + "Minutes");
+      recipeServingsTXT.setText("Servings: " + recipe.getServings());
+      recipePrepTimeTXT.setText("Prep Time: " + recipe.getPrepTime() + "Minutes");
+      recipePassiveTimeTXT.setText("Passive Time: " + recipe.getPassiveTime() + "Minutes");
+      recipeCookTimeTXT.setText("Cook Time: " + recipe.getCookTime() + "Minutes");
 
-      int totalTime = 0; // add the prep and cook times
+      int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime(); // add the prep and cook times
 
       recipeTotalTimeTXT.setText("Total: " + totalTime + "Minutes");
-      specialEquipmentTXT.setText("Special Equipment: " + "");
-      stepOfTXT.setText("Step " + "" + " of " + "");
+      recipeComplexityTXT.setText("Complexity: " + getComplexityLabel(recipe.getComplexity()));
+
+      recipeDetailDescription.setText(recipe.getDescription());
+
+      recipeIngredients.setItems(FXCollections.observableArrayList(recipe.getIngredients()));
+      specialEquipmentTXTArea.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
+      recipeTagFlowPane.getChildren().clear();
+
+      for (String tag : recipe.getTags()) {
+         // Create a label for each tag
+         Label tagLabel = new Label(tag);
+         
+         // Optionally style the label (for example, add padding, border, background, etc.)
+         tagLabel.setStyle("-fx-background-color: #e0e0e0; -fx-padding: 5 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-margin: 5;");
+         
+         // Add the label to the FlowPane
+         recipeTagFlowPane.getChildren().add(tagLabel);
+      }
+
+      recipeCookingNameTXT.setText(name);
+      ingredientsArea.setItems(FXCollections.observableArrayList(recipe.getIngredients()));
+      recipeImages.setImage(image);
+
+      preparationSteps = FXCollections.observableArrayList(recipe.getSteps());
+
+      stepOfTXT.setText("Step " + 1 + " of " + preparationSteps.size());
+      stepArea.setText(preparationSteps.get(0));
    }
 
    // Method to open the edit form with the recipe's current details
-   public void openEditRecipe(int recipeId) {
+   public void openEditRecipe(Recipe recipe) {
       // Logic to open edit pane and load recipe details by ID
-      System.out.println("Edit recipe with ID: " + recipeId);
 
+      myRecipesPane.setVisible(false);
+      addRecipePaneP1.setVisible(true);
 
+      // Set Values to be edited
+      recipeName.setText(recipe.getName());
+      recipeCategory.setValue(recipe.getCategory());
+      recipeCollection.setValue(recipe.getCollection());
+      recipeYield.setText(Integer.toString(recipe.getServings()));
+      recipeDescription.setText(recipe.getDescription());
+      recipeETAPrep.setText(Integer.toString(recipe.getPrepTime()));
+      recipeETAPassive.setText(Integer.toString(recipe.getPassiveTime()));
+      recipeETA.setText(Integer.toString(recipe.getCookTime()));
+
+      //set up image refs
+      //recipeImages.setImage(selectedImage);
+
+      tags.clear();
+      tags.addAll(recipe.getTags());
+      updateTagView();
+
+      equipment.clear();
+      equipment.addAll(recipe.getEquipment()); 
+
+      ingredients.clear();
+      for (String ingredientData : recipe.getIngredients()) {
+         String[] parts = ingredientData.split(": ");
+         if (parts.length == 2) {
+            String name = parts[0];
+            String[] quantityAndUnit = parts[1].split(" ", 2);
+            if (quantityAndUnit.length == 2) {
+               String amount = quantityAndUnit[0];
+               String unit = quantityAndUnit[1];
+               ingredients.add(new Ingredient(name, amount, unit));
+            }
+         }
+      }
+
+      preparationSteps.clear();
+      for (String step : recipe.getSteps()) {
+         preparationSteps.add(step); // Add each step back into the list
+      }
+   
+      currentStep = 0; // Reset to the first step
+      updateStepView(); // Update the UI to show the first step
    }
 
    // Method to delete the recipe by ID
-   public void deleteRecipe(int recipeId) {
+   public void deleteRecipe(Recipe recipe) {
       // Logic to remove the recipe from data source and refresh UI
-      System.out.println("Delete recipe with ID: " + recipeId);
+      System.out.println("Delete recipe with ID: " + recipe.getID());
 
       // Remove from database, then remove from frontend
 
       // Access and remove the recipe card widget
-      VBox recipeCard = recipeWidgets.get(recipeId);
+      VBox recipeCard = recipeWidgets.get(recipe.getID());
       if (recipeCard != null) {
           recipeFlowPane.getChildren().remove(recipeCard);
-          recipeWidgets.remove(recipeId);  // Clean up from the map
+          recipeWidgets.remove(recipe.getID());  // Clean up from the map
       }
    }
+
+   // Method to apply hover effect for displaying short recipe details
+   private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
+      // Create a tooltip pane
+      Label tooltip = new Label();
+      tooltip.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-text-fill: white; -fx-padding: 10; -fx-font-size: 16px; -fx-border-radius: 10; -fx-background-radius: 10;");
+      tooltip.setVisible(false);
+      tooltip.setWrapText(true);
+  
+      // Set the content of the tooltip
+      String tooltipContent = String.format(
+          "Name: %s%nServings: %d%nPrep Time: %d min%nCook Time: %d min%nDescription: %s%nTags: %s",
+          recipe.getName(),
+          recipe.getServings(),
+          recipe.getPrepTime(),
+          recipe.getCookTime(),
+          recipe.getDescription(),
+          String.join(", ", recipe.getTags())
+      );
+      tooltip.setText(tooltipContent);
+  
+      // Add tooltip to the main pane
+      myRecipesPane.getChildren().add(tooltip);
+  
+      // Set up hover events for the recipe card
+      recipeCard.setOnMouseEntered(event -> {
+          tooltip.setVisible(true);
+          tooltip.setLayoutX(event.getScreenX() - myRecipesPane.getScene().getWindow().getX() - recipeCard.getLayoutX());
+          tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
+      });
+  
+      recipeCard.setOnMouseExited(event -> {
+          tooltip.setVisible(false);
+      });
+  
+      recipeCard.setOnMouseMoved(event -> {
+          // Update the tooltip position when the mouse moves over the recipe card
+          tooltip.setLayoutX(event.getScreenX() - myRecipesPane.getScene().getWindow().getX() - recipeCard.getLayoutX());
+          tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
+      });
+  }
 }
+
 
 // Custom classes to manage ingredients and steps
 class Ingredient {

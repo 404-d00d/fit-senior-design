@@ -1131,6 +1131,14 @@ public class InventoryDashboardController {
    private void addIngredientToDatabase(Item item) {
       // Placeholder for adding the ingredient to a database
       ingredientInventory.add(item);
+      try (Writer writer = new FileWriter("itemInventory.json")) {
+         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+         gson.toJson(ingredientInventory, writer);
+         System.out.println("Inventory saved to JSON file: itemInventory.json");
+     } catch (IOException e) {
+         e.printStackTrace();
+         showAlert("Save Error", "Failed to save inventory to JSON file.");
+     }
       // In the future, replace this with an actual database call.
    }
   

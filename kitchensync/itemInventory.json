@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Cheese",
+    "ID": "0",
+    "quantity": 1,
+    "location": "Fridge",
+    "expirDate": "2026-12-12",
+    "unit": "kg"
+  },
+  {
+    "name": "Banana Bread",
+    "ID": "0",
+    "quantity": 2,
+    "location": "Pantry",
+    "expirDate": "2025-11-22",
+    "unit": "lbs"
+  }
+]

@@ -125,6 +125,7 @@ public class InventoryDashboardController {
       setupDefaultCategories();
 
       loadPersistedSpacesAndCategories(); // Load spaces and categories from JSON
+      loadIngredientInventory();
       loadCategoriesForSpace("Fridge");
       loadCategoriesForSpace("Freezer");
       loadCategoriesForSpace("Pantry");
@@ -1154,19 +1155,61 @@ public class InventoryDashboardController {
       }
    }
 
+   private void loadIngredientInventory() {
+      File file = new File("itemInventory.json");
+  
+      if (file.exists() && file.length() > 0) { // Check if the file exists and is not empty
+          try (Reader reader = new FileReader(file)) {
+              Gson gson = new Gson();
+              Item[] items = gson.fromJson(reader, Item[].class); // Deserialize JSON to an array of Items
+              ingredientInventory.clear(); // Clear the existing inventory
+              ingredientInventory.addAll(List.of(items)); // Add all items to the inventory list
+
+              System.out.println("Inventory successfully loaded from JSON file.");
+          } catch (IOException e) {
+              e.printStackTrace();
+              showAlert("Load Error", "Failed to load inventory from JSON file.");
+          }
+      } else {
+          System.out.println("No inventory file found. Starting with an empty inventory.");
+      }
+  }
+
    private void addIngredientToDatabase(Item item) {
       // Placeholder for adding the ingredient to a database
       ingredientInventory.add(item);
-      try (Writer writer = new FileWriter("itemInventory.json")) {
-         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-         gson.toJson(ingredientInventory, writer);
-         System.out.println("Inventory saved to JSON file: itemInventory.json");
-     } catch (IOException e) {
-         e.printStackTrace();
-         showAlert("Save Error", "Failed to save inventory to JSON file.");
-     }
+      File file = new File("itemInventory.json");
+
+      try {
+          // Read existing items from the file
+          List<Item> existingItems = new ArrayList<>();
+          if (file.exists() && file.length() > 0) {
+              try (Reader reader = new FileReader(file)) {
+                  Gson gson = new Gson();
+                  Item[] items = gson.fromJson(reader, Item[].class);
+                  if (items != null) {
+                      existingItems = new ArrayList<>(List.of(items));
+                  }
+              }
+          }
+  
+          // Add the new item to the list
+          existingItems.add(item);
+  
+          // Write the updated list back to the file
+          try (Writer writer = new FileWriter(file)) {
+              Gson gson = new GsonBuilder().setPrettyPrinting().create();
+              gson.toJson(existingItems, writer);
+              //System.out.println("Item added to inventory: " + item.getName());
+          }
+  
+      } catch (IOException e) {
+          e.printStackTrace();
+          showAlert("Save Error", "Failed to save item to inventory.");
+      }
       // In the future, replace this with an actual database call.
-   }
+  }
+      
   
    private List<Item> fetchIngredientsFromDatabase() {
       try (Reader reader = new FileReader("itemInventory.json")) {

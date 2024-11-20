@@ -63,6 +63,8 @@ public class MealPlannerController {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d'th'");
 
+    private Label draggedBlock;
+
     @FXML
     private void initialize() {
 
@@ -216,7 +218,18 @@ public class MealPlannerController {
 
     private void loadDayView() {
         dayView.getChildren().clear();  // Clear previous content
-        dayView.getRowConstraints().clear();
+        dayView.getRowConstraints().clear(); // Clear previous row constraints
+        dayView.getColumnConstraints().clear();  // Clear previous column constraints
+
+        // Set up a new column to the far left for displaying the hours of the day
+        ColumnConstraints timeColumn = new ColumnConstraints();
+        timeColumn.setPercentWidth(15); // Set 10% of width for the time labels
+        dayView.getColumnConstraints().add(timeColumn);
+
+        // Add a column for actual meal planning (rest of the width)
+        ColumnConstraints contentColumn = new ColumnConstraints();
+        contentColumn.setPercentWidth(85);
+        dayView.getColumnConstraints().add(contentColumn);
 
         // Set up rows for each hour of the day
         for (int i = 0; i < 25; i++) {
@@ -225,14 +238,31 @@ public class MealPlannerController {
             dayView.getRowConstraints().add(rowConstraints);
         }
 
-        LocalDate selectedDate = datePicker.getValue();
+        LocalDate selectedDate = dateInView.getValue();
         String dayOfWeek = selectedDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
         String dayLabel = dayOfWeek + ", " + DATE_FORMATTER.format(selectedDate);
 
+        // Place the day title in column 1, row 0
         Text dayTitle = new Text(dayLabel);
         dayTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-        GridPane.setConstraints(dayTitle, 0, 0);
+        GridPane.setConstraints(dayTitle, 1, 0);
         dayView.getChildren().add(dayTitle);
+
+        // Add hour labels to the far left column
+        for (int hour = 0; hour < 24; hour++) {
+            String hourText = String.format("%02d:00", hour);  // Display in HH:00 format
+            Label hourLabel = new Label(hourText);
+            hourLabel.setStyle("-fx-font-size: 14px; -fx-padding: 5px; -fx-font-weight: bold;");
+            GridPane.setConstraints(hourLabel, 0, hour + 1);  // +1 to account for the title row
+            dayView.getChildren().add(hourLabel);
+        }
+
+        // Load meals for the selected day
+        List<Recipe> mealsForDay = getMealsForDay(selectedDate);
+        for (Recipe meal : mealsForDay) {
+            // Add the time blocks for each meal to the day view
+            createTimeBlocksForMeal(selectedDate, meal, "Lunch", 1); // Assume "Lunch" for now; this can be made dynamic
+        }
 
         dayView.setGridLinesVisible(false);
         dayView.setGridLinesVisible(true);
@@ -250,33 +280,48 @@ public class MealPlannerController {
             weekView.getRowConstraints().add(rowConstraints);
         }
 
-        // Set up 7 columns for the days of the week
+        // Set up 8 columns: one for the hours, and seven for each day of the week
+        ColumnConstraints hourColumn = new ColumnConstraints();
+        hourColumn.setPercentWidth(10); // Set 10% of width for the hour labels
+        weekView.getColumnConstraints().add(hourColumn);
+
         for (int i = 0; i < 7; i++) {
-            ColumnConstraints colConstraints = new ColumnConstraints();
-            colConstraints.setPercentWidth(100.0 / 7);
-            weekView.getColumnConstraints().add(colConstraints);
+            ColumnConstraints dayColumn = new ColumnConstraints();
+            dayColumn.setPercentWidth(90.0 / 7); // Split remaining 90% across 7 days
+            weekView.getColumnConstraints().add(dayColumn);
         }
 
         LocalDate startDate = datePicker.getValue();
-    
+        
+        // Add hour labels in the left-most column
+        for (int hour = 0; hour < 24; hour++) {
+            String hourText = String.format("%02d:00", hour); // Display in HH:00 format
+            Label hourLabel = new Label(hourText);
+            hourLabel.setStyle("-fx-font-size: 14px; -fx-padding: 5px; -fx-font-weight: bold;");
+            GridPane.setConstraints(hourLabel, 0, hour + 1); // +1 to account for the title row
+            weekView.getChildren().add(hourLabel);
+        }
+
+        // Add day labels at the top row
+        for (int i = 0; i < 7; i++) {
+            LocalDate currentDate = startDate.plusDays(i);
+            String dayOfWeek = currentDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+            String dayLabel = dayOfWeek + ", " + DATE_FORMATTER.format(currentDate);
+            Text dayTitle = new Text(dayLabel);
+            dayTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+            GridPane.setConstraints(dayTitle, i + 1, 0); // +1 to skip the hour column
+            weekView.getChildren().add(dayTitle);
+        }
+
+        // Add meal blocks to each day in the week view
         for (int i = 0; i < 7; i++) {
             LocalDate currentDate = startDate.plusDays(i);
             List<Recipe> mealsForDay = getMealsForDay(currentDate);
 
-            int row = 1;
             for (Recipe meal : mealsForDay) {
-                Text mealBlock = new Text(meal.getName() + "\nPrep: " + meal.getPrepTime() + " mins\nCook: " + meal.getCookTime() + " mins");
-                GridPane.setConstraints(mealBlock, 0, row++);
-                dayView.getChildren().add(mealBlock);
+                // Add the time blocks for each meal to the week view
+                createTimeBlocksForMeal(currentDate, meal, "Lunch", i + 1); // Pass the appropriate column for the day
             }
-
-            String dayOfWeek = currentDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
-            String dayLabel = dayOfWeek + ", " + DATE_FORMATTER.format(currentDate);
-            Text dayTitle = new Text(dayLabel);
-
-            dayTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-            GridPane.setConstraints(dayTitle, i, 0);
-            weekView.getChildren().add(dayTitle);
         }
 
         weekView.setGridLinesVisible(false);
@@ -407,18 +452,16 @@ public class MealPlannerController {
     
         Recipe newMeal = new Recipe(0, "Sample Meal", null, null, null, 30, 60, 30, 0, 0, null, null, null, null); // Replace with selected meal details
         addMealToPlan(selectedDate, newMeal);
-    
-        // Create the time blocks for the meal and add them to the day view
-        createTimeBlocksForMeal(selectedDate, newMeal, "Lunch");
         
         loadDailyMeals(selectedDate);
         loadCalendarView();
         updateNutritionalBreakdown();
     }
 
-    private void createTimeBlocksForMeal(LocalDate date, Recipe meal, String mealSlot) {
-        // Determine the starting hour based on the meal slot
+    private void createTimeBlocksForMeal(LocalDate date, Recipe meal, String mealSlot, int dayColumn) {
         int startHour;
+    
+        // Determine starting row based on meal slot (e.g., Breakfast, Lunch, etc.)
         switch (mealSlot) {
             case "Breakfast":
                 startHour = 8; // Breakfast starts at 8 AM
@@ -434,79 +477,120 @@ public class MealPlannerController {
                 break;
         }
     
+        // Starting row (+1 for title row)
+        int currentRow = startHour + 1;
+    
+        // Determine which view to add the meal to: dayView or weekView
+        GridPane targetView = dayView.isVisible() ? dayView : weekView;
+    
         // Add Prep Time Block
         if (meal.getPrepTime() > 0) {
             Label prepBlock = new Label(meal.getName() + " - Prep: " + meal.getPrepTime() + " mins");
-            prepBlock.setStyle("-fx-background-color: lightblue; -fx-padding: 5px; -fx-font-size: 14px;");
-            makeTimeBlockDraggable(prepBlock);
-            int rowForPrep = startHour + 1; // +1 to account for the header row
-            GridPane.setConstraints(prepBlock, 0, 1);
-            dayView.getChildren().add(prepBlock);
+            prepBlock.setStyle("-fx-background-color: lightblue; -fx-padding: 5px; -fx-font-size: 15px;");
+            prepBlock.setId(meal.getName() + "-prep-" + dayColumn + "-" + currentRow); // Set unique ID for drag and drop
+    
+            // Remove existing block if already added to avoid duplicate children
+            targetView.getChildren().remove(prepBlock);
+            makeTimeBlockDraggable(prepBlock, targetView);
+    
+            int rowSpan = (int) Math.ceil(meal.getPrepTime() / 60.0);
+            GridPane.setConstraints(prepBlock, dayColumn, currentRow); // Set to appropriate row
+            GridPane.setRowSpan(prepBlock, rowSpan); // Span multiple rows for the duration of the time block
+            targetView.getChildren().add(prepBlock);
+            currentRow += rowSpan;
         }
     
         // Add Passive Time Block (if applicable)
         if (meal.getPassiveTime() > 0) {
             Label passiveBlock = new Label(meal.getName() + " - Passive: " + meal.getPassiveTime() + " mins");
-            passiveBlock.setStyle("-fx-background-color: lightgreen; -fx-padding: 5px; -fx-font-size: 14px;");
-            makeTimeBlockDraggable(passiveBlock);
-            int rowForPassive = startHour + (meal.getPrepTime() / 60) + 1; // Starts after prep time
-            GridPane.setConstraints(passiveBlock, 0, rowForPassive);
-            dayView.getChildren().add(passiveBlock);
+            passiveBlock.setStyle("-fx-background-color: lightgreen; -fx-padding: 5px; -fx-font-size: 15px;");
+            passiveBlock.setId(meal.getName() + "-passive-" + dayColumn + "-" + currentRow); // Set unique ID for drag and drop
+    
+            // Remove existing block if already added to avoid duplicate children
+            targetView.getChildren().remove(passiveBlock);
+            makeTimeBlockDraggable(passiveBlock, targetView);
+    
+            int rowSpan = (int) Math.ceil(meal.getPassiveTime() / 60.0);
+            GridPane.setConstraints(passiveBlock, dayColumn, currentRow);
+            GridPane.setRowSpan(passiveBlock, rowSpan);
+            targetView.getChildren().add(passiveBlock);
+            currentRow += rowSpan;
         }
     
         // Add Cook Time Block
         if (meal.getCookTime() > 0) {
             Label cookBlock = new Label(meal.getName() + " - Cook: " + meal.getCookTime() + " mins");
-            cookBlock.setStyle("-fx-background-color: salmon; -fx-padding: 5px; -fx-font-size: 14px;");
-            makeTimeBlockDraggable(cookBlock);
-            int rowForCook = startHour + (meal.getPrepTime() + meal.getPassiveTime()) / 60 + 1; // Starts after prep and passive times
-            GridPane.setConstraints(cookBlock, 0, rowForCook);
-            dayView.getChildren().add(cookBlock);
+            cookBlock.setStyle("-fx-background-color: salmon; -fx-padding: 5px; -fx-font-size: 15px;");
+            cookBlock.setId(meal.getName() + "-cook-" + dayColumn + "-" + currentRow); // Set unique ID for drag and drop
+    
+            // Remove existing block if already added to avoid duplicate children
+            targetView.getChildren().remove(cookBlock);
+            makeTimeBlockDraggable(cookBlock, targetView);
+    
+            int rowSpan = (int) Math.ceil(meal.getCookTime() / 60.0);
+            GridPane.setConstraints(cookBlock, dayColumn, currentRow);
+            GridPane.setRowSpan(cookBlock, rowSpan);
+            targetView.getChildren().add(cookBlock);
         }
     
         // Refresh grid lines to ensure proper visualization
-        dayView.setGridLinesVisible(false);
-        dayView.setGridLinesVisible(true);
+        targetView.setGridLinesVisible(false);
+        targetView.setGridLinesVisible(true);
     }
 
-    private void makeTimeBlockDraggable(Label block) {
+    private void makeTimeBlockDraggable(Label block, GridPane targetView) {
+        // Start Drag
         block.setOnDragDetected(event -> {
             javafx.scene.input.Dragboard db = block.startDragAndDrop(TransferMode.MOVE);
             javafx.scene.image.WritableImage snapshot = block.snapshot(null, null);
             db.setDragView(snapshot);
             javafx.scene.input.ClipboardContent content = new javafx.scene.input.ClipboardContent();
-            content.putString(block.getText());
+            content.putString(block.getId()); // Use block ID to uniquely identify the block
             db.setContent(content);
             event.consume();
+
+            // Store the dragged block in the class-level variable
+            draggedBlock = block;
+
+            System.out.println(draggedBlock);
         });
-    
-        block.setOnDragOver(event -> {
-            if (event.getGestureSource() != block && event.getDragboard().hasString()) {
+
+        // Allow Drag Over on the target view (dayView or weekView)
+        targetView.setOnDragOver(event -> {
+            if (event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
         });
-    
-        block.setOnDragDropped(event -> {
+
+        // Handle Drop Event on the target view
+        targetView.setOnDragDropped(event -> {
             javafx.scene.input.Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasString()) {
-                ((Label) event.getGestureTarget()).setText(db.getString());
-                success = true;
-                // Adjust position to handle half-hour placement using setLayoutY()
-                block.setLayoutY(event.getY());
+
+            if (db.hasString() && draggedBlock != null) {
+                // Calculate the new row index based on the Y-coordinate of the drop event
+                double y = event.getY();
+                double rowHeight = targetView.getHeight() / targetView.getRowConstraints().size(); // Assuming consistent row height
+                int newRow = (int) Math.floor(y / rowHeight) + 1; // Calculate the row index
+
+                // Ensure the new row is within valid bounds
+                if (newRow >= 1 && newRow < targetView.getRowConstraints().size()) { // Avoid header row and ensure within bounds
+                    targetView.getChildren().remove(draggedBlock); // Remove block from old position
+                    GridPane.setRowIndex(draggedBlock, newRow); // Set new row index
+                    targetView.getChildren().add(draggedBlock); // Add block to the new position
+                    success = true;
+                }
             }
+
             event.setDropCompleted(success);
             event.consume();
-        });
-    
-        block.setOnDragDone(event -> {
-            if (event.getTransferMode() == TransferMode.MOVE) {
-                ((Pane) block.getParent()).getChildren().remove(block);
-            }
-            event.consume();
+
+            // Clear the reference after drop
+            draggedBlock = null;
         });
     }
+    
 
     private void saveMealPlansToJson() {
         try (FileWriter writer = new FileWriter("mealPlans.json")) {

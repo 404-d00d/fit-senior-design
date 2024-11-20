@@ -120,10 +120,6 @@ public class MyRecipesController {
 
    @FXML
    private void initialize() {
-      AwsBasicCredentials awsCreds = AwsBasicCredentials.create(
-                "AKIAS6J7QGOOS2VSJQNP",
-                "RpYmWXTZAk4k33zL/tQYUDP/x+L7403SYAjwSx9Y"
-        );
       database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");

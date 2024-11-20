@@ -41,11 +41,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
-//import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-//import software.amazon.awssdk.regions.Region;
-//import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
-//import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 
 public class MyRecipesController {
@@ -113,15 +115,16 @@ public class MyRecipesController {
    private int currentStep = 0;
    private int displayStep = 0;
 
-   //private DynamoDbClient database;
-   //private Map<String, AttributeValue> item = new HashMap<>();
+   private DynamoDbClient database;
+   private Map<String, AttributeValue> item = new HashMap<>();
 
    @FXML
    private void initialize() {
-      //Region region = Region.US_EAST_1;
-      //database = DynamoDbClient.builder()
-      //.region(region)
-      //.build();
+      AwsBasicCredentials awsCreds = AwsBasicCredentials.create(
+                "AKIAS6J7QGOOS2VSJQNP",
+                "RpYmWXTZAk4k33zL/tQYUDP/x+L7403SYAjwSx9Y"
+        );
+      database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
       ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
@@ -550,9 +553,10 @@ public class MyRecipesController {
 
       // Create a new Recipe object with all required fields
       Recipe newRecipe = new Recipe(id, name, category, collection, description, prepTime, passiveTime, cookTime, complexity, servings, tagsArray, ingredientsArray, equipmentArray, stepsArray);
-      //item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
-      //PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
-      //database.putItem(request);
+      item.put("Recipe", AttributeValue.builder().s(Integer.toString(id)).build());
+      item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
+      PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
+      database.putItem(request);
       // Save recipe to database or use it as needed
       // Example: addRecipeToDatabase(newRecipe);
 

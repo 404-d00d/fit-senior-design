@@ -8,9 +8,9 @@
     "Freezer": [
       "All Items",
       "Expiring Soon",
-      "Vegetables",
+      "Frozen Foods",
       "Meat \u0026 Seafood",
-      "Frozen Foods"
+      "Vegetables"
     ],
     "Pantry": [
       "All Items",
@@ -23,8 +23,8 @@
       "All Items",
       "Expiring Soon",
       "Ready to Eat",
-      "Meat \u0026 Seafood",
-      "Dairy"
+      "Dairy",
+      "Meat \u0026 Seafood"
     ]
   }
 }

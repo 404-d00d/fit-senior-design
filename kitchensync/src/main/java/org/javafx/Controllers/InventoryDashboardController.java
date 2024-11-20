@@ -28,6 +28,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -125,6 +128,9 @@ public class InventoryDashboardController {
       loadCategoriesForSpace("Fridge");
       loadCategoriesForSpace("Freezer");
       loadCategoriesForSpace("Pantry");
+
+      // Fetch ingredients from the database and update views
+      List<Item> ingredients = fetchIngredientsFromDatabase();
 
       // Set current space to default (e.g., "Fridge")
       currentSpace = "Fridge";
@@ -679,6 +685,28 @@ public class InventoryDashboardController {
      }
    }
 
+   private VBox createIngredientCard(Item ingredient) {
+    try {
+        // Load the FXML for the ingredient card
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/ingredientCard.fxml"));
+        VBox ingredientCard = loader.load();
+
+        // Set ingredient card details
+        IngredientCardController controller = loader.getController();
+        controller.setIngredientData(
+            Integer.parseInt(ingredient.getID()),
+            ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
+            null, // Assuming image is null for now
+            this
+        );
+
+        return ingredientCard;
+    } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+    }
+}
+
    // Helper method to duplicate the ingredient card
    private Node createDuplicateNode(VBox originalCard) {
       try {
@@ -1023,16 +1051,14 @@ public class InventoryDashboardController {
   
       // Retrieve or initialize categories for the specified space
       Map<String, FlowPane> categories = spacesCategories.get(space);
-      
-      // If no categories are loaded for this space, initialize them with defaults if applicable
+  
       if (categories == null) {
           categories = new LinkedHashMap<>(); // Use LinkedHashMap to maintain order
           for (String category : defaultCategories.getOrDefault(space, List.of())) {
               categories.put(category, createCategoryPane(category));
           }
           spacesCategories.put(space, categories);
-          // Save changes to keep things consistent
-          savePersistedSpacesAndCategories();
+          savePersistedSpacesAndCategories(); // Save changes to keep things consistent
       }
   
       // Create a list of category names in the correct order
@@ -1142,10 +1168,51 @@ public class InventoryDashboardController {
       // In the future, replace this with an actual database call.
    }
   
-  private List<Item> fetchIngredientsFromDatabase() {
-      // Placeholder for fetching ingredients from a database
-      // Populate the ingredientInventory array with the db data
+   private List<Item> fetchIngredientsFromDatabase() {
+      try (Reader reader = new FileReader("itemInventory.json")) {
+          Gson gson = new Gson();
+          Type itemListType = new TypeToken<List<Item>>() {}.getType();
+          ingredientInventory = gson.fromJson(reader, itemListType);
+  
+          if (ingredientInventory == null) {
+              ingredientInventory = new ArrayList<>();
+          }
+  
+          System.out.println("Inventory loaded from JSON file.");
+      } catch (IOException e) {
+          e.printStackTrace();
+          showAlert("Load Error", "Failed to load inventory from JSON file.");
+      }
+  
+      // Update categories for spaces after loading ingredients
+      for (Item ingredient : ingredientInventory) {
+          String location = ingredient.getLocation();
+          Map<String, FlowPane> locationCategories = spacesCategories.get(location);
+          
+          if (locationCategories != null) {
+              // Add ingredient to "All Items" category
+              FlowPane allItemsPane = locationCategories.get("All Items");
+              if (allItemsPane != null) {
+                  allItemsPane.getChildren().add(createIngredientCard(ingredient));
+              }
+  
+              // Add ingredient to other categories based on tags or expiration date
+              List<String> categories = new ArrayList<>();
+              if (ingredient.getExpirDate() != null && LocalDate.parse(ingredient.getExpirDate()).isBefore(LocalDate.now().plusDays(3))) {
+                  categories.add("Expiring Soon");
+              }
+  
+              // Add ingredient to the appropriate categories
+              for (String category : categories) {
+                  FlowPane categoryPane = locationCategories.get(category);
+                  if (categoryPane != null) {
+                      categoryPane.getChildren().add(createIngredientCard(ingredient));
+                  }
+              }
+          }
+      }
+  
       return ingredientInventory;
-   }
+  }
 
 }

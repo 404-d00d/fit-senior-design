@@ -1,8 +1,10 @@
 package org.javafx.Controllers;
 
 import java.io.File;
-import javafx.scene.control.Label;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
@@ -17,6 +19,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
@@ -35,11 +38,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 //import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 //import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -521,7 +519,10 @@ public class MyRecipesController {
    private void saveRecipe() {
 
       //check if last step was saved
-      if (preparationSteps.get(currentStep).isEmpty() && prepStepField.getText() != "") {
+      if (preparationSteps.isEmpty() && prepStepField.getText() != "") {
+         preparationSteps.add(currentStep, prepStepField.getText().trim());
+      }
+      else if (preparationSteps.get(currentStep).isEmpty() && prepStepField.getText() != "") {
          preparationSteps.set(currentStep, prepStepField.getText().trim());
       }
 
@@ -539,8 +540,9 @@ public class MyRecipesController {
 
       // Convert ingredients to a string array representation
       String[] ingredientsArray = ingredients.stream()
-       .map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit())
-       .toArray(String[]::new);
+      .map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit())
+      .toArray(String[]::new);
+
       String[] stepsArray = preparationSteps.toArray(new String[0]); //Required
 
       //get num of entries in db and then add 1

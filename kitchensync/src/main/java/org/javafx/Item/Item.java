@@ -4,13 +4,13 @@ import java.time.LocalDate;
 
 public class Item {
     private String name;
-    private String ID;
+    private Integer ID;
     private Integer quantity;
     private String location;
     private String expirDate;
     private String unit;
 
-    public Item(String name, String ID, Integer quantity, String unit, String location, String expirDate){
+    public Item(String name, Integer ID, Integer quantity, String unit, String location, String expirDate){
         this.name = name;
         this.ID = ID;
         this.quantity = quantity;
@@ -23,7 +23,7 @@ public class Item {
         return this.name;
     }
 
-    public String getID(){
+    public Integer getID(){
         return this.ID;
     }
 
@@ -53,6 +53,10 @@ public class Item {
         else {
             this.quantity = newValue;
         }
+    }
+
+    public void setID(Integer value) {
+        this.ID = value;
     }
 
 }

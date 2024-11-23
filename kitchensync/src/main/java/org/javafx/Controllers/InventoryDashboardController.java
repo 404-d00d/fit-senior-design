@@ -119,6 +119,8 @@ public class InventoryDashboardController {
 
    private static final String SPACES_FILE_PATH = "spacesAndCategories.json"; // File for storing spaces and categories
 
+   private int nextIngredientID = 1;
+
    @FXML
    private void initialize() {
 
@@ -523,7 +525,7 @@ public class InventoryDashboardController {
               // Set ingredient card details
               IngredientCardController controller = loader.getController();
               controller.setIngredientData(
-                  Integer.parseInt(ingredient.getID()),
+                  ingredient.getID(),
                   ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
                   null, // we need to add a image ref to the ingredients
                   this
@@ -618,7 +620,8 @@ public class InventoryDashboardController {
          //String expirationDateString = expirationDate.format(formatter);
 
          // Create new ingredient item and add to inventory
-         Item newIngredient = new Item(ingredientName, "0", Integer.parseInt(quantity), unit, location, convertedDate);
+         Item newIngredient = new Item(ingredientName, 0, Integer.parseInt(quantity), unit, location, convertedDate);
+         
          addIngredientToDatabase(newIngredient);
 
          try {
@@ -628,7 +631,7 @@ public class InventoryDashboardController {
 
             // Set ingredient card details
             IngredientCardController controller = loader.getController();
-            controller.setIngredientData(Integer.parseInt(newIngredient.getID()), ingredientName + " - " + quantity + " " + unit, selectedImage, this);
+            controller.setIngredientData(newIngredient.getID(), ingredientName + " - " + quantity + " " + unit, selectedImage, this);
 
             // Store the controller in the properties map for later access
             ingredientCard.getProperties().put("controller", controller);
@@ -1164,7 +1167,13 @@ public class InventoryDashboardController {
               Item[] items = gson.fromJson(reader, Item[].class); // Deserialize JSON to an array of Items
               ingredientInventory.clear(); // Clear the existing inventory
               ingredientInventory.addAll(List.of(items)); // Add all items to the inventory list
-
+  
+              // Determine the highest ID
+              int maxID = 0;
+              for (Item item : ingredientInventory) {
+                  maxID = Math.max(maxID, item.getID());
+              }
+              nextIngredientID = maxID + 1; // Set the next ID
               System.out.println("Inventory successfully loaded from JSON file.");
           } catch (IOException e) {
               e.printStackTrace();
@@ -1174,9 +1183,13 @@ public class InventoryDashboardController {
           System.out.println("No inventory file found. Starting with an empty inventory.");
       }
   }
+  
 
    private void addIngredientToDatabase(Item item) {
       // Placeholder for adding the ingredient to a database
+
+      item.setID(nextIngredientID);
+      nextIngredientID++;
       ingredientInventory.add(item);
       File file = new File("itemInventory.json");
 

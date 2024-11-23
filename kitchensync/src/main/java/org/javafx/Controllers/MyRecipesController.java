@@ -1,6 +1,11 @@
 package org.javafx.Controllers;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +13,9 @@ import java.util.Map;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -110,14 +118,17 @@ public class MyRecipesController {
    private DynamoDbClient database;
    private Map<String, AttributeValue> item = new HashMap<>();
 
+   private static final String RECIPES_FILE_PATH = "recipes.json";
+
+   private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
+
+
    @FXML
    private void initialize() {
-<<<<<<< HEAD
       
       //database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
-=======
-      // database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
->>>>>>> 8557f3baa7e84284840da963454e57dd98e41a22
+
+      recipeList.addAll(loadRecipesFromJson());
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
       ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
@@ -550,25 +561,18 @@ public class MyRecipesController {
 
       // Create a new Recipe object with all required fields
       Recipe newRecipe = new Recipe(id, name, category, collection, description, prepTime, passiveTime, cookTime, complexity, servings, tagsArray, ingredientsArray, equipmentArray, stepsArray);
-<<<<<<< HEAD
       //item.put("Recipe", AttributeValue.builder().s(Integer.toString(id)).build());
       //item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
       //PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
       //database.putItem(request);
-=======
-      // item.put("Recipe", AttributeValue.builder().s(Integer.toString(id)).build());
-      // item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
-      // PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
-      // database.putItem(request);
-      // Save recipe to database or use it as needed
-      // Example: addRecipeToDatabase(newRecipe);
-
->>>>>>> 8557f3baa7e84284840da963454e57dd98e41a22
 
       if (isFormValid(name, category, recipeYield.getText(), description, recipeETAPrep.getText(), recipeETAPassive.getText(), recipeETA.getText(), ingredientsArray, stepsArray)) {
 
          // Concatenate all preparation steps
         String PrepSteps = String.join("\n", preparationSteps);
+
+        recipeList.add(newRecipe);
+        saveRecipesToJson(recipeList);
          
          try {
             VBox recipeCard = null;
@@ -862,6 +866,42 @@ public class MyRecipesController {
           recipeWidgets.remove(recipe.getID());  // Clean up from the map
       }
    }
+
+   private void saveRecipesToJson(List<Recipe> recipes) {
+      File file = new File(RECIPES_FILE_PATH);
+
+      try (Writer writer = new FileWriter(file)) {
+         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+         gson.toJson(recipes, writer);
+         System.out.println("Recipes successfully saved to JSON.");
+      } catch (IOException e) {
+         e.printStackTrace();
+         //showAlert("Save Error", "Failed to save recipes to JSON file.");
+         System.out.println("Save Error - Failed to save recipes to JSON file,");
+      }
+   }
+
+   private List<Recipe> loadRecipesFromJson() {
+      File file = new File(RECIPES_FILE_PATH);
+
+      if (file.exists() && file.length() > 0) {
+         try (Reader reader = new FileReader(file)) {
+               Gson gson = new Gson();
+               Recipe[] recipesArray = gson.fromJson(reader, Recipe[].class);
+               System.out.println("Recipes successfully loaded from JSON.");
+               return new ArrayList<>(List.of(recipesArray));
+         } catch (IOException e) {
+               e.printStackTrace();
+               //showAlert("Load Error", "Failed to load recipes from JSON file.");
+               System.out.println("Load Error - Failed to load recipes from JSON file,");
+         }
+      } else {
+         System.out.println("No recipe file found. Starting with an empty recipe list.");
+      }
+      return new ArrayList<>();
+   }
+
+
 
    // Method to apply hover effect for displaying short recipe details
    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {

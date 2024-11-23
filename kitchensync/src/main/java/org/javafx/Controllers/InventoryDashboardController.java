@@ -698,7 +698,7 @@ public class InventoryDashboardController {
         // Set ingredient card details
         IngredientCardController controller = loader.getController();
         controller.setIngredientData(
-            Integer.parseInt(ingredient.getID()),
+            ingredient.getID(),
             ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
             null, // Assuming image is null for now
             this

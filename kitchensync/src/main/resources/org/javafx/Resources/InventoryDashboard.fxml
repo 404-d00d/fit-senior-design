@@ -179,8 +179,8 @@
                   <Font size="45.0" />
                </font>
             </Button>
-            <Button fx:id="BarcodeUpload" layoutX="410.0" layoutY="144.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Barcode Upload" textAlignment="CENTER" wrapText="true" />
-            <Button layoutX="765.0" layoutY="144.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Receipt Upload" />
+            <Button fx:id="barcodeButton" layoutX="410.0" layoutY="144.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Barcode Upload" textAlignment="CENTER" wrapText="true" />
+            <Button fx:id="receiptButton" layoutX="765.0" layoutY="144.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Receipt Upload" />
             <Button fx:id="cancelButton" layoutX="410.0" layoutY="495.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="249.0" style="-fx-background-color: grey; -fx-font-size: 30; -fx-background-radius: 50;" text="Cancel">
                <font>
                   <Font size="45.0" />

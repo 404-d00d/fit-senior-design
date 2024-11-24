@@ -125,14 +125,11 @@ public class MyRecipesController {
 
    @FXML
    private void initialize() {
-<<<<<<< HEAD
-      // database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
-=======
       
       //database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
 
       recipeList.addAll(loadRecipesFromJson());
->>>>>>> 0047c19cab7a45cba4b646b232905c007ba78d77
+      loadRecipesCards();
 
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
       ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
@@ -558,27 +555,17 @@ public class MyRecipesController {
 
       String[] stepsArray = preparationSteps.toArray(new String[0]); //Required
 
-      //get num of entries in db and then add 1
-      Integer id = 0;
+      // Set a unique ID for the new recipe
+      int id = recipeList.size();
 
       int complexity = calculateRecipeComplexity(); 
 
       // Create a new Recipe object with all required fields
       Recipe newRecipe = new Recipe(id, name, category, collection, description, prepTime, passiveTime, cookTime, complexity, servings, tagsArray, ingredientsArray, equipmentArray, stepsArray);
-<<<<<<< HEAD
-      // item.put("Recipe", AttributeValue.builder().s(Integer.toString(id)).build());
-      // item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
-      // PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
-      // database.putItem(request);
-      // Save recipe to database or use it as needed
-      // Example: addRecipeToDatabase(newRecipe);
-
-=======
       //item.put("Recipe", AttributeValue.builder().s(Integer.toString(id)).build());
       //item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
       //PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
       //database.putItem(request);
->>>>>>> 0047c19cab7a45cba4b646b232905c007ba78d77
 
       if (isFormValid(name, category, recipeYield.getText(), description, recipeETAPrep.getText(), recipeETAPassive.getText(), recipeETA.getText(), ingredientsArray, stepsArray)) {
 
@@ -883,36 +870,71 @@ public class MyRecipesController {
 
    private void saveRecipesToJson(List<Recipe> recipes) {
       File file = new File(RECIPES_FILE_PATH);
-
+   
       try (Writer writer = new FileWriter(file)) {
          Gson gson = new GsonBuilder().setPrettyPrinting().create();
          gson.toJson(recipes, writer);
          System.out.println("Recipes successfully saved to JSON.");
       } catch (IOException e) {
          e.printStackTrace();
-         //showAlert("Save Error", "Failed to save recipes to JSON file.");
-         System.out.println("Save Error - Failed to save recipes to JSON file,");
+         System.out.println("Save Error - Failed to save recipes to JSON file.");
       }
    }
 
    private List<Recipe> loadRecipesFromJson() {
       File file = new File(RECIPES_FILE_PATH);
-
-      if (file.exists() && file.length() > 0) {
+      boolean isFileValid = file.exists() && file.length() > 0;
+   
+      if (isFileValid) {
          try (Reader reader = new FileReader(file)) {
-               Gson gson = new Gson();
-               Recipe[] recipesArray = gson.fromJson(reader, Recipe[].class);
+            Gson gson = new Gson();
+            Recipe[] recipesArray = gson.fromJson(reader, Recipe[].class);
+            if (recipesArray != null) {
                System.out.println("Recipes successfully loaded from JSON.");
                return new ArrayList<>(List.of(recipesArray));
-         } catch (IOException e) {
-               e.printStackTrace();
-               //showAlert("Load Error", "Failed to load recipes from JSON file.");
-               System.out.println("Load Error - Failed to load recipes from JSON file,");
+            }
+         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Load Error - Failed to load recipes from JSON file.");
          }
       } else {
          System.out.println("No recipe file found. Starting with an empty recipe list.");
       }
       return new ArrayList<>();
+   }
+
+   private void loadRecipesCards() {
+   
+      // Populate recipe cards to the UI
+    recipeFlowPane.getChildren().clear(); // Clear any existing children before repopulating
+    for (Recipe recipe : recipeList) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
+            VBox recipeCard = loader.load();
+
+            // Get the RecipeCardController and pass `this` as MyRecipesController
+            RecipeCardController controller = loader.getController();
+            controller.setRecipeData(recipe, null, this); // Pass the Recipe object to set its data
+
+            // Add the recipe card to the FlowPane
+            recipeFlowPane.getChildren().add(recipeCard);
+
+            // Store the card and its controller in recipeWidgets for future reference
+            recipeWidgets.put(recipe.getID(), recipeCard);
+            recipeCard.setUserData(controller); // Store the controller for easy retrieval later
+
+            // Apply hover effect to show more details of each recipe
+            applyHoverEffect(recipeCard, recipe);
+
+            // Hide the "No Recipes" text if there are recipes to show
+            if (noRecipesTXT.isVisible()) {
+                noRecipesTXT.setVisible(false);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+      }
    }
 
 

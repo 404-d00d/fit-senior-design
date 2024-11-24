@@ -28,6 +28,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -68,7 +69,7 @@ public class InventoryDashboardController {
    private Button addIngredientSpacesButton, addIngredientPlacesButton, spacesButton, placesButton, menuButton, inventoryButton, myRecipesButton, inboxButton,
                   browseRecipesButton, profileButton, settingsButton, myListsButton, cancelButton, manualButton, closeIngredient, addTagButton, imageSelect, 
                   removeButton, saveButton, productIDSearchButton, addSpace, addCategory, userDashboardButton, mealPlannerButton, fridgeButton, freezerButton, 
-                  pantryButton, gridViewButton, listViewButton, allFiltersButton;
+                  pantryButton, gridViewButton, listViewButton, allFiltersButton, barcodeButton, receiptButton;
 
    @FXML
    private VBox menuPane, categoryContainer, spacesButtons;
@@ -216,7 +217,7 @@ public class InventoryDashboardController {
 
       productIDSearchButton.setOnAction(event -> {
          try {
-            fetchProductDetails();
+            fetchProductDetails(productID.getText());
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -274,6 +275,16 @@ public class InventoryDashboardController {
       manualButton.setOnAction(event -> {
          uploadPane.setVisible(false);
          addIngredientMenuPane.setVisible(true);
+      });
+
+      barcodeButton.setOnAction(event -> {
+         uploadPane.setVisible(false);
+         onBarcodeUpload();
+      });
+
+      receiptButton.setOnAction(event -> {
+         uploadPane.setVisible(false);
+         onReceiptUpload();
       });
 
       closeIngredient.setOnAction(event -> {
@@ -549,45 +560,174 @@ public class InventoryDashboardController {
   
       ingredientList.setItems(ingredientItems); // Set items to ListView
    }
+   
+   @FXML
+   private void onReceiptUpload() {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+      fileChooser.setTitle("Select Receipt Image(s)");
+      Stage stage = (Stage) manualButton.getScene().getWindow();
+      List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
-   //create the py script to get the product details similar to the barcode scanner script
-   private void fetchProductDetails() {
-      String upc = productID.getText().trim();
-      if (!upc.isEmpty()) {
-         try {
-            //ProcessBuilder pb = new ProcessBuilder("python", "src/main/python/get_product_details.py", upc);
-            //Process process = pb.start();
-            
-            //BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            //String line;
-            //while ((line = in.readLine()) != null) {
-                  //System.out.println("Python Output: " + line);  // Simulating fetching details
-                  // Parse and fill in the product details here
-            //}
-         } catch (Exception e) {
-            e.printStackTrace();
+      if (files != null && !files.isEmpty()) {
+         for (File file : files) {
+               String imagePath = file.getAbsolutePath();
+               String command = "python src/main/python/receipt_processor.py " + imagePath + " Walmart";  // Replace with store if known
+
+               try {
+                  ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+                  pb.directory(new File(System.getProperty("user.dir")));
+                  Process process = pb.start();
+
+                  BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                  String line;
+
+                  while ((line = in.readLine()) != null) {
+                     System.out.println("Python Output: " + line);
+                     if (line.contains("Product ID:")) {
+                           String[] parts = line.split(",");
+                           if (parts.length > 1) {
+                              String productName = parts[0].split(":")[1].trim();
+                              String quantity = parts[1].split(":")[1].trim();
+                              prefillManualForm(productName, quantity, null);
+                           }
+                     } else if (line.contains("No items found.")) {
+                           showAlert("No Items Found", "No valid items were found on the receipt.");
+                     }
+                  }
+               } catch (Exception e) {
+                  e.printStackTrace();
+               }
          }
       }
    }
 
    @FXML
    private void onBarcodeUpload() {
-       // Open the file chooser for the user to select an image
-       FileChooser fileChooser = new FileChooser();
-       fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
-       fileChooser.setTitle("Select Barcode Image(s)");
-       
-       // Get the current stage (window)
-       Stage stage = (Stage) manualButton.getScene().getWindow();
-       List<File> files = fileChooser.showOpenMultipleDialog(stage);
-       
-       if (files != null && !files.isEmpty()) {
-         // For each selected file, call the Python script
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+      fileChooser.setTitle("Select Barcode Image(s)");
+      Stage stage = (Stage) manualButton.getScene().getWindow();
+      List<File> files = fileChooser.showOpenMultipleDialog(stage);
+
+      if (files != null && !files.isEmpty()) {
          for (File file : files) {
-             runPythonScript(file.getAbsolutePath());
+               String absolutePathToScript = new File("src/main/python/BarcodeModule.py").getAbsolutePath();
+               String imagePath = file.getAbsolutePath();
+
+               String command = String.format("python \"%s\" \"%s\"", absolutePathToScript, imagePath);
+
+               try {
+                  ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+                  pb.directory(new File(System.getProperty("user.dir")));
+                  pb.redirectErrorStream(true);
+                  Process process = pb.start();
+
+                  BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                  StringBuilder output = new StringBuilder();
+                  String line;
+
+                  // Capture the output from the Python script
+                  while ((line = inputReader.readLine()) != null) {
+                     output.append(line);
+                  }
+
+                  // Print the output for debugging purposes
+                  System.out.println("Python Script Output: " + output.toString());
+
+                  // Check if output is not empty
+                  if (output.length() == 0) {
+                     showAlert("Error", "No response from barcode scanner.");
+                     return;
+                  }
+
+                  try {
+                     // Parse the JSON response from Python script
+                     JsonObject jsonObject = JsonParser.parseString(output.toString()).getAsJsonObject();
+                     String status = jsonObject.get("status").getAsString();
+
+                     if ("success".equals(status)) {
+                           JsonArray results = jsonObject.getAsJsonArray("results");
+                           for (int i = 0; i < results.size(); i++) {
+                              JsonObject result = results.get(i).getAsJsonObject();
+                              String resultStatus = result.get("status").getAsString();
+                              String barcode = result.get("barcode").getAsString();
+
+                              if ("success".equals(resultStatus)) {
+                                 String productName = result.get("product_name").getAsString();
+                                 String quantityInfo = result.has("quantity") ? result.get("quantity").getAsString() : null;
+
+                                 // Prefill manual form with product name and quantity
+                                 prefillManualForm(productName, Integer.toString(parseQuantity(quantityInfo)), parseUnit(quantityInfo));
+                              } else if ("not_found".equals(resultStatus)) {
+                                 showAlert("Product Not Found", "No product information found for barcode: " + barcode + ", please enter manually.");
+                              } else if ("error".equals(resultStatus)) {
+                                 String message = result.get("message").getAsString();
+                                 showAlert("Error", "An error occurred: " + message);
+                              }
+                           }
+                     } else {
+                           String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "Unknown error occurred.";
+                           showAlert("Error", "An error occurred: " + message);
+                     }
+                  } catch (JsonSyntaxException e) {
+                     showAlert("Error", "Failed to parse response from barcode scanner.");
+                     e.printStackTrace();
+                  }
+
+               } catch (IOException e) {
+                  e.printStackTrace();
+                  showAlert("Error", "An error occurred while executing the barcode image processing.");
+               }
          }
       }
    }
+
+   // Helper method to parse quantity and unit from the quantity string
+   private Integer parseQuantity(String quantityInfo) {
+      if (quantityInfo == null) return null;
+
+      try {
+         // Try to extract a number from the quantity information
+         String quantityString = quantityInfo.split(" ")[0]; // Assuming quantity is the first word
+         return Integer.parseInt(quantityString);
+      } catch (NumberFormatException e) {
+         // If we can't parse the quantity, return null
+         return null;
+      }
+   }
+
+   private String parseUnit(String quantityInfo) {
+      if (quantityInfo == null) return null;
+
+      String[] parts = quantityInfo.split(" ");
+      return (parts.length > 1) ? parts[1] : null; // Return unit if available
+   }
+
+   private void fetchProductDetails(String upc) {
+      try {
+          ProcessBuilder pb = new ProcessBuilder("python", "src/main/python/get_product_details.py", upc);
+          Process process = pb.start();
+
+          BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+          String jsonResponse = in.lines().collect(Collectors.joining());
+          process.waitFor();
+
+          if (!jsonResponse.isEmpty()) {
+              Gson gson = new Gson();
+              JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
+              String name = jsonObject.get("name").getAsString();
+              String quantity = jsonObject.get("quantity").getAsString();
+              String unit = jsonObject.get("unit").getAsString();
+
+              Item item = new Item(name, 0, Integer.parseInt(quantity), unit, null, null);
+              prefillManualForm(item.getName(), Integer.toString(item.getQuantity()), item.getUnit());
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+  }
+
 
    // Helper method to style the active space button
    private void styleActiveButton(Button activeButton) {
@@ -602,7 +742,13 @@ public class InventoryDashboardController {
       activeButton.setStyle("-fx-background-color: orange; -fx-background-radius: 50; -fx-border-color: black; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
   }
 
-   //System.out.println(ingredientInventory.get(j).getName()+", "+ingredientInventory.get(j).getQuantity()+" of "+ingredientInventory.get(j).getUnit());
+   private void prefillManualForm(String itemName, String quantity, String unit) {
+      productName.setText(itemName != null ? itemName : "");
+      productQuantity.setText(quantity != null ? quantity : "");
+      productUnit.setValue(unit != null ? unit : "");
+      addIngredientMenuPane.setVisible(true);
+      uploadPane.setVisible(false);
+   }
 
    private void saveIngredient() {
 
@@ -735,9 +881,7 @@ public class InventoryDashboardController {
    }
 
    private boolean isFormValid() {
-      // Check if required fields are filled
-      return !productName.getText().trim().isEmpty() &&
-             !productQuantity.getText().trim().isEmpty();
+      return !productName.getText().trim().isEmpty() && !productQuantity.getText().trim().isEmpty();
    }
 
    private void SelectImage() {
@@ -759,35 +903,41 @@ public class InventoryDashboardController {
       }
    }
 
-   // Method to run the Python script and print the result to the terminal
-   private void runPythonScript(String imagePath) {
-        try {
-          // Use ProcessBuilder to run the Python script with the image path
-          // Use environment to find Python if it's in the PATH
-            ProcessBuilder pb = new ProcessBuilder(
-                "python",                      // Will use the 'python' command from PATH
-                "src/main/python/Barcode Module/BarcodeModule.py",         // Relative path to the script
-                imagePath                       // Image path passed as argument
-            );
+   private String barcodePythonScript(String imagePath) {
+      try {
+          ProcessBuilder pb = new ProcessBuilder("python", "src/main/python/BarcodeModule.py", imagePath);
+          Process process = pb.start();
 
-            // Set the working directory to the project's base folder
-            pb.directory(new File(System.getProperty("user.dir"))); 
-
-            pb.redirectErrorStream(true);  // Redirect errors to the output stream
-            Process process = pb.start();
-
-            // Capture the output from the Python script
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String result = in.lines().collect(Collectors.joining("\n"));
-            process.waitFor();  // Wait for the process to finish
-            System.out.println(result);  // Print the result to the terminal
-        } 
-        
-        catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error: " + e.getMessage());
-        }
+          BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+          String result = in.readLine();
+          process.waitFor();
+          return result;
+      } catch (Exception e) {
+          e.printStackTrace();
+          return null;
+      }
    }
+
+   private List<Item> receiptPythonScript(String imagePath) {
+      try {
+          ProcessBuilder pb = new ProcessBuilder("python", "src/main/python/ReceiptModule.py", imagePath);
+          Process process = pb.start();
+
+          BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+          String jsonResponse = in.lines().collect(Collectors.joining());
+          process.waitFor();
+
+          if (!jsonResponse.isEmpty()) {
+              Gson gson = new Gson();
+              Type itemListType = new TypeToken<List<Item>>() {}.getType();
+              return gson.fromJson(jsonResponse, itemListType);
+          }
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+      return null;
+   }
+
 
    // Method to open the edit form with the recipe's current details
    public void openEditIngriedent(int ingredientId) {

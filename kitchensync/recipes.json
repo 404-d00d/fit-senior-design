@@ -1,1 +1,22 @@
 [
+  {
+    "id": 0,
+    "name": "test",
+    "category": "dinner",
+    "servings": 1,
+    "description": "asd",
+    "prepTime": 2,
+    "passiveTime": 3,
+    "cookTime": 4,
+    "complexity": 1,
+    "tags": [],
+    "specialEquipment": [],
+    "ingredients": [
+      "dsa: 3 g"
+    ],
+    "steps": [
+      "dgf",
+      "hg"
+    ]
+  }
+]

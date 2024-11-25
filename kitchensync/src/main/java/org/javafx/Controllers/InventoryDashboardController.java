@@ -571,32 +571,59 @@ public class InventoryDashboardController {
 
       if (files != null && !files.isEmpty()) {
          for (File file : files) {
+               String absolutePathToScript = new File("src/main/python/ReceiptModule.py").getAbsolutePath();
                String imagePath = file.getAbsolutePath();
-               String command = "python src/main/python/receipt_processor.py " + imagePath + " Walmart";  // Replace with store if known
+
+               String command = String.format("python \"%s\" \"%s\"", absolutePathToScript, imagePath);
 
                try {
                   ProcessBuilder pb = new ProcessBuilder(command.split(" "));
                   pb.directory(new File(System.getProperty("user.dir")));
+                  pb.redirectErrorStream(true);
                   Process process = pb.start();
 
-                  BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                  BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                  StringBuilder output = new StringBuilder();
                   String line;
 
-                  while ((line = in.readLine()) != null) {
-                     System.out.println("Python Output: " + line);
-                     if (line.contains("Product ID:")) {
-                           String[] parts = line.split(",");
-                           if (parts.length > 1) {
-                              String productName = parts[0].split(":")[1].trim();
-                              String quantity = parts[1].split(":")[1].trim();
-                              prefillManualForm(productName, quantity, null);
-                           }
-                     } else if (line.contains("No items found.")) {
-                           showAlert("No Items Found", "No valid items were found on the receipt.");
-                     }
+                  // Capture the output from the Python script
+                  while ((line = inputReader.readLine()) != null) {
+                     output.append(line);
                   }
-               } catch (Exception e) {
+
+                  // Print the output for debugging purposes
+                  System.out.println("Python Script Output: " + output.toString());
+
+                  // Check if output is not empty
+                  if (output.length() == 0) {
+                     showAlert("Error", "No response from receipt scanner.");
+                     return;
+                  }
+
+                  try {
+                     // Parse the JSON response from Python script
+                     JsonObject jsonObject = JsonParser.parseString(output.toString()).getAsJsonObject();
+                     String status = jsonObject.get("status").getAsString();
+
+                     if ("success".equals(status)) {
+                           JsonArray upcCodes = jsonObject.getAsJsonArray("upc_codes");
+                           for (int i = 0; i < upcCodes.size(); i++) {
+                              String upcCode = upcCodes.get(i).getAsString();
+                              // Call the barcode processing function to retrieve product details
+                              fetchProductDetails(upcCode);
+                           }
+                     } else {
+                           String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "Unknown error occurred.";
+                           showAlert("Error", "An error occurred: " + message);
+                     }
+                  } catch (JsonSyntaxException e) {
+                     showAlert("Error", "Failed to parse response from receipt scanner.");
+                     e.printStackTrace();
+                  }
+
+               } catch (IOException e) {
                   e.printStackTrace();
+                  showAlert("Error", "An error occurred while executing the receipt image processing.");
                }
          }
       }

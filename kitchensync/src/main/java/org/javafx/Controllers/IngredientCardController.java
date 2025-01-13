@@ -1,5 +1,7 @@
 package org.javafx.Controllers;
 
+import java.io.File;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -19,14 +21,22 @@ public class IngredientCardController {
    private VBox ingredientCardPane;
    
    private int ingredientId;
+   private String imagePath;
 
    private InventoryDashboardController InventoryDashboardController;
 
-   public void setIngredientData(int id, String name, Image image, InventoryDashboardController controller) {
+   public void setIngredientData(int id, String name, String imagePath, InventoryDashboardController controller) {
       this.ingredientId = id;
       this.InventoryDashboardController = controller; 
       ingredientName.setText(name);
-      ingredientImage.setImage(image);
+      if (imagePath != null) {
+         try {
+               Image image = new Image(new File("/org/javafx/Resources/Item Images", imagePath).toURI().toString());
+               this.ingredientImage.setImage(image);
+         } catch (Exception e) {
+               e.printStackTrace();
+         }
+      }
    }
 
    // Getter methods to access data for duplication
@@ -40,6 +50,10 @@ public class IngredientCardController {
 
    public Image getImage() {
       return ingredientImage.getImage();
+   }
+
+   public String getImagePath() {
+      return imagePath;
    }
 
    @FXML

@@ -1,10 +1,13 @@
 org\javafx\Main\Main.class
 org\javafx\Controllers\EditPopUpController.class
+org\javafx\Controllers\LocalDateAdapter.class
+org\javafx\Controllers\MealPlannerController$3.class
 org\javafx\App.class
 org\javafx\PrimaryController.class
 org\javafx\Controllers\AddIngredientPopUpController.class
 org\javafx\Controllers\RemoveIngredientPopUpController.class
 org\javafx\Controllers\Ingredient.class
+org\javafx\Controllers\InventoryDashboardController$3.class
 org\javafx\Controllers\SignUpPageController.class
 org\javafx\Controllers\MyRecipesController.class
 org\javafx\Controllers\LoginPageController.class
@@ -22,6 +25,7 @@ org\javafx\Recipe\Recipe.class
 org\javafx\Controllers\MyListsController$1.class
 org\javafx\Controllers\InventoryDashboardController$1.class
 org\javafx\Controllers\IngredientCell.class
+org\javafx\Controllers\MealPlannerController$2.class
 org\javafx\SecondaryController.class
 module-info.class
 org\javafx\Controllers\ListCreationController.class

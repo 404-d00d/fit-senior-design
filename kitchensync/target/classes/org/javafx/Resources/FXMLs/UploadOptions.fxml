@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Bloom?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.BarcodeUploadController">
+   <children>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="112.0" layoutX="4.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1909.0" />
+      <Text layoutX="122.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="INVENTORY" wrappingWidth="321.30859375">
+         <font>
+            <Font size="56.0" />
+         </font>
+      </Text>
+      <Pane layoutX="424.0" layoutY="361.0" visible="false">
+         <children>
+            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="301.0" stroke="BLACK" strokeType="INSIDE" width="1069.0" />
+            <Button layoutX="55.0" layoutY="26.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30;" text="Manual Entry">
+               <font>
+                  <Font size="45.0" />
+               </font>
+            </Button>
+            <Button fx:id="BarcodeUpload" layoutX="410.0" layoutY="26.0" mnemonicParsing="false" onAction="#onBarcodeUpload" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30;" text="Barcode Upload" textAlignment="CENTER" wrapText="true" />
+            <Button layoutX="765.0" layoutY="26.0" mnemonicParsing="false" prefHeight="250.0" prefWidth="250.0" style="-fx-background-color: grey; -fx-font-size: 30;" text="Receipt Upload" />
+         </children>
+      </Pane>
+      <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
+      <VBox prefHeight="1080.0" prefWidth="275.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false" AnchorPane.leftAnchor="0.0">
+         <children>
+            <Button alignment="CENTER" contentDisplay="TOP" mnemonicParsing="false" prefHeight="91.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER">
+               <effect>
+                  <Bloom />
+               </effect>
+            </Button>
+            <Button mnemonicParsing="false" prefHeight="83.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Recipes" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" prefHeight="78.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" prefHeight="149.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Browse Recipes" textAlignment="CENTER" wrapText="true" />
+            <Button mnemonicParsing="false" prefHeight="86.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" prefHeight="85.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Button>
+            <Separator prefHeight="30.0" prefWidth="275.0" />
+            <Button mnemonicParsing="false" prefHeight="138.0" prefWidth="275.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Shopping Lists" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font size="40.0" />
+               </font>
+            </Button>
+            <Button mnemonicParsing="false" prefHeight="120.0" prefWidth="284.0" style="-fx-background-color: clear; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Needed Ingredients" textAlignment="CENTER" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="45.0" />
+               </font>
+            </Button>
+            <Separator prefHeight="48.0" prefWidth="621.0" />
+         </children>
+      </VBox>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="64.0" layoutX="479.0" layoutY="22.0" stroke="#ff8100" strokeType="INSIDE" strokeWidth="4.0" width="321.0" />
+      <Text layoutX="573.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Spaces" wrappingWidth="132.56119537353516">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#c4c4c4" height="64.0" layoutX="808.0" layoutY="22.0" stroke="BLACK" strokeType="INSIDE" width="321.0" />
+      <Text layoutX="895.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="All Items" wrappingWidth="164.56119537353516">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Text>
+      <Button layoutX="34.0" layoutY="28.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
+      <TextField layoutX="1170.0" layoutY="28.0" prefHeight="53.0" prefWidth="551.0" promptText="Can't Find Somthing?" style="-fx-background-color: Orange; -fx-background-radius: 50;" />
+   </children>
+</AnchorPane>

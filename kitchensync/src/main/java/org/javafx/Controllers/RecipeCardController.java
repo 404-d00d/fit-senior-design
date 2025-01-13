@@ -43,13 +43,24 @@ public class RecipeCardController {
       ContextMenu contextMenu = new ContextMenu();
       MenuItem editItem = new MenuItem("Edit");
       MenuItem deleteItem = new MenuItem("Delete");
+      MenuItem addToCollectionItem = new MenuItem("Add to Collection");
+      MenuItem addToFavoritesItem = new MenuItem("Add to Favorites");
+      MenuItem removeFromCollectionItem = new MenuItem("Remove from Current Collection");
 
-      contextMenu.getItems().addAll(editItem, deleteItem);
+      contextMenu.getItems().addAll(editItem, deleteItem, addToCollectionItem, addToFavoritesItem, removeFromCollectionItem);
 
       // Add event handlers for Edit and Delete, linking to MyRecipesController
       editItem.setOnAction(e -> myRecipesController.openEditRecipe(recipe));
       deleteItem.setOnAction(e -> myRecipesController.deleteRecipe(recipe));
 
+      // Add event handler for Add to Collection
+      addToCollectionItem.setOnAction(e -> myRecipesController.openAddToCollectionForm(recipe));
+
+      // Add event handler for Add to Favorites
+      addToFavoritesItem.setOnAction(e -> myRecipesController.addRecipeToFavorites(recipe));
+
+      // Add event handler for Remove From Current Collection
+      removeFromCollectionItem.setOnAction(e -> myRecipesController.removeFromCurrentCollection(recipe));
 
       // Handle right-click for context menu and left-click for details
       recipeCardPane.setOnMouseClicked(event -> {

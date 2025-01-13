@@ -2,6 +2,8 @@ package org.javafx.Item;
 
 import java.time.LocalDate;
 
+import javafx.scene.image.Image;
+
 public class Item {
     private String name;
     private Integer ID;
@@ -9,14 +11,16 @@ public class Item {
     private String location;
     private String expirDate;
     private String unit;
+    private String imagePath;
 
-    public Item(String name, Integer ID, Integer quantity, String unit, String location, String expirDate){
+    public Item(String name, Integer ID, Integer quantity, String unit, String location, String expirDate, String imagePath){
         this.name = name;
         this.ID = ID;
         this.quantity = quantity;
         this.unit = unit;
         this.location = location;
         this.expirDate = expirDate;
+        this.imagePath = imagePath;
     }
 
     public String getName(){
@@ -41,6 +45,10 @@ public class Item {
 
     public String getExpirDate(){
         return this.expirDate;
+    }
+
+    public String  getImagePath(){
+        return this.imagePath;
     }
 
     public void modifyQuantity(Integer newValue) {

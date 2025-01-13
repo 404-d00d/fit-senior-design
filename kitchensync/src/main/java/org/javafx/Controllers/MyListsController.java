@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -58,6 +59,8 @@ public class MyListsController {
    private VBox listPane;
 
    private Button currentSelectedButton = null;
+
+   private MealPlannerController mealPlannerController;
 
    @FXML
    private void initialize() {
@@ -214,13 +217,20 @@ public class MyListsController {
                  if (selectedList != null) {
                      ObservableList<Item> ingredientList = ingredientsMap.get(selectedList);
                      if (ingredientList != null) {
-                         Item newIngredient = new Item(name, quantity, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13");
+                         // Generate the ID based on the number of entries in the list
+                         int newId = ingredientList.size() + 1;
      
+                         // Create a new Item with the generated ID
+                         Item newIngredient = new Item(name, newId, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13", null);
+     
+                         // Add the new ingredient to the list
                          ingredientList.add(newIngredient);
                          myListsView.setItems(ingredientList);
      
-                         saveListsToJson();  // Save changes to JSON after adding the ingredient
+                         // Save changes to JSON
+                         saveListsToJson();
      
+                         // Clear the input fields
                          ingredientName.clear();
                          productQuantity.clear();
                          productUnit.setValue(null);
@@ -239,7 +249,7 @@ public class MyListsController {
              e.printStackTrace();
              showAlert("Error", "Save Failed", "An unexpected error occurred while saving the ingredient.");
          }
-      });
+     });
 
       // Switch to userDashboard Screen
       userDashboardButton.setOnAction(event -> {
@@ -311,6 +321,44 @@ public class MyListsController {
       alert.setContentText(content);
       alert.showAndWait();
    }
+
+   public void setMealPlannerController(MealPlannerController controller) {
+      this.mealPlannerController = controller;
+   }
+
+   public void updateNeededIngredientsList(List<Map<String, Object>> neededIngredients) {
+      // Fetch the "Needed Ingredients" list from the map
+      ObservableList<Item> neededIngredientsList = ingredientsMap.get("Needed Ingredients");
+  
+      if (neededIngredientsList == null) {
+          // If the list doesn't exist, create and initialize it
+          neededIngredientsList = FXCollections.observableArrayList();
+          ingredientsMap.put("Needed Ingredients", neededIngredientsList);
+      } else {
+          // Clear existing items in the list
+          neededIngredientsList.clear();
+      }
+  
+      // Convert the list of maps into `Item` objects and add them to the "Needed Ingredients" list
+      for (Map<String, Object> ingredient : neededIngredients) {
+          String name = (String) ingredient.get("name");
+          int quantity = ((Number) ingredient.get("quantity")).intValue();
+          String unit = (String) ingredient.get("unit");
+          String location = (String) ingredient.getOrDefault("meal", "Unknown Meal");
+  
+          // Create an Item instance and add it to the list
+          Item item = new Item(name, neededIngredientsList.size() + 1, quantity, unit, location, "N/A", null);
+          neededIngredientsList.add(item);
+      }
+  
+      // Update the ListView to display the updated "Needed Ingredients" list
+      if (currentSelectedButton != null && "Needed Ingredients".equals(currentSelectedButton.getText())) {
+          myListsView.setItems(neededIngredientsList);
+      }
+  
+      // Save changes to JSON to persist the updates
+      saveListsToJson();
+  }
 
    private void loadListsFromJson() {
       try (FileReader reader = new FileReader(LISTS_JSON_FILE)) {

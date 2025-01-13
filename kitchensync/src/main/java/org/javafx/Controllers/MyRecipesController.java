@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
@@ -25,6 +26,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -35,6 +38,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -56,16 +60,16 @@ public class MyRecipesController {
    private Button menuButton, inventoryButton, myRecipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton,
                   closeP1Button, closeP2Button, addRecipeButton, closeRecipeButton, addTagButton, addIngredientButton, imageSelectButton, saveButton,
                   nextStep, prevStep, userDashboardButton, mealPlannerButton, myListsButton, addEquipmentButton, prevStepButton, nextStepButton,
-                  addStepButton, backButton, nextButton, cookItButton, closeRecipeDetailsButton;
+                  addStepButton, backButton, nextButton, cookItButton, closeRecipeDetailsButton, addCollectionButton;
 
    @FXML
-   private VBox menuPane;
+   private VBox menuPane, collectionsButtons;
 
    @FXML
    private TextField recipeName, recipeTag, ingredientEntry, recipeETAPassive, recipeETA, recipeETAPrep, recipeYield, amountEntry, equipmentEntry;
    
    @FXML
-   private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry;
+   private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry, sortBy, ingredientFilter, categoryFilter, tagsFilter;
 
    @FXML
    private Pane myRecipesPane, myRecipeMainPane, addRecipePaneP1, addRecipePaneP2, recipeDetailsPane, recipeCookingPane;
@@ -119,20 +123,39 @@ public class MyRecipesController {
    private Map<String, AttributeValue> item = new HashMap<>();
 
    private static final String RECIPES_FILE_PATH = "recipes.json";
+   private static final String COLLECTIONS_FILE_PATH = "collections.json";
 
    private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
+   private Map<String, List<Integer>> recipeCollections = new HashMap<>();
 
+   private String currentCollection = "All Recipes";
 
    @FXML
    private void initialize() {
       
       //database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
 
+      loadCollectionsFromJson();
+      
+      // Ensure default collections are always present
+      recipeCollections.putIfAbsent("All Recipes", new ArrayList<>());
+      recipeCollections.putIfAbsent("Favorites", new ArrayList<>());
+
+      // Save default collections
+      saveCollectionsToJson();
+
+      loadCollectionButtons();
       recipeList.addAll(loadRecipesFromJson());
       loadRecipesCards();
 
+      recipeCollection.getItems().clear();
+      recipeCollection.getItems().addAll(recipeCollections.keySet());
+
       recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
       ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
+      sortBy.getItems().addAll("A-Z", "Z-A", "Complexity", "Prep Time", "Cook Time");
+
+      sortBy.setOnAction(event -> handleSortBySelection());
 
       // Set up TableView columns for ingredients
       ingredientList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
@@ -184,6 +207,7 @@ public class MyRecipesController {
       addEquipmentButton.setOnAction(event -> addEquipment());
       prevStep.setOnAction(event -> detailsSteps(-1));
       nextStep.setOnAction(event -> detailsSteps(1));
+      addCollectionButton.setOnAction(event -> openAddCollectionForm());
 
       // Initialize the first step
       preparationSteps.add("");
@@ -588,7 +612,7 @@ public class MyRecipesController {
             }
             else {
                // Otherwise, create a new recipe card
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
+               FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
                recipeCard = loader.load();
 
                // Get the RecipeCardController and pass `this` as MyRecipesController
@@ -909,7 +933,7 @@ public class MyRecipesController {
     recipeFlowPane.getChildren().clear(); // Clear any existing children before repopulating
     for (Recipe recipe : recipeList) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/RecipeCard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
             VBox recipeCard = loader.load();
 
             // Get the RecipeCardController and pass `this` as MyRecipesController
@@ -936,8 +960,6 @@ public class MyRecipesController {
         }
       }
    }
-
-
 
    // Method to apply hover effect for displaying short recipe details
    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
@@ -979,6 +1001,236 @@ public class MyRecipesController {
           tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
       });
   }
+   /*
+  
+  Recipe Cards
+
+  */
+
+   // Sort Recipe Cards by: X
+   @FXML
+   private void handleSortBySelection() {
+      String selectedSort = sortBy.getValue();
+
+      if (selectedSort == null) return; // Do nothing if no sort option is selected
+
+      switch (selectedSort) {
+         case "A-Z":
+               recipeList.sort((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()));
+               break;
+         case "Z-A":
+               recipeList.sort((r1, r2) -> r2.getName().compareToIgnoreCase(r1.getName()));
+               break;
+         case "Complexity":
+               recipeList.sort((r1, r2) -> Integer.compare(r1.getComplexity(), r2.getComplexity()));
+               break;
+         case "Prep Time":
+               recipeList.sort((r1, r2) -> Integer.compare(r1.getPrepTime(), r2.getPrepTime()));
+               break;
+         case "Cook Time":
+               recipeList.sort((r1, r2) -> Integer.compare(r1.getCookTime(), r2.getCookTime()));
+               break;
+         default:
+               break;
+      }
+
+      // Refresh the recipe cards in the FlowPane
+      updateRecipeCards();
+   }
+
+   private void updateRecipeCards() {
+      recipeFlowPane.getChildren().clear();
+  
+      for (Recipe recipe : recipeList) {
+          VBox recipeCard = recipeWidgets.get(recipe.getID());
+          if (recipeCard != null) {
+              recipeFlowPane.getChildren().add(recipeCard);
+          }
+      }
+   }
+
+  /*
+  
+  Collections
+
+  */
+
+   public void addRecipeToFavorites(Recipe recipe) {
+      if (!recipeCollections.get("Favorites").contains(recipe.getID())) {
+          recipeCollections.get("Favorites").add(recipe.getID());
+          saveCollectionsToJson();
+          System.out.println("Recipe added to Favorites.");
+      } else {
+          showAlert("Info", "Already in Favorites", "This recipe is already in the Favorites collection.");
+      }
+  }
+
+   public void openAddToCollectionForm(Recipe recipe) {
+      ChoiceDialog<String> dialog = new ChoiceDialog<>("All Recipes", recipeCollections.keySet());
+      dialog.setTitle("Add to Collection");
+      dialog.setHeaderText("Select a Collection");
+      dialog.setContentText("Collection:");
+
+      Optional<String> result = dialog.showAndWait();
+      result.ifPresent(collection -> {
+         if (!recipeCollections.containsKey(collection)) {
+            recipeCollections.put(collection, new ArrayList<>());
+         }
+         if (!recipeCollections.get(collection).contains(recipe.getID())) {
+            recipeCollections.get(collection).add(recipe.getID());
+            saveCollectionsToJson();
+            System.out.println("Recipe added to collection: " + collection);
+         } else {
+            showAlert("Info", "Already in Collection", "This recipe is already in the selected collection.");
+         }
+      });
+   }
+
+   private void openAddCollectionForm() {
+      TextInputDialog dialog = new TextInputDialog();
+      dialog.setTitle("New Collection");
+      dialog.setHeaderText("Add a New Recipe Collection");
+      dialog.setContentText("Collection Name:");
+  
+      Optional<String> result = dialog.showAndWait();
+      result.ifPresent(collectionName -> {
+          if (!recipeCollections.containsKey(collectionName)) {
+              recipeCollections.put(collectionName, new ArrayList<>());
+              saveCollectionsToJson();
+              Button newButton = createCollectionButton(collectionName);
+              collectionsButtons.getChildren().add(newButton);
+          } else {
+              showAlert("Error", "Duplicate Collection", "A collection with this name already exists.");
+          }
+      });
+   }
+
+   private void deleteCollection(String collectionName) {
+      if (!collectionName.equals("All Recipes") && !collectionName.equals("Favorites")) {
+         Alert confirmation = new Alert(AlertType.CONFIRMATION);
+         confirmation.setTitle("Delete Collection");
+         confirmation.setHeaderText("Are you sure you want to delete this collection?");
+         confirmation.setContentText("Collection: " + collectionName);
+         confirmation.getDialogPane().setPrefSize(300, 150); // Scale down the popup size
+         Optional<ButtonType> result = confirmation.showAndWait();
+
+         if (result.isPresent() && result.get() == ButtonType.OK) {
+               recipeCollections.remove(collectionName);
+               saveCollectionsToJson();
+               loadCollectionButtons(); // Refresh buttons
+         }
+      } else {
+         showAlert("Error", "Cannot Delete", "This collection cannot be deleted.");
+      }
+   }
+
+   private void filterRecipesByCollection(String collectionName) {
+      currentCollection = collectionName;
+      recipeFlowPane.getChildren().clear();
+  
+      List<Integer> recipeIDs = recipeCollections.getOrDefault(collectionName, new ArrayList<>());
+  
+      for (Recipe recipe : recipeList) {
+          if (recipeIDs.contains(recipe.getID()) || collectionName.equals("All Recipes")) {
+              recipeFlowPane.getChildren().add(recipeWidgets.get(recipe.getID()));
+          }
+      }
+   }
+
+   private Button createCollectionButton(String collectionName) {
+      Button button = new Button(collectionName);
+      button.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; " +
+                     "-fx-border-radius: 50; -fx-border-width: 3; -fx-font-size: 20; -fx-padding: 5;");
+      button.setPrefWidth(120); // Set button width
+      button.setPrefHeight(40); // Set button height
+
+      button.setOnAction(event -> {
+         filterRecipesByCollection(collectionName);
+         updateButtonStyles(button);
+      });
+
+      // Add delete option for non-default collections
+      if (!collectionName.equals("All Recipes") && !collectionName.equals("Favorites")) {
+         ContextMenu contextMenu = new ContextMenu();
+         MenuItem deleteItem = new MenuItem("Delete Collection");
+         deleteItem.setOnAction(e -> deleteCollection(collectionName));
+         contextMenu.getItems().add(deleteItem);
+         button.setOnContextMenuRequested(e -> contextMenu.show(button, e.getScreenX(), e.getScreenY()));
+      }
+
+      return button;
+   }
+
+   private void updateButtonStyles(Button activeButton) {
+      for (var node : collectionsButtons.getChildren()) {
+          if (node instanceof Button) {
+              Button button = (Button) node;
+              if (button == activeButton) {
+                  button.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 25;");
+              } else {
+                  button.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 25;");
+              }
+          }
+      }
+   }
+
+   private void saveCollectionsToJson() {
+      File file = new File(COLLECTIONS_FILE_PATH);
+      try (Writer writer = new FileWriter(file)) {
+         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+         gson.toJson(recipeCollections, writer);
+         System.out.println("Collections successfully saved to JSON.");
+      } catch (IOException e) {
+         e.printStackTrace();
+         System.out.println("Save Error - Failed to save collections to JSON file.");
+      }
+   }
+
+   private void loadCollectionButtons() {
+      collectionsButtons.getChildren().clear(); // Clear existing buttons
+  
+      for (String collectionName : recipeCollections.keySet()) {
+          Button collectionButton = createCollectionButton(collectionName);
+          collectionsButtons.getChildren().add(collectionButton);
+      }
+   }
+
+   private void loadCollectionsFromJson() {
+      File file = new File(COLLECTIONS_FILE_PATH);
+      if (file.exists() && file.length() > 0) {
+         try (Reader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            recipeCollections = gson.fromJson(reader, Map.class);
+            if (recipeCollections == null) recipeCollections = new HashMap<>();
+            System.out.println("Collections successfully loaded from JSON.");
+         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Load Error - Failed to load collections from JSON file.");
+         }
+      }
+   }
+
+   public void removeFromCurrentCollection(Recipe recipe) {
+      String currentCollection = getCurrentCollection(); // Implement this to track the current collection name
+      if (currentCollection.equals("All Recipes")) {
+          showAlert("Error", "Cannot Remove from All Recipes", "You cannot remove a recipe from the All Recipes collection.");
+          return;
+      }
+  
+      List<Integer> recipeIDs = recipeCollections.getOrDefault(currentCollection, new ArrayList<>());
+      if (recipeIDs.contains(recipe.getID())) {
+          recipeIDs.remove((Integer) recipe.getID());
+          saveCollectionsToJson();
+          filterRecipesByCollection(currentCollection);
+          System.out.println("Recipe removed from collection: " + currentCollection);
+      } else {
+          showAlert("Info", "Not in Collection", "This recipe is not part of the current collection.");
+      }
+   }
+
+   private String getCurrentCollection() {
+      return currentCollection;
+   }
 }
 
 

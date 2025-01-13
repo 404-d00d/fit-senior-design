@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 import org.javafx.Item.Item;
@@ -32,9 +33,13 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
@@ -46,6 +51,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -62,6 +68,7 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.control.TextInputDialog;
 import java.util.Optional;
+import java.util.Set;
 
 public class InventoryDashboardController {
 
@@ -123,18 +130,36 @@ public class InventoryDashboardController {
    private int nextIngredientID = 1;
 
    @FXML
+   private ProgressBar progressBar;
+
+   @FXML
+   private Label tipsLabel;
+
+   @FXML
+   private Text loadingTXT;
+
+   private final List<String> tips = List.of(
+    "Did you know? Scanned items can be categorized automatically!",
+    "Tip: You can manually add items by clicking the 'Add Ingredient' button.",
+    "Ensure the barcode or receipt image is clear for better accuracy.",
+    "Organize your ingredients by tags for quick access!",
+    "Pro Tip: Expiring soon items are highlighted for easy identification."
+   );
+
+   @FXML
    private void initialize() {
 
       setupDefaultCategories();
 
       loadPersistedSpacesAndCategories(); // Load spaces and categories from JSON
       loadIngredientInventory();
+
       loadCategoriesForSpace("Fridge");
       loadCategoriesForSpace("Freezer");
       loadCategoriesForSpace("Pantry");
 
-      // Fetch ingredients from the database and update views
-      List<Item> ingredients = fetchIngredientsFromDatabase();
+      // Update Spaces View
+      updateSpacesItemCards();
 
       // Set current space to default (e.g., "Fridge")
       currentSpace = "Fridge";
@@ -187,7 +212,7 @@ public class InventoryDashboardController {
          gridPane.setVisible(true);
          placesList = false;
 
-         updateIngredientGrid(fetchIngredientsFromDatabase());
+         updateIngredientGrid(ingredientInventory);
       });
       setClickEffect(gridViewButton);
 
@@ -197,7 +222,7 @@ public class InventoryDashboardController {
          ingredientList.setVisible(true);
          placesList = true;
 
-         updateIngredientList(fetchIngredientsFromDatabase());
+         updateIngredientList(ingredientInventory);
       });
       setClickEffect(listViewButton);
 
@@ -253,20 +278,22 @@ public class InventoryDashboardController {
          places = false;
          spacesPane.setVisible(true);
          spaces = true;
+         uploadPane.setVisible(false);
       });
 
       setClickEffect(spacesButton);
 
       placesButton.setOnAction(event -> {
+         uploadPane.setVisible(false);
          spacesPane.setVisible(false);
          spaces = false;
          placesPane.setVisible(true);
          places = true;
 
          if (placesGrid) {
-            updateIngredientGrid(fetchIngredientsFromDatabase());
+            updateIngredientGrid(ingredientInventory);
          } else {
-            updateIngredientList(fetchIngredientsFromDatabase());
+            updateIngredientList(ingredientInventory);
          }
       });
 
@@ -525,41 +552,47 @@ public class InventoryDashboardController {
    private void updateIngredientGrid(List<Item> ingredients) {
       // Clear the existing ingredient cards to prevent duplicates
       ingredientGrid.getChildren().clear();
-  
-      // Add each ingredient as a card to the FlowPane
+
+      // Maintain a set of IDs to avoid duplicates
+      Set<Integer> addedItemIds = new HashSet<>();
+
       for (Item ingredient : ingredients) {
-          try {
-              // Load the FXML for the ingredient card
-              FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/ingredientCard.fxml"));
-              VBox ingredientCard = loader.load();
-  
-              // Set ingredient card details
-              IngredientCardController controller = loader.getController();
-              controller.setIngredientData(
-                  ingredient.getID(),
-                  ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
-                  null, // we need to add a image ref to the ingredients
-                  this
-              );
-  
-              // Add the card to the FlowPane
-              ingredientGrid.getChildren().add(ingredientCard);
-          } catch (IOException e) {
-              e.printStackTrace();
-          }
+         if (!addedItemIds.contains(ingredient.getID())) {
+               addedItemIds.add(ingredient.getID());
+               try {
+                  FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
+                  VBox ingredientCard = loader.load();
+
+                  IngredientCardController controller = loader.getController();
+                  controller.setIngredientData(
+                     ingredient.getID(),
+                     ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
+                     null,
+                     this
+                  );
+
+                  ingredientGrid.getChildren().add(ingredientCard);
+               } catch (IOException e) {
+                  e.printStackTrace();
+               }
+         }
       }
-  }
+   }
 
    private void updateIngredientList(List<Item> ingredients) {
       ObservableList<String> ingredientItems = FXCollections.observableArrayList();
   
-      // Add each ingredient to the list
+      Set<Integer> addedItemIds = new HashSet<>();
+  
       for (Item ingredient : ingredients) {
-          ingredientItems.add(ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit());
+          if (!addedItemIds.contains(ingredient.getID())) {
+              addedItemIds.add(ingredient.getID());
+              ingredientItems.add(ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit());
+          }
       }
   
-      ingredientList.setItems(ingredientItems); // Set items to ListView
-   }
+      ingredientList.setItems(ingredientItems);
+  }
    
    @FXML
    private void onReceiptUpload() {
@@ -570,62 +603,95 @@ public class InventoryDashboardController {
       List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
       if (files != null && !files.isEmpty()) {
-         for (File file : files) {
-               String absolutePathToScript = new File("src/main/python/ReceiptModule.py").getAbsolutePath();
-               String imagePath = file.getAbsolutePath();
+         List<String> failureMessages = new ArrayList<>(); // Collect failures
+         showLoadingScreen(); // Show the loading screen with progress bar
 
-               String command = String.format("python \"%s\" \"%s\"", absolutePathToScript, imagePath);
+         // Define a Task to process files in the background
+         Task<Void> receiptProcessingTask = new Task<>() {
+               @Override
+               protected Void call() throws Exception {
+                  int totalTasks = files.size();
+                  int completedTasks = 0;
 
-               try {
-                  ProcessBuilder pb = new ProcessBuilder(command.split(" "));
-                  pb.directory(new File(System.getProperty("user.dir")));
-                  pb.redirectErrorStream(true);
-                  Process process = pb.start();
+                  for (File file : files) {
+                     try {
+                           String absolutePathToScript = new File("src/main/python/ReceiptModule.py").getAbsolutePath();
+                           String imagePath = file.getAbsolutePath();
 
-                  BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                  StringBuilder output = new StringBuilder();
-                  String line;
+                           String command = String.format("python \"%s\" \"%s\"", absolutePathToScript, imagePath);
 
-                  // Capture the output from the Python script
-                  while ((line = inputReader.readLine()) != null) {
-                     output.append(line);
-                  }
+                           ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+                           pb.directory(new File(System.getProperty("user.dir")));
+                           pb.redirectErrorStream(true);
+                           Process process = pb.start();
 
-                  // Print the output for debugging purposes
-                  System.out.println("Python Script Output: " + output.toString());
+                           BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                           StringBuilder output = new StringBuilder();
+                           String line;
 
-                  // Check if output is not empty
-                  if (output.length() == 0) {
-                     showAlert("Error", "No response from receipt scanner.");
-                     return;
-                  }
-
-                  try {
-                     // Parse the JSON response from Python script
-                     JsonObject jsonObject = JsonParser.parseString(output.toString()).getAsJsonObject();
-                     String status = jsonObject.get("status").getAsString();
-
-                     if ("success".equals(status)) {
-                           JsonArray upcCodes = jsonObject.getAsJsonArray("upc_codes");
-                           for (int i = 0; i < upcCodes.size(); i++) {
-                              String upcCode = upcCodes.get(i).getAsString();
-                              // Call the barcode processing function to retrieve product details
-                              fetchProductDetails(upcCode);
+                           while ((line = inputReader.readLine()) != null) {
+                              output.append(line);
                            }
-                     } else {
-                           String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "Unknown error occurred.";
-                           showAlert("Error", "An error occurred: " + message);
+
+                           if (output.length() == 0) {
+                              failureMessages.add("File: " + file.getName() + " - No response from receipt scanner.");
+                              continue;
+                           }
+
+                           JsonObject jsonObject = JsonParser.parseString(output.toString()).getAsJsonObject();
+                           String status = jsonObject.get("status").getAsString();
+
+                           if ("success".equals(status)) {
+                              JsonArray upcCodes = jsonObject.getAsJsonArray("upc_codes");
+                              for (int i = 0; i < upcCodes.size(); i++) {
+                                 String upcCode = upcCodes.get(i).getAsString();
+                                 try {
+                                       fetchProductDetails(upcCode);
+                                 } catch (Exception e) {
+                                       failureMessages.add("UPC Code: " + upcCode + " - Error fetching details.");
+                                 }
+                              }
+                           } else {
+                              String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "Unknown error occurred.";
+                              failureMessages.add("File: " + file.getName() + " - " + message);
+                           }
+                     } catch (IOException e) {
+                           e.printStackTrace();
+                           failureMessages.add("File: " + file.getName() + " - Error during processing.");
                      }
-                  } catch (JsonSyntaxException e) {
-                     showAlert("Error", "Failed to parse response from receipt scanner.");
-                     e.printStackTrace();
+
+                     // Update progress
+                     completedTasks++;
+                     updateProgress(completedTasks, totalTasks);
                   }
 
-               } catch (IOException e) {
-                  e.printStackTrace();
-                  showAlert("Error", "An error occurred while executing the receipt image processing.");
+                  return null;
                }
-         }
+         };
+
+         // Bind progress bar to task progress
+         progressBar.progressProperty().bind(receiptProcessingTask.progressProperty());
+
+         // Handle task completion
+         receiptProcessingTask.setOnSucceeded(event -> {
+               hideLoadingScreen(); // Hide the loading screen
+               progressBar.progressProperty().unbind();
+               progressBar.setProgress(0); // Reset progress bar
+
+               if (!failureMessages.isEmpty()) {
+                  showFailureAlert("Receipt Errors", "The following items failed:", String.join("\n", failureMessages));
+               }
+         });
+
+         receiptProcessingTask.setOnFailed(event -> {
+               hideLoadingScreen();
+               progressBar.progressProperty().unbind();
+               progressBar.setProgress(0);
+               showFailureAlert("Error", "An unexpected error occurred during receipt processing.", receiptProcessingTask.getException().getMessage());
+         });
+
+         // Run the task in a new thread
+         new Thread(receiptProcessingTask).start();
       }
    }
 
@@ -638,38 +704,36 @@ public class InventoryDashboardController {
       List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
       if (files != null && !files.isEmpty()) {
-         for (File file : files) {
-               String absolutePathToScript = new File("src/main/python/BarcodeModule.py").getAbsolutePath();
-               String imagePath = file.getAbsolutePath();
+         showLoadingScreen();
 
-               String command = String.format("python \"%s\" \"%s\"", absolutePathToScript, imagePath);
-
+         new Thread(() -> {
                try {
-                  ProcessBuilder pb = new ProcessBuilder(command.split(" "));
-                  pb.directory(new File(System.getProperty("user.dir")));
-                  pb.redirectErrorStream(true);
-                  Process process = pb.start();
+                  for (File file : files) {
+                     String absolutePathToScript = new File("src/main/python/BarcodeModule.py").getAbsolutePath();
+                     String imagePath = file.getAbsolutePath();
 
-                  BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                  StringBuilder output = new StringBuilder();
-                  String line;
+                     String command = String.format("python \"%s\" \"%s\"", absolutePathToScript, imagePath);
 
-                  // Capture the output from the Python script
-                  while ((line = inputReader.readLine()) != null) {
-                     output.append(line);
-                  }
+                     ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+                     pb.directory(new File(System.getProperty("user.dir")));
+                     pb.redirectErrorStream(true);
+                     Process process = pb.start();
 
-                  // Print the output for debugging purposes
-                  System.out.println("Python Script Output: " + output.toString());
+                     BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                     StringBuilder output = new StringBuilder();
+                     String line;
 
-                  // Check if output is not empty
-                  if (output.length() == 0) {
-                     showAlert("Error", "No response from barcode scanner.");
-                     return;
-                  }
+                     while ((line = inputReader.readLine()) != null) {
+                           output.append(line);
+                     }
 
-                  try {
-                     // Parse the JSON response from Python script
+                     System.out.println("Python Script Output: " + output.toString());
+
+                     if (output.length() == 0) {
+                           showAlert("Error", "No response from barcode scanner.");
+                           return;
+                     }
+
                      JsonObject jsonObject = JsonParser.parseString(output.toString()).getAsJsonObject();
                      String status = jsonObject.get("status").getAsString();
 
@@ -684,77 +748,108 @@ public class InventoryDashboardController {
                                  String productName = result.get("product_name").getAsString();
                                  String quantityInfo = result.has("quantity") ? result.get("quantity").getAsString() : null;
 
-                                 // Prefill manual form with product name and quantity
                                  prefillManualForm(productName, Integer.toString(parseQuantity(quantityInfo)), parseUnit(quantityInfo));
                               } else if ("not_found".equals(resultStatus)) {
                                  showAlert("Product Not Found", "No product information found for barcode: " + barcode + ", please enter manually.");
-                              } else if ("error".equals(resultStatus)) {
-                                 String message = result.get("message").getAsString();
-                                 showAlert("Error", "An error occurred: " + message);
                               }
                            }
                      } else {
-                           String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "Unknown error occurred.";
-                           showAlert("Error", "An error occurred: " + message);
+                           showAlert("Error", "An error occurred while scanning barcodes.");
                      }
-                  } catch (JsonSyntaxException e) {
-                     showAlert("Error", "Failed to parse response from barcode scanner.");
-                     e.printStackTrace();
                   }
-
                } catch (IOException e) {
                   e.printStackTrace();
-                  showAlert("Error", "An error occurred while executing the barcode image processing.");
+                  showAlert("Error", "An error occurred during barcode processing.");
+               } finally {
+                  hideLoadingScreen();
                }
-         }
+         }).start();
       }
+   }
+
+   private void showLoadingScreen() {
+      progressBar.setVisible(true);
+      tipsLabel.setVisible(true);
+      loadingTXT.setVisible(true);
+  
+      // Randomly select a tip to display
+      String randomTip = tips.get((int) (Math.random() * tips.size()));
+      tipsLabel.setText(randomTip);
+   }
+  
+   private void hideLoadingScreen() {
+         // Ensure this is run on the JavaFX application thread
+         javafx.application.Platform.runLater(() -> {
+            progressBar.setVisible(false);
+            tipsLabel.setVisible(false);
+            loadingTXT.setVisible(false);
+         });
+   }
+
+   private void updateProgressBar(double progress) {
+      progressBar.setProgress(progress);
    }
 
    // Helper method to parse quantity and unit from the quantity string
    private Integer parseQuantity(String quantityInfo) {
       if (quantityInfo == null) return null;
-
+  
       try {
-         // Try to extract a number from the quantity information
-         String quantityString = quantityInfo.split(" ")[0]; // Assuming quantity is the first word
-         return Integer.parseInt(quantityString);
+          // Extract the number from the quantity information
+          String quantityString = quantityInfo.split(" ")[0];
+          return Integer.parseInt(quantityString);
       } catch (NumberFormatException e) {
-         // If we can't parse the quantity, return null
-         return null;
+          return null;  // Return null if parsing fails
       }
-   }
-
+  }
+  
    private String parseUnit(String quantityInfo) {
       if (quantityInfo == null) return null;
-
+   
       String[] parts = quantityInfo.split(" ");
-      return (parts.length > 1) ? parts[1] : null; // Return unit if available
+      return (parts.length > 1) ? parts[1] : null;
    }
 
    private void fetchProductDetails(String upc) {
       try {
-          ProcessBuilder pb = new ProcessBuilder("python", "src/main/python/get_product_details.py", upc);
-          Process process = pb.start();
+         ProcessBuilder pb = new ProcessBuilder("python", "src/main/python/ProductDetails.py", upc);
+         pb.directory(new File(System.getProperty("user.dir")));
+         pb.redirectErrorStream(true);
+         Process process = pb.start();
 
-          BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-          String jsonResponse = in.lines().collect(Collectors.joining());
-          process.waitFor();
+         BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+         String jsonResponse = in.lines().collect(Collectors.joining());
+         process.waitFor();
 
-          if (!jsonResponse.isEmpty()) {
-              Gson gson = new Gson();
-              JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
-              String name = jsonObject.get("name").getAsString();
-              String quantity = jsonObject.get("quantity").getAsString();
-              String unit = jsonObject.get("unit").getAsString();
+         if (!jsonResponse.isEmpty()) {
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
+            if ("success".equals(jsonObject.get("status").getAsString())) {
+                  JsonObject product = jsonObject.getAsJsonObject("product");
+                  String name = product.has("product_name") ? product.get("product_name").getAsString() : null;
+                  String quantityInfo = product.has("quantity") ? product.get("quantity").getAsString() : null;
 
-              Item item = new Item(name, 0, Integer.parseInt(quantity), unit, null, null);
-              prefillManualForm(item.getName(), Integer.toString(item.getQuantity()), item.getUnit());
-          }
+                  prefillManualForm(name, quantityInfo != null ? parseQuantity(quantityInfo).toString() : null, parseUnit(quantityInfo));
+            } else {
+                  String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "No product information in the database.";
+                  showFailureAlert("Barcode Error", "UPC Code: " + upc, message);
+            }
+         } else {
+            showFailureAlert("Barcode Error", "UPC Code: " + upc, "No response from the server.");
+         }
       } catch (Exception e) {
-          e.printStackTrace();
+         e.printStackTrace();
+         showFailureAlert("Barcode Error", "UPC Code: " + upc, "An error occurred while processing.");
       }
-  }
+   }
 
+   private void showFailureAlert(String title, String header, String content) {
+      Alert alert = new Alert(Alert.AlertType.ERROR);
+      alert.setTitle(title);
+      alert.setHeaderText(header);
+      alert.setContentText(content);
+      alert.showAndWait();
+   }
 
    // Helper method to style the active space button
    private void styleActiveButton(Button activeButton) {
@@ -793,18 +888,19 @@ public class InventoryDashboardController {
          //String expirationDateString = expirationDate.format(formatter);
 
          // Create new ingredient item and add to inventory
-         Item newIngredient = new Item(ingredientName, 0, Integer.parseInt(quantity), unit, location, convertedDate);
+         String imageFileName = selectedImageFile != null ? selectedImageFile.getName() : null;
+         Item newIngredient = new Item(ingredientName, 0, Integer.parseInt(quantity), unit, location, convertedDate, imageFileName);
          
          addIngredientToDatabase(newIngredient);
 
          try {
             // Load the FXML for the ingredient card
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/ingredientCard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
             VBox ingredientCard = loader.load();
 
             // Set ingredient card details
             IngredientCardController controller = loader.getController();
-            controller.setIngredientData(newIngredient.getID(), ingredientName + " - " + quantity + " " + unit, selectedImage, this);
+            controller.setIngredientData(newIngredient.getID(), ingredientName + " - " + quantity + " " + unit, newIngredient.getImagePath(), this);
 
             // Store the controller in the properties map for later access
             ingredientCard.getProperties().put("controller", controller);
@@ -840,6 +936,8 @@ public class InventoryDashboardController {
             productLoc.setValue(null);
             productEXPDate.setValue(null);
             tags.clear();
+            imagePreview.setImage(null); // Clear the image preview
+            selectedImage.cancel();
 
             // Hide add ingredient pane and show main inventory view
             addIngredientMenuPane.setVisible(false);
@@ -865,7 +963,7 @@ public class InventoryDashboardController {
    private VBox createIngredientCard(Item ingredient) {
     try {
         // Load the FXML for the ingredient card
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/ingredientCard.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
         VBox ingredientCard = loader.load();
 
         // Set ingredient card details
@@ -888,7 +986,7 @@ public class InventoryDashboardController {
    private Node createDuplicateNode(VBox originalCard) {
       try {
          // Load the FXML again to create a fresh duplicate
-         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/ingredientCard.fxml"));
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
          VBox duplicateCard = loader.load();
 
          // Transfer data from the original card to the duplicate
@@ -898,7 +996,7 @@ public class InventoryDashboardController {
          // Set the same data on the duplicate
          duplicateController.setIngredientData(originalController.getIngredientId(), 
                                                 originalController.getIngredientName(), 
-                                                originalController.getImage(), 
+                                                originalController.getImagePath(), 
                                                 this);
          return duplicateCard;
       } catch (IOException e) {
@@ -914,21 +1012,31 @@ public class InventoryDashboardController {
    private void SelectImage() {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Select Ingredient Image");
-
+  
       // Restrict to image file types
       fileChooser.getExtensionFilters().add(
-         new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+          new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
       );
-
+  
       Stage stage = (Stage) imageSelect.getScene().getWindow();  // Get the current stage
       selectedImageFile = fileChooser.showOpenDialog(stage);
-
+  
       if (selectedImageFile != null) {
-         // Convert file to Image
-        selectedImage = new Image(selectedImageFile.toURI().toString());
-        imagePreview.setImage(selectedImage);
+          // Convert file to Image
+          selectedImage = new Image(selectedImageFile.toURI().toString());
+          imagePreview.setImage(selectedImage);
+  
+          // Copy the image to the resources folder
+          String destinationFileName = selectedImageFile.getName();
+          try {
+              copyImageToResources(selectedImageFile, destinationFileName);
+              System.out.println("Image copied to resources folder: " + destinationFileName);
+          } catch (IOException e) {
+              e.printStackTrace();
+              showAlert("Error", "Failed to copy image to resources folder.");
+          }
       }
-   }
+  }
 
    private String barcodePythonScript(String imagePath) {
       try {
@@ -1401,22 +1509,7 @@ public class InventoryDashboardController {
   }
       
   
-   private List<Item> fetchIngredientsFromDatabase() {
-      try (Reader reader = new FileReader("itemInventory.json")) {
-          Gson gson = new Gson();
-          Type itemListType = new TypeToken<List<Item>>() {}.getType();
-          ingredientInventory = gson.fromJson(reader, itemListType);
-  
-          if (ingredientInventory == null) {
-              ingredientInventory = new ArrayList<>();
-          }
-  
-          System.out.println("Inventory loaded from JSON file.");
-      } catch (IOException e) {
-          e.printStackTrace();
-          showAlert("Load Error", "Failed to load inventory from JSON file.");
-      }
-  
+   private void updateSpacesItemCards() {
       // Update categories for spaces after loading ingredients
       for (Item ingredient : ingredientInventory) {
           String location = ingredient.getLocation();
@@ -1444,8 +1537,10 @@ public class InventoryDashboardController {
               }
           }
       }
-  
-      return ingredientInventory;
   }
 
+   private void copyImageToResources(File sourceFile, String destinationFileName) throws IOException {
+      File destinationFile = new File("/org/javafx/Resources/Item Images", destinationFileName);
+      Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+   }
 }

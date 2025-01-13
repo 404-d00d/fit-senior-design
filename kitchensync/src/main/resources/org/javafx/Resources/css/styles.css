@@ -1,0 +1,61 @@
+/* General Styles */
+.root {
+   -fx-font-family: 'Segoe UI', sans-serif;
+}
+
+/* Background */
+.background {
+   -fx-fill: linear-gradient(to bottom, #c4c4c4, #8c8c8c);
+}
+
+/* Login Card */
+.login-card {
+   -fx-fill: white;
+   -fx-stroke: #e0e0e0;
+   -fx-stroke-width: 2;
+   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 10, 0.5, 0, 5);
+}
+
+/* Text Styles */
+.login-header {
+   -fx-font-size: 36px;
+   -fx-font-weight: bold;
+   -fx-fill: #333333;
+   -fx-text-alignment: center;
+}
+
+.form-label {
+   -fx-font-size: 16px;
+   -fx-font-weight: bold;
+   -fx-fill: #666666;
+}
+
+.form-input {
+   -fx-background-color: #f7f7f7;
+   -fx-border-color: #cccccc;
+   -fx-border-radius: 8;
+   -fx-padding: 5 10;
+   -fx-font-size: 14px;
+}
+
+/* Buttons */
+.primary-button {
+   -fx-background-color: orange;
+   -fx-text-fill: white;
+   -fx-font-weight: bold;
+   -fx-font-size: 16px;
+   -fx-background-radius: 25;
+   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 5, 0.5, 0, 3);
+}
+
+.secondary-button {
+   -fx-background-color: grey;
+   -fx-text-fill: orange;
+   -fx-border-color: orange;
+   -fx-border-radius: 25;
+   -fx-border-width: 2;
+   -fx-font-weight: bold;
+   -fx-font-size: 16px;
+   -fx-background-radius: 25;
+   -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 5, 0.5, 0, 3);
+}

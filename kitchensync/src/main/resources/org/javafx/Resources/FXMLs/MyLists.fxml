@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
@@ -33,7 +34,7 @@
                </font>
             </Button>
             <ScrollBar layoutX="1886.0" layoutY="97.0" orientation="VERTICAL" prefHeight="829.0" prefWidth="20.0" />
-            <Button fx:id="addIngredientButton" layoutX="934.0" layoutY="25.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="346.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Add Ingredient" textAlignment="CENTER">
+            <Button fx:id="addIngredientButton" layoutX="486.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="270.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Add Ingredient" textAlignment="CENTER">
                <font>
                   <Font size="28.0" />
                </font>
@@ -48,6 +49,21 @@
                   </Button>
                </children>
             </VBox>
+            <Button fx:id="generateShoppingList" layoutX="787.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="459.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Generate New Shopping List(s)" textAlignment="CENTER">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Button>
+            <Button fx:id="editPrefrences" layoutX="1275.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="270.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Edit Prefrences" textAlignment="CENTER">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Button>
+            <Button fx:id="addStoreList" layoutX="1592.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="270.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;" text="Add Store List" textAlignment="CENTER">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
       <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
@@ -118,5 +134,41 @@
             </Button>
          </children>
       </VBox>
+      <Pane layoutX="43.0" layoutY="143.0" prefHeight="919.0" prefWidth="1821.0" visible="false">
+         <children>
+            <Text layoutX="14.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Shopping List Preferences">
+               <font>
+                  <Font name="System Bold" size="36.0" />
+               </font>
+            </Text>
+            <Button fx:id="closeButton1" layoutX="1652.0" layoutY="51.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="126.0" style="-fx-background-color: grey;" text="Close">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+            <Slider layoutX="15.0" layoutY="123.0" prefHeight="14.0" prefWidth="436.0" />
+            <Text layoutX="188.0" layoutY="104.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Distance">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Text layoutX="195.0" layoutY="171.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0 Miles">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <TextField layoutX="14.0" layoutY="226.0" prefHeight="25.0" prefWidth="436.0" />
+            <Text layoutX="15.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min Items Per List">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Text>
+            <Button fx:id="closeButton11" layoutX="15.0" layoutY="843.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="126.0" style="-fx-background-color: grey;" text="Save">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Button>
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

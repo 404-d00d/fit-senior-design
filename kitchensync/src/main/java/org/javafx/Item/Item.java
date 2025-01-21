@@ -1,6 +1,8 @@
 package org.javafx.Item;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.scene.image.Image;
 
@@ -12,6 +14,7 @@ public class Item {
     private String expirDate;
     private String unit;
     private String imagePath;
+    private Set<String> tags;
 
     public Item(String name, Integer ID, Integer quantity, String unit, String location, String expirDate, String imagePath){
         this.name = name;
@@ -21,6 +24,7 @@ public class Item {
         this.location = location;
         this.expirDate = expirDate;
         this.imagePath = imagePath;
+        this.tags = new HashSet<>();
     }
 
     public String getName(){
@@ -49,6 +53,14 @@ public class Item {
 
     public String  getImagePath(){
         return this.imagePath;
+    }
+
+    public Set<String> getTags() {
+        return this.tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 
     public void modifyQuantity(Integer newValue) {

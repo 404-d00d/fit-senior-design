@@ -76,7 +76,7 @@ public class InventoryDashboardController {
    private Button addIngredientSpacesButton, addIngredientPlacesButton, spacesButton, placesButton, menuButton, inventoryButton, myRecipesButton, inboxButton,
                   browseRecipesButton, profileButton, settingsButton, myListsButton, cancelButton, manualButton, closeIngredient, addTagButton, imageSelect, 
                   removeButton, saveButton, productIDSearchButton, addSpace, addCategory, userDashboardButton, mealPlannerButton, fridgeButton, freezerButton, 
-                  pantryButton, gridViewButton, listViewButton, allFiltersButton, barcodeButton, receiptButton;
+                  pantryButton, gridViewButton, listViewButton, allFiltersButton, barcodeButton, receiptButton, clearFilters;
 
    @FXML
    private VBox menuPane, categoryContainer, spacesButtons;
@@ -188,6 +188,7 @@ public class InventoryDashboardController {
       });
 
       productUnit.getItems().addAll("kg", "g", "l", "ml", "oz", "lbs");
+      sortByFilter.getItems().addAll("A-Z", "Z-A", "Quantity", "Expiration Date");
 
       // Add the space to the productLoc ComboBox
       if (!productLoc.getItems().contains("Fridge")) {
@@ -231,6 +232,15 @@ public class InventoryDashboardController {
       addTagButton.setOnAction(event -> addTag());
 
       imageSelect.setOnAction(event -> SelectImage());
+
+      // Populate filter combo boxes with initial data
+      populateFilterOptions();
+
+      // Set event handlers for filters
+      locationFilter.setOnAction(event -> applyFilters());
+      categoryFilter.setOnAction(event -> applyFilters());
+      tagsFilter.setOnAction(event -> applyFilters());
+      clearFilters.setOnAction(event -> clearAllFilters());
 
       saveButton.setOnAction(event -> {
          try {
@@ -298,6 +308,8 @@ public class InventoryDashboardController {
       });
 
       setClickEffect(placesButton);
+
+      sortByFilter.setOnAction(event -> handleSorting());
 
       manualButton.setOnAction(event -> {
          uploadPane.setVisible(false);
@@ -462,6 +474,75 @@ public class InventoryDashboardController {
       
    }
 
+   /*
+    * Filters
+   */
+
+   private void populateFilterOptions() {
+      // Populate location filter
+      locationFilter.getItems().clear();
+      locationFilter.getItems().add("All Locations");
+      locationFilter.getItems().addAll(productLoc.getItems());
+  
+      // Populate category filter
+      categoryFilter.getItems().clear();
+      categoryFilter.getItems().add("All Categories");
+      defaultCategories.values().forEach(categories -> categoryFilter.getItems().addAll(categories));
+  
+      // Populate tags filter
+      tagsFilter.getItems().clear();
+      tagsFilter.getItems().add("All Tags");
+      tags.forEach(tagsFilter.getItems()::add);
+   }
+   
+   private void applyFilters() {
+      String selectedLocation = locationFilter.getValue();
+      String selectedCategory = categoryFilter.getValue();
+      String selectedTag = tagsFilter.getValue();
+  
+      List<Item> filteredItems = new ArrayList<>(ingredientInventory);
+  
+      // Filter by location
+      if (selectedLocation != null && !"All Locations".equals(selectedLocation)) {
+          filteredItems = filteredItems.stream()
+              .filter(item -> selectedLocation.equals(item.getLocation()))
+              .collect(Collectors.toList());
+      }
+  
+      // Filter by category
+      if (selectedCategory != null && !"All Categories".equals(selectedCategory)) {
+          filteredItems = filteredItems.stream()
+              .filter(item -> item.getTags() != null && item.getTags().contains(selectedCategory.toLowerCase()))
+              .collect(Collectors.toList());
+      }
+  
+      // Filter by tag
+      if (selectedTag != null && !"All Tags".equals(selectedTag)) {
+          filteredItems = filteredItems.stream()
+              .filter(item -> item.getTags() != null && item.getTags().contains(selectedTag.toLowerCase()))
+              .collect(Collectors.toList());
+      }
+  
+      // Update the UI with filtered results
+      if (placesGrid) {
+          updateIngredientGrid(filteredItems);
+      } else if (placesList) {
+          updateIngredientList(filteredItems);
+      }
+  }
+   
+   private void clearAllFilters() {
+         locationFilter.setValue("All Locations");
+         categoryFilter.setValue("All Categories");
+         tagsFilter.setValue("All Tags");
+         applyFilters();
+   }
+      
+
+   /*
+   *  Unorganized Things
+   */
+
    // Utility method to show an alert
    private void showAlert(String title, String content) {
       Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -513,6 +594,40 @@ public class InventoryDashboardController {
       
       }
    }
+
+   private void handleSorting() {
+      String selectedSort = sortByFilter.getValue();
+      if (selectedSort == null) return;
+  
+      // Sort the `ingredientInventory` list based on the selected criteria
+      switch (selectedSort) {
+          case "A-Z":
+              ingredientInventory.sort((i1, i2) -> i1.getName().compareToIgnoreCase(i2.getName()));
+              break;
+          case "Z-A":
+              ingredientInventory.sort((i1, i2) -> i2.getName().compareToIgnoreCase(i1.getName()));
+              break;
+          case "Quantity":
+              ingredientInventory.sort((i1, i2) -> Integer.compare(i2.getQuantity(), i1.getQuantity()));
+              break;
+          case "Expiration Date":
+              ingredientInventory.sort((i1, i2) -> {
+                  if (i1.getExpirDate() == null) return 1;
+                  if (i2.getExpirDate() == null) return -1;
+                  return LocalDate.parse(i1.getExpirDate()).compareTo(LocalDate.parse(i2.getExpirDate()));
+              });
+              break;
+          default:
+              break;
+      }
+  
+      // Refresh the UI after sorting
+      if (placesGrid) {
+          updateIngredientGrid(ingredientInventory);
+      } else if (placesList) {
+          updateIngredientList(ingredientInventory);
+      }
+  }
 
    // Add tag as a chip in FlowPane
    private void addTag() {
@@ -581,16 +696,13 @@ public class InventoryDashboardController {
 
    private void updateIngredientList(List<Item> ingredients) {
       ObservableList<String> ingredientItems = FXCollections.observableArrayList();
-  
-      Set<Integer> addedItemIds = new HashSet<>();
-  
       for (Item ingredient : ingredients) {
-          if (!addedItemIds.contains(ingredient.getID())) {
-              addedItemIds.add(ingredient.getID());
-              ingredientItems.add(ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit());
+          String display = ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit();
+          if (ingredient.getExpirDate() != null) {
+              display += " (Expires: " + ingredient.getExpirDate() + ")";
           }
+          ingredientItems.add(display);
       }
-  
       ingredientList.setItems(ingredientItems);
   }
    
@@ -883,6 +995,9 @@ public class InventoryDashboardController {
          LocalDate expirationDate = productEXPDate.getValue();
          String convertedDate = expirationDate.toString();
 
+         // Convert tags to a set
+         Set<String> itemTags = new HashSet<>(tags);
+
          // Format date for display
          //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
          //String expirationDateString = expirationDate.format(formatter);
@@ -890,6 +1005,7 @@ public class InventoryDashboardController {
          // Create new ingredient item and add to inventory
          String imageFileName = selectedImageFile != null ? selectedImageFile.getName() : null;
          Item newIngredient = new Item(ingredientName, 0, Integer.parseInt(quantity), unit, location, convertedDate, imageFileName);
+         newIngredient.setTags(itemTags);
          
          addIngredientToDatabase(newIngredient);
 
@@ -1447,19 +1563,22 @@ public class InventoryDashboardController {
       File file = new File("itemInventory.json");
   
       if (file.exists() && file.length() > 0) { // Check if the file exists and is not empty
-          try (Reader reader = new FileReader(file)) {
-              Gson gson = new Gson();
-              Item[] items = gson.fromJson(reader, Item[].class); // Deserialize JSON to an array of Items
-              ingredientInventory.clear(); // Clear the existing inventory
-              ingredientInventory.addAll(List.of(items)); // Add all items to the inventory list
-  
-              // Determine the highest ID
-              int maxID = 0;
-              for (Item item : ingredientInventory) {
-                  maxID = Math.max(maxID, item.getID());
-              }
-              nextIngredientID = maxID + 1; // Set the next ID
-              System.out.println("Inventory successfully loaded from JSON file.");
+         try (Reader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            Item[] items = gson.fromJson(reader, Item[].class); // Deserialize JSON to an array of Items
+            ingredientInventory.clear(); // Clear the existing inventory
+            ingredientInventory.addAll(List.of(items)); // Add all items to the inventory list
+
+            // Determine the highest ID
+            for (Item item : ingredientInventory) {
+               if (item.getTags() == null) {
+                  item.setTags(new HashSet<>()); // Initialize tags if null
+               }
+            }
+
+            int maxID = ingredientInventory.stream().mapToInt(Item::getID).max().orElse(0);
+            nextIngredientID = maxID + 1;
+            System.out.println("Inventory successfully loaded from JSON file.");
           } catch (IOException e) {
               e.printStackTrace();
               showAlert("Load Error", "Failed to load inventory from JSON file.");
@@ -1473,8 +1592,7 @@ public class InventoryDashboardController {
    private void addIngredientToDatabase(Item item) {
       // Placeholder for adding the ingredient to a database
 
-      item.setID(nextIngredientID);
-      nextIngredientID++;
+      item.setID(nextIngredientID++);
       ingredientInventory.add(item);
       File file = new File("itemInventory.json");
 

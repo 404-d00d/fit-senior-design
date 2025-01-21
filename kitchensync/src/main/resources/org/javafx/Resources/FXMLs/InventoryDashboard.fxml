@@ -172,6 +172,11 @@
                   <FlowPane fx:id="ingredientGrid" prefHeight="854.0" prefWidth="1438.0" style="-fx-hgap: 10; -fx-vgap: 10;" />
                </content>
             </ScrollPane>
+            <Button fx:id="clearFilters" layoutX="63.0" layoutY="870.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="229.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 30; -fx-text-fill: black;" text="Clear Filters">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
       <Pane fx:id="uploadPane" layoutX="434.0" layoutY="253.0" prefHeight="574.0" prefWidth="1069.0" visible="false">

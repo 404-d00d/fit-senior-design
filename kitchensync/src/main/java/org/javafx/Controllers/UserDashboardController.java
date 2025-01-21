@@ -1,11 +1,20 @@
 package org.javafx.Controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.javafx.Main.Main;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Popup;
 
 public class UserDashboardController {
 
@@ -17,7 +26,25 @@ public class UserDashboardController {
    private AnchorPane basePane;
 
    @FXML
+   private TextField searchBar;
+
+   @FXML
    private void initialize() {
+
+      // Initialize AutoCompleteTextField
+      setupCustomAutoComplete(searchBar, basePane);
+
+      // Add search functionality
+      searchBar.setOnKeyPressed(event -> {
+         switch (event.getCode()) {
+             case ENTER: // Check for the Enter key
+                 performSearch(searchBar.getText());
+                 break;
+             default:
+                 // Do nothing for other keys
+                 break;
+         }
+     });
 
       // Switch to userDashboard Screen
       userDashboardButton.setOnAction(event -> {
@@ -118,6 +145,109 @@ public class UserDashboardController {
 
       setHoverEffect(myListsButton);
 
+   }
+
+   private void setupCustomAutoComplete(TextField searchBar, AnchorPane basePane) {
+      // Create a list of all possible suggestions
+      List<String> allSuggestions = new ArrayList<>();
+      allSuggestions.add("Meal Planner");
+      allSuggestions.add("Inventory");
+      allSuggestions.add("Recipes");
+      allSuggestions.add("Lists");
+      allSuggestions.add("Settings");
+  
+      // Create a ListView to show suggestions
+      ListView<String> suggestionListView = new ListView<>();
+      suggestionListView.setMaxHeight(100); // Limit the height of the dropdown
+  
+      // Create a Popup to display the ListView
+      Popup suggestionPopup = new Popup();
+      suggestionPopup.setAutoHide(true);
+      suggestionPopup.getContent().add(suggestionListView);
+  
+      // Add a listener to filter suggestions dynamically
+      searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+          if (newValue == null || newValue.trim().isEmpty()) {
+              suggestionPopup.hide();
+          } else {
+              // Filter suggestions
+              List<String> filteredSuggestions = new ArrayList<>();
+              for (String suggestion : allSuggestions) {
+                  if (suggestion.toLowerCase().contains(newValue.toLowerCase())) {
+                      filteredSuggestions.add(suggestion);
+                  }
+              }
+  
+              if (!filteredSuggestions.isEmpty()) {
+                  ObservableList<String> items = FXCollections.observableArrayList(filteredSuggestions);
+                  suggestionListView.setItems(items);
+  
+                  // Position the popup below the search bar
+                  suggestionPopup.show(basePane, 
+                      searchBar.localToScene(0, 0).getX() + basePane.getScene().getWindow().getX(), 
+                      searchBar.localToScene(0, 0).getY() + searchBar.getHeight() + basePane.getScene().getWindow().getY());
+              } else {
+                  suggestionPopup.hide();
+              }
+          }
+      });
+  
+      // Handle selection from the ListView
+      suggestionListView.setOnMouseClicked(event -> {
+          String selectedItem = suggestionListView.getSelectionModel().getSelectedItem();
+          if (selectedItem != null) {
+              searchBar.setText(selectedItem);
+              performSearch(selectedItem);
+              suggestionPopup.hide();
+          }
+      });
+  
+      // Handle keyboard navigation in the ListView
+      searchBar.setOnKeyPressed(event -> {
+          if (suggestionPopup.isShowing()) {
+              if (event.getCode() == KeyCode.DOWN) {
+                  suggestionListView.requestFocus();
+                  suggestionListView.getSelectionModel().select(0);
+              }
+          }
+      });
+  
+      suggestionListView.setOnKeyPressed(event -> {
+          if (event.getCode() == KeyCode.ENTER) {
+              String selectedItem = suggestionListView.getSelectionModel().getSelectedItem();
+              if (selectedItem != null) {
+                  searchBar.setText(selectedItem);
+                  performSearch(selectedItem);
+                  suggestionPopup.hide();
+              }
+          } else if (event.getCode() == KeyCode.ESCAPE) {
+              suggestionPopup.hide();
+          }
+      });
+  }
+
+   private void performSearch(String query) {
+      if (query == null || query.trim().isEmpty()) {
+         System.out.println("Empty search query.");
+         return;
+      }
+
+      // Search in the active screen (e.g., Dashboard)
+      if (!searchInActiveScreen(query)) {
+         // If not found, search in other screens
+         searchInOtherScreens(query);
+      }
+   }
+
+   private boolean searchInActiveScreen(String query) {
+      System.out.println("Searching in the active screen: " + query);
+      // Add logic to search dashboard content
+      return false; // Placeholder
+   }
+
+   private void searchInOtherScreens(String query) {
+      System.out.println("Searching in other screens: " + query);
+      // Example: Extend to query recipes or inventory from the database
    }
 
    private void setHoverEffect(Button button) {

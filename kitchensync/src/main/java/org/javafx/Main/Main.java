@@ -130,6 +130,36 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    // Load the UserInbox screen 
+    public static void showInboxScreen() throws IOException {
+        Parent InboxScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/FXMLs/UserInbox.fxml"));
+        primaryStage.setScene(new Scene(InboxScreen, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(InboxScreen);
+        primaryStage.show();
+    }
+
+    // Load the UserProfile screen 
+    public static void showUserProfileScreen() throws IOException {
+        Parent UserProfile = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/FXMLs/UserProfile.fxml"));
+        primaryStage.setScene(new Scene(UserProfile, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(UserProfile);
+        primaryStage.show();
+    }
+
+    // Load the UserSettings screen 
+    public static void showUserSettingsScreen() throws IOException {
+        Parent UserSettings = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/FXMLs/UserSettings.fxml"));
+        primaryStage.setScene(new Scene(UserSettings, 1280, 720));
+
+        // Apply the scaling transformation to fit 1920x1080 content into 1280x720
+        setScale(UserSettings);
+        primaryStage.show();
+    }
+
     public static void setScale(Parent root) {
         // Original design dimensions (1920x1080)
         double originalWidth = 1920;

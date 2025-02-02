@@ -26,8 +26,6 @@ public class RecipeCardController {
 
    private MyRecipesController myRecipesController;
 
-   
-
    public void setRecipeData(Recipe newRecipe, Image image, MyRecipesController controller) {
       this.recipe = newRecipe;
       this.recipeId = newRecipe.getID();

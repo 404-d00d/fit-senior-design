@@ -93,7 +93,7 @@ public class UserDashboardController {
       // Switch to Inbox Screen
       inboxButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showInboxScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -115,7 +115,7 @@ public class UserDashboardController {
       // Switch to Profile Screen
       profileButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showUserProfileScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -126,7 +126,7 @@ public class UserDashboardController {
       // Switch to Browse Settings Screen
       settingsButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showUserSettingsScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }

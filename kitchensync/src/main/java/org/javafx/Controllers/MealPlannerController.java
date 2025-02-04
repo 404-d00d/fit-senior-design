@@ -7,11 +7,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
@@ -22,77 +18,45 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.ColumnConstraints;
 
 public class MealPlannerController {
 
-    @FXML
-    private ComboBox<String> calanderViewDropdown, nutritionalMeals, mealSlot;
+    // 🔹 FXML UI COMPONENTS
+    @FXML private ComboBox<String> calanderViewDropdown, nutritionalMeals, mealSlot;
+    @FXML private Button addMealButton, userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
+                        closeButton, inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton, 
+                        menuButton, addMealToPlan, prevStep, nextStep, closeRecipeButton;
+    @FXML private DatePicker datePicker, dateInView, mealPlanDate;
+    @FXML private PieChart dailyNutritionalBreakdown;
+    @FXML private ScrollPane mealDetailsPane;
+    @FXML private Text mealNameTXT, complecityTXT, servingsTXT, prepTimeTXT, passiveTimeTXT, cookTimeTXT, totalTimeTXT, 
+                        stepOfTXT, recipeCookingNameTXT, breakfastMeal, lunchMeal, dinnerMeal, snacksMeal;
+    @FXML private ListView<String> specialEqupmentListView, recipeIngredientsListView, ingredientsArea;
+    @FXML private TextArea descriptionArea, stepArea;
+    @FXML private Pane menuPane, calanderPane, AddMealMenu, recipeCookingPane;
+    @FXML private GridPane dayView, weekView, monthView;
+    @FXML private ImageView recipeImages;
 
-    @FXML
-    private Button addMealButton, userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton, closeButton,
-                    inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton, menuButton, addMealToPlan,
-                    prevStep, nextStep, closeRecipeButton;
-
-    @FXML
-    private DatePicker datePicker, dateInView, mealPlanDate;
-
-    @FXML
-    private Text breakfastMeal, lunchMeal, dinnerMeal, snacksMeal;
-
-    @FXML
-    private PieChart dailyNutritionalBreakdown;
-
-    @FXML
-    private ScrollPane mealDetailsPane;
-
-    @FXML
-    private Text mealNameTXT, complecityTXT, servingsTXT, prepTimeTXT, passiveTimeTXT, cookTimeTXT, totalTimeTXT,
-                    stepOfTXT, recipeCookingNameTXT;
-    
-    @FXML
-    private ListView<String> specialEqupmentListView, recipeIngredientsListView, ingredientsArea;
-
-    @FXML
-    private TextArea descriptionArea, stepArea;
-
-    @FXML
-    private Pane menuPane, calanderPane, AddMealMenu, recipeCookingPane;
-
-    @FXML
-    private GridPane dayView, weekView, monthView;
-
+    // 🔹 DATA STORAGE
     private Map<LocalDate, List<Map<String, Object>>> mealPlans = new HashMap<>();
-
+    private Label draggedBlock;
+    private MyListsController myListsController;
+    private int currentStep = 0, displayStep = 0;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d'th'");
 
-    private Label draggedBlock;
-
-    private MyListsController myListsController;
-
-    @FXML
-    private ImageView recipeImages;
-
+    /**
+     * 🔹 Initialization (initialize method): Runs on controller load
+     */
     @FXML
     private void initialize() {
 
@@ -101,7 +65,7 @@ public class MealPlannerController {
 
         menuButton.setOnAction(event -> toggleMenuPane());
         
-        // Setup navigation buttons
+        // Set up navigation and button interactions
         setNavigationButtonHandlers();
         setHoverEffect(userDashboardButton);
         setHoverEffect(mealPlannerButton);
@@ -112,62 +76,32 @@ public class MealPlannerController {
         setHoverEffect(profileButton);
         setHoverEffect(settingsButton);
 
-        // Set default view for calendar
+        // Configure the calendar dropdown and date pickers
         calanderViewDropdown.getItems().addAll("Day View", "Week View", "Month View");
         calanderViewDropdown.setValue("Week View");
-
-        // Initialize date pickers with current date
-        LocalDate currentDate = LocalDate.now();
-        datePicker.setValue(currentDate);
-        datePicker.setStyle("-fx-font-size: 18px;");
-        dateInView.setValue(currentDate);
-        dateInView.setStyle("-fx-font-size: 18px;");
-
-        // Load initial data
-        loadDailyMeals(currentDate);
-        loadCalendarView();
-
-        // Add listener to update view when dropdown changes
-        calanderViewDropdown.setOnAction(event -> loadCalendarView());
-
-        // Add listener to update the date in view when a new date is picked
-        dateInView.setOnAction(event -> updateDateInView());
-
-        // Set up nutritional breakdown combo box options
-        nutritionalMeals.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snacks", "All Meals", "Total Per Serving");
-        nutritionalMeals.setOnAction(event -> updateNutritionalBreakdown());
-
-        // Initialize add meal button
-        addMealButton.setOnAction(event -> openAddMealDialog());
-
-        // Setup date picker for day selection
         datePicker.setValue(LocalDate.now());
-        datePicker.setOnAction(event -> loadDailyMeals(datePicker.getValue()));
-
-        // Load initial data
+        datePicker.setStyle("-fx-font-size: 18px;");
+        dateInView.setValue(LocalDate.now());
+        dateInView.setStyle("-fx-font-size: 18px;");
+        
+        // Load the default views
         loadDailyMeals(LocalDate.now());
-        loadCalendarView(); // Ensure datePicker is properly set before loading the view
+        loadCalendarView();
+        calculateMealNutrition();
 
-        // Initialize add meal button
-        addMealButton.setOnAction(event -> openAddMealDialog());
-
-        closeButton.setOnAction(event -> {
-
-            AddMealMenu.setVisible(false);
-            mealDetailsPane.setVisible(false);
-            //reset mealDetails pane to null
-            calanderPane.setVisible(true);
-        });
+        // UI event handlers
+        calanderViewDropdown.setOnAction(event -> loadCalendarView());
+        dateInView.setOnAction(event -> updateDateInView());
+        nutritionalMeals.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snacks", "All Meals", "Total Per Serving");
+        nutritionalMeals.setOnAction(event -> calculateMealNutrition());
+        addMealButton.setOnAction(event -> addMeal());
+        closeButton.setOnAction(event -> closeMealDetails());
+        closeRecipeButton.setOnAction(event -> closeRecipeCookingPane());
     }
 
-    private void toggleMenuPane() {
-        try {
-            menuPane.setVisible(!menuPane.isVisible());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * 🔹 UI & Menu Navigation BUTTON HANDLERS
+     */
     private void setNavigationButtonHandlers() {
         inventoryButton.setOnAction(event -> navigateToScreen("Inventory"));
         myRecipesButton.setOnAction(event -> navigateToScreen("MyRecipes"));
@@ -182,51 +116,55 @@ public class MealPlannerController {
     private void navigateToScreen(String screen) {
         try {
             switch (screen) {
-                case "Inventory":
-                    Main.showInventoryScreen();
-                    break;
-                case "MyRecipes":
-                    Main.showMyRecipesScreen();
-                    break;
-                case "CommunityRecipes":
-                    Main.showCommunityRecipesScreen();
-                    break;
-                case "MyLists":
-                    Main.showMyListsScreen();
-                    break;
-                case "UserDashboard":
-                    Main.showUserDashboardScreen();
-                    break;
-                default:
-                    System.out.println("Screen not implemented yet: " + screen);
+                case "Inventory": Main.showInventoryScreen(); break;
+                case "MyRecipes": Main.showMyRecipesScreen(); break;
+                case "Inbox": Main.showInboxScreen(); break;
+                case "CommunityRecipes": Main.showCommunityRecipesScreen(); break;
+                case "Profile": Main.showUserProfileScreen(); break;
+                case "Settings": Main.showUserSettingsScreen(); break;
+                case "MyLists": Main.showMyListsScreen(); break;
+                case "UserDashboard": Main.showUserDashboardScreen(); break;
+                default: System.out.println("Screen not implemented: " + screen);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void setHoverEffect(Button button) {
-        button.setOnMouseEntered(this::handleMouseEntered);
-        button.setOnMouseExited(this::handleMouseExited);
-    }  
-
-    private void handleMouseEntered(MouseEvent event) {
-        Button button = (Button) event.getSource();
-        // Change style when mouse enters
-        button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+    private void closeMealDetails() {
+        AddMealMenu.setVisible(false);
+        mealDetailsPane.setVisible(false);
+        //reset mealDetails pane to null
+        calanderPane.setVisible(true);
     }
 
-    private void handleMouseExited(MouseEvent event) {
-        Button button = (Button) event.getSource();
-        // Reset style when mouse exits
-        button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+    private void closeRecipeCookingPane() {
+        calanderPane.setVisible(true);
+        recipeCookingPane.setVisible(false);
     }
 
+    private void addMeal() {
+        openAddMealDialog();
+        calculateMealNutrition();
+    }
+
+    private void toggleMenuPane() {
+        try {
+            menuPane.setVisible(!menuPane.isVisible());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 🔹 Meal Planner Views (Day, Week, Month)
+     */
     private void updateDateInView() {
         LocalDate selectedDate = dateInView.getValue();
         if (selectedDate != null) {
             datePicker.setValue(selectedDate);
             loadCalendarView();
+            calculateMealNutrition();
         }
     }
 
@@ -440,22 +378,23 @@ public class MealPlannerController {
         stylePastDates();
     }
 
-    private boolean validateTimeBlockOrder(Map<String, Object> mealData) {
-        Map<String, Object> prepTime = (Map<String, Object>) mealData.get("prepTime");
-        Map<String, Object> passiveTime = (Map<String, Object>) mealData.get("passiveTime");
-        Map<String, Object> cookTime = (Map<String, Object>) mealData.get("cookTime");
+    /**
+     * 🔹 Meal Plan Handling
+     */
+    private void openAddMealDialog() {
+        // TODO: Implement a dialog where the user can select the meal and times.
     
-        int prepHour = prepTime != null ? ((Number) prepTime.get("hour")).intValue() : Integer.MAX_VALUE;
-        int passiveHour = passiveTime != null ? ((Number) passiveTime.get("hour")).intValue() : Integer.MAX_VALUE;
-        int cookHour = cookTime != null ? ((Number) cookTime.get("hour")).intValue() : Integer.MIN_VALUE;
+        // Once a meal is selected, create meal time blocks:
+        LocalDate selectedDate = datePicker.getValue();
     
-        if (cookHour < Math.min(prepHour, passiveHour)) {
-            return false; // Cook starts before prep or passive ends
-        }
-    
-        return true;
+        Recipe newMeal = new Recipe(0, "Sample Meal", null, null, null, 30, 60, 30, 0, 0, null, null, null, null); // Replace with selected meal details
+        addMealToPlan(newMeal, selectedDate, 0, selectedDate, 1, selectedDate, 2);
+        
+        loadDailyMeals(selectedDate);
+        loadCalendarView();
+        calculateMealNutrition();
     }
-    
+
     private void addMealToPlan(Recipe meal, LocalDate prepDate, int prepHour, LocalDate passiveDate, int passiveHour, LocalDate cookDate, int cookHour) {
         // Add prepTime block
         if (meal.getPrepTime() > 0) {
@@ -472,6 +411,55 @@ public class MealPlannerController {
         saveMealPlansToJson();
     }
 
+
+    /**
+     * 🔹 Time Blocks and Their Interactions (Click, Drag, Drop)
+     */
+
+    private void enableTimeBlockInteraction(Label block, GridPane targetView) {
+        final long[] pressTime = new long[1]; // Stores the time of press
+        final double[] startX = new double[1]; // Stores initial X position
+        final double[] startY = new double[1]; // Stores initial Y position
+    
+        block.setOnMousePressed(event -> {
+            pressTime[0] = System.currentTimeMillis(); // Store time when pressed
+            startX[0] = event.getSceneX(); // Store initial X position
+            startY[0] = event.getSceneY(); // Store initial Y position
+        });
+    
+        block.setOnMouseReleased(event -> {
+            long releaseTime = System.currentTimeMillis();
+            double endX = event.getSceneX();
+            double endY = event.getSceneY();
+    
+            long clickDuration = releaseTime - pressTime[0]; // Calculate duration
+    
+            // If the duration is short and the block didn't move much, treat it as a click
+            if (clickDuration < 200 && Math.abs(startX[0] - endX) < 5 && Math.abs(startY[0] - endY) < 5) {
+                openRecipeOnClick(block);
+            }
+        });
+    
+        // Enable dragging for repositioning meals
+        makeTimeBlockDraggable(block, targetView);
+    }
+
+    private boolean validateTimeBlockOrder(Map<String, Object> mealData) {
+        Map<String, Object> prepTime = (Map<String, Object>) mealData.get("prepTime");
+        Map<String, Object> passiveTime = (Map<String, Object>) mealData.get("passiveTime");
+        Map<String, Object> cookTime = (Map<String, Object>) mealData.get("cookTime");
+    
+        int prepHour = prepTime != null ? ((Number) prepTime.get("hour")).intValue() : Integer.MAX_VALUE;
+        int passiveHour = passiveTime != null ? ((Number) passiveTime.get("hour")).intValue() : Integer.MAX_VALUE;
+        int cookHour = cookTime != null ? ((Number) cookTime.get("hour")).intValue() : Integer.MIN_VALUE;
+    
+        if (cookHour < Math.min(prepHour, passiveHour)) {
+            return false; // Cook starts before prep or passive ends
+        }
+    
+        return true;
+    }
+
     private void addTimeBlock(String blockType, Recipe meal, LocalDate date, int hour, int duration) {
         Map<String, Object> timeBlock = new HashMap<>();
         timeBlock.put("id", meal.getID());
@@ -484,109 +472,6 @@ public class MealPlannerController {
     
         List<Map<String, Object>> mealsForDay = mealPlans.computeIfAbsent(date, k -> new ArrayList<>());
         mealsForDay.add(Map.of(blockType, timeBlock));
-    }
-
-    private Recipe getRecipeById(int id) {
-        try (FileReader reader = new FileReader("recipes.json")) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Recipe>>() {}.getType();
-            List<Recipe> recipes = gson.fromJson(reader, type);
-    
-            return recipes.stream()
-                          .filter(recipe -> recipe.getID() == id)
-                          .findFirst()
-                          .orElse(null);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private List<Map<String, Object>> getMealsForDay(LocalDate date) {
-        // Retrieve the list of meals for the given date, or return an empty list if none exist
-        return mealPlans.getOrDefault(date, new ArrayList<>());
-    }
-    
-
-    private void loadDailyMeals(LocalDate date) {
-        List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
-    
-        // Initialize default meal names for breakfast, lunch, dinner, and snacks
-        String breakfast = "[No Meal Planned]";
-        String lunch = "[No Meal Planned]";
-        String dinner = "[No Meal Planned]";
-        String snacks = "[No Meal Planned]";
-    
-        for (Map<String, Object> mealData : mealsForDay) {
-            for (String timePartKey : List.of("prepTime", "passiveTime", "cookTime")) {
-                Map<String, Object> timePart = (Map<String, Object>) mealData.get(timePartKey);
-                if (timePart != null) {
-                    String blockDate = (String) timePart.get("date");
-                    int hour = ((Number) timePart.get("hour")).intValue();
-    
-                    // Only process if the block date matches the selected date
-                    if (LocalDate.parse(blockDate).equals(date)) {
-                        String mealName = (String) mealData.get("name");
-                        if (hour >= 7 && hour < 10) {
-                            breakfast = mealName;
-                        } else if (hour >= 12 && hour < 14) {
-                            lunch = mealName;
-                        } else if (hour >= 18 && hour < 20) {
-                            dinner = mealName;
-                        } else {
-                            snacks = mealName;
-                        }
-                    }
-                }
-            }
-        }
-    
-        breakfastMeal.setText("Breakfast: " + breakfast);
-        lunchMeal.setText("Lunch: " + lunch);
-        dinnerMeal.setText("Dinner: " + dinner);
-        snacksMeal.setText("Snacks: " + snacks);
-    }
-    
-    
-    private String getMealName(List<Recipe> meals, int index) {
-        if (index < meals.size()) {
-            return meals.get(index).getName();
-        }
-        return "[No Meal Planned]";
-    }
-
-    private void updateNutritionalBreakdown() {
-        String selectedMeal = nutritionalMeals.getValue();
-        if (selectedMeal == null || selectedMeal.equalsIgnoreCase("All Meals")) {
-            dailyNutritionalBreakdown.setTitle("Nutritional Breakdown: All Meals");
-            // Example data: Replace with real nutritional calculations
-            dailyNutritionalBreakdown.getData().setAll(
-                new PieChart.Data("Protein", 25),
-                new PieChart.Data("Carbs", 50),
-                new PieChart.Data("Fats", 25)
-            );
-        } else {
-            dailyNutritionalBreakdown.setTitle("Nutritional Breakdown: " + selectedMeal);
-            // Example data: Replace with calculations for the selected meal type
-            dailyNutritionalBreakdown.getData().setAll(
-                new PieChart.Data("Protein", 30),
-                new PieChart.Data("Carbs", 40),
-                new PieChart.Data("Fats", 30)
-            );
-        }
-    }
-    private void openAddMealDialog() {
-        // TODO: Implement a dialog where the user can select the meal and times.
-    
-        // Once a meal is selected, create meal time blocks:
-        LocalDate selectedDate = datePicker.getValue();
-    
-        Recipe newMeal = new Recipe(0, "Sample Meal", null, null, null, 30, 60, 30, 0, 0, null, null, null, null); // Replace with selected meal details
-        addMealToPlan(newMeal, selectedDate, 0, selectedDate, 1, selectedDate, 2);
-        
-        loadDailyMeals(selectedDate);
-        loadCalendarView();
-        updateNutritionalBreakdown();
     }
 
     private void createTimeBlocksForMeal(Map<String, Object> mealData, GridPane targetView, int dayColumn) {
@@ -628,21 +513,6 @@ public class MealPlannerController {
         }
     }
 
-    private int getColumnForDate(LocalDate blockDate) {
-        LocalDate startDate = datePicker.getValue();
-    
-        // Calculate the difference in days
-        int daysDifference = blockDate.compareTo(startDate);
-    
-        // Return the column index if within range
-        if (daysDifference >= 0 && daysDifference < 7) {
-            return daysDifference + 1; // Add 1 to account for the hour column
-        }
-        return -1; // Out of range
-    }
-    
-
-    // Helper to add a block for a time part
     private void addBlockForTimePart(Map<String, Object> mealData, String timePartKey, GridPane targetView, int dayColumn, int currentRow, String color) {
         Map<String, Object> timePart = (Map<String, Object>) mealData.get(timePartKey);
         int duration = ((Number) timePart.get("duration")).intValue();
@@ -668,21 +538,6 @@ public class MealPlannerController {
             addRightClickOptions(block, LocalDate.parse(blockDate)); // Add context menu
             openRecipeOnClick(block); // Add left-click to view recipe
         }
-    }
-    
-
-    private Map<String, String> parseBlockId(String blockId) {
-        String[] parts = blockId.split("\\|");
-        if (parts.length != 4) {
-            throw new IllegalArgumentException("Invalid block ID format: " + blockId);
-        }
-    
-        Map<String, String> parsedData = new HashMap<>();
-        parsedData.put("mealName", parts[0]);
-        parsedData.put("timeBlockType", parts[1]);
-        parsedData.put("date", parts[2]);
-        parsedData.put("hour", parts[3]);
-        return parsedData;
     }
 
     private void makeTimeBlockDraggable(Label block, GridPane targetView) {
@@ -748,6 +603,392 @@ public class MealPlannerController {
         });
     }
 
+    /**
+     * 🔹 Recipe Details & Cooking Steps
+     */
+    public void showRecipeDetails(String name, Image image, Recipe recipe) {
+
+        recipeCookingPane.setVisible(true);
+        calanderPane.setVisible(false);
+
+        displayStep = 0;
+
+        recipeCookingNameTXT.setText(name);
+
+        // Populate ingredient list with checkboxes
+        ingredientsArea.getItems().clear();
+        for (String ingredient : recipe.getIngredients()) {
+            ingredientsArea.getItems().add("⬜ " + ingredient);
+        }
+        recipeImages.setImage(image);
+
+        ObservableList<String> preparationSteps = FXCollections.observableArrayList(recipe.getSteps());
+
+        stepOfTXT.setText("Step " + 1 + " of " + preparationSteps.size());
+        stepArea.setText(preparationSteps.get(0));
+
+    }
+
+    private void openRecipeOnClick(Label block) {
+        block.setOnMouseClicked(event -> {
+            if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
+                try { 
+                    // Extract meal details from block ID
+                    Map<String, String> blockData = parseBlockId(block.getId());
+                    String mealName = blockData.get("mealName");
+                    
+                    // Retrieve recipe from storage
+                    Recipe recipe = getRecipeByName(mealName);
+                    System.out.println(recipe);
+                    if (recipe != null) {
+                        // Fetch an image (assuming path is stored in the recipe)
+                        //Image mealImage = new Image("file:" + recipe.getImagePath());
+    
+                        // Open recipe details with extracted info
+                        System.out.println("show details");
+                        showRecipeDetails(mealName, null, recipe);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showAlert("Error", "Failed to open recipe details.");
+                }
+            }
+        });
+    }
+
+    private void openRecipeDetails(Recipe recipe) {
+        // Set recipe details in the mealDetailsPane
+        mealNameTXT.setText(recipe.getName());
+        complecityTXT.setText(String.valueOf(recipe.getComplexity()));
+        servingsTXT.setText("Servings: " + String.valueOf(recipe.getServings()));
+        prepTimeTXT.setText("Prep Time: " + String.valueOf(recipe.getPrepTime()));
+        passiveTimeTXT.setText("Passive Time: " + String.valueOf(recipe.getPassiveTime()));
+        cookTimeTXT.setText("Cook Time: " + String.valueOf(recipe.getCookTime()));
+
+        int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime();
+
+        totalTimeTXT.setText("Total Time: " + String.valueOf(totalTime));
+    
+        // Populate ingredients
+        recipeIngredientsListView.getItems().clear();
+        recipeIngredientsListView.getItems().addAll(recipe.getIngredients());
+    
+        // Populate special equipment
+        specialEqupmentListView.getItems().clear();
+        specialEqupmentListView.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
+    
+        // Set description
+        descriptionArea.setText(recipe.getDescription());
+    
+        // Show the details pane
+        mealDetailsPane.setVisible(true);
+    }
+
+    /**
+     * 🔹 Inventory & Nutritional Breakdown
+     */
+    private void calculateMealNutrition() {
+        LocalDate selectedDate = datePicker.getValue();  // Get selected date
+        List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(selectedDate, new ArrayList<>());
+    
+        List<Map<String, Object>> cookPhaseMeals = new ArrayList<>();
+
+        for (Map<String, Object> meal : mealsForDay) {
+            if (meal.containsKey("cookTime")) {  // Only include meals with a cook phase
+                cookPhaseMeals.add(meal);
+            }
+        }
+    
+        if (cookPhaseMeals.isEmpty()) {
+            System.out.println("No meals to be cooked today.");
+            dailyNutritionalBreakdown.getData().clear();
+            return;
+        }
+    
+        List<Map<String, Object>> ingredients = new ArrayList<>();
+        
+        for (Map<String, Object> meal : cookPhaseMeals) {
+
+            Map<String, Object> cookTimeData = (Map<String, Object>) meal.get("cookTime");
+            if (cookTimeData == null) continue;
+
+            String mealName = (String) cookTimeData.get("name");
+
+
+            Recipe recipe = getRecipeByName(mealName);
+
+            if (recipe != null) {
+                for (String ingredient : recipe.getIngredients()) {
+                    Ingredient parsedIngredient = parseIngredient(ingredient);
+                    Map<String, Object> ingredientData = new HashMap<>();
+                    ingredientData.put("name", parsedIngredient.getName());
+                    ingredientData.put("amount", Double.parseDouble(parsedIngredient.getAmount()));
+                    ingredients.add(ingredientData);
+                }
+            }
+        }
+
+        // Calculate nutrition based on cookPhaseMeals
+        List<Map<String, Object>> nutritionData = MacroCalculator.calculateNutrition(ingredients);
+
+        if (nutritionData != null) {
+            dailyNutritionalBreakdown.getData().clear();
+            double totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0;
+    
+            for (Map<String, Object> ingredient : nutritionData) {
+                if (!ingredient.containsKey("error")) {
+                    totalCalories += (double) ingredient.get("calories");
+                    totalProtein += (double) ingredient.get("protein");
+                    totalCarbs += (double) ingredient.get("carbs");
+                    totalFats += (double) ingredient.get("fats");
+                }
+            }
+            
+            // Update PieChart UI with labels containing values
+            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Protein: " + totalProtein + "g", totalProtein));
+            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Carbs: " + totalCarbs + "g", totalCarbs));
+            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Fats: " + totalFats + "g", totalFats));
+
+            // Add total calories as a tooltip over the pie chart
+            Tooltip calorieTooltip = new Tooltip("Total Calories: " + totalCalories + " kcal");
+            Tooltip.install(dailyNutritionalBreakdown, calorieTooltip);
+
+            for (PieChart.Data data : dailyNutritionalBreakdown.getData()) {
+                data.getNode().setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+            }
+    
+        } else {
+            System.out.println("Failed to fetch nutrition data.");
+        }
+    }
+    
+    private void deductFromInventory(Ingredient ingredient) {
+        List<Map<String, Object>> inventory = getInventory();
+        for (Map<String, Object> item : inventory) {
+            if (item.get("name").equals(ingredient.getName()) &&
+                item.get("unit").equals(ingredient.getUnit())) {
+                int availableQuantity = Integer.parseInt((String) item.get("quantity"));
+                int requiredQuantity = Integer.parseInt(ingredient.getAmount());
+                if (availableQuantity >= requiredQuantity) {
+                    item.put("quantity", String.valueOf(availableQuantity - requiredQuantity));
+                } else {
+                    // Handle case where inventory is insufficient
+                    System.out.println("Not enough inventory for " + ingredient.getName());
+                }
+                break;
+            }
+        }
+        saveInventory(inventory);
+    }
+
+
+    /**
+     * 🔹 Data Persistence (Load/Save JSON)
+     */
+    private void saveInventory(List<Map<String, Object>> inventory) {
+        try (FileWriter writer = new FileWriter("itemInventory.json")) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(inventory, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void archiveMadeMeals() {
+        List<Map<String, Object>> archive = new ArrayList<>();
+        mealPlans.forEach((date, meals) -> {
+            meals.removeIf(meal -> {
+                if ((boolean) meal.get("isMealMade")) {
+                    archive.add(meal);
+                    return true; // Remove from current plan
+                }
+                return false;
+            });
+        });
+        saveToJson(archive, "mealArchive.json");
+        saveMealPlansToJson();
+    }
+
+    private void saveToJson(Object data, String fileName) {
+        try (FileWriter writer = new FileWriter(fileName)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(data, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void saveMealPlansToJson() {
+        try (FileWriter writer = new FileWriter("mealPlans.json")) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(mealPlans, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadMealPlansFromJson() {
+        try (FileReader reader = new FileReader("mealPlans.json")) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .setPrettyPrinting()
+                    .create();
+    
+            Type type = new TypeToken<Map<LocalDate, List<Map<String, Object>>>>() {}.getType();
+            mealPlans = gson.fromJson(reader, type);
+    
+            if (mealPlans == null) {
+                mealPlans = new HashMap<>();
+            }
+        } catch (IOException e) {
+            mealPlans = new HashMap<>();
+            e.printStackTrace();
+        }
+    }   
+
+
+    /**
+     * 🔹 Utility Methods (Alerts, Parsing, Miscellaneous)  
+     */
+
+    private void setHoverEffect(Button button) {
+        button.setOnMouseEntered(this::handleMouseEntered);
+        button.setOnMouseExited(this::handleMouseExited);
+    }  
+
+    private void handleMouseEntered(MouseEvent event) {
+        Button button = (Button) event.getSource();
+        // Change style when mouse enters
+        button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+    }
+
+    private void handleMouseExited(MouseEvent event) {
+        Button button = (Button) event.getSource();
+        // Reset style when mouse exits
+        button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private Recipe getRecipeById(int id) {
+        try (FileReader reader = new FileReader("recipes.json")) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Recipe>>() {}.getType();
+            List<Recipe> recipes = gson.fromJson(reader, type);
+
+            for (Recipe recipe : recipes) {
+                System.out.println("Checking recipe: " + recipe.getID());
+                if (recipe.getID() == (id)) {
+                    return recipe;
+                }
+            }
+            System.out.println("No recipe found with name: " + id);
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String getMealName(List<Recipe> meals, int index) {
+        if (index < meals.size()) {
+            return meals.get(index).getName();
+        }
+        return "[No Meal Planned]";
+    }
+
+    private Recipe getRecipeByName(String mealName) {
+        try (FileReader reader = new FileReader("recipes.json")) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Recipe>>() {}.getType();
+            List<Recipe> recipes = gson.fromJson(reader, type);
+    
+            for (Recipe recipe : recipes) {
+                System.out.println("Checking recipe: " + recipe.getName());
+                if (recipe.getName().equals(mealName)) {
+                    return recipe;
+                }
+            }
+            System.out.println("No recipe found with name: " + mealName);
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Map<String, String> parseBlockId(String blockId) {
+        String[] parts = blockId.split("\\|");
+        if (parts.length != 4) {
+            throw new IllegalArgumentException("Invalid block ID format: " + blockId);
+        }
+    
+        Map<String, String> parsedData = new HashMap<>();
+        parsedData.put("mealName", parts[0]);
+        parsedData.put("timeBlockType", parts[1]);
+        parsedData.put("date", parts[2]);
+        parsedData.put("hour", parts[3]);
+        return parsedData;
+    }
+
+    private List<Map<String, Object>> getMealsForDay(LocalDate date) {
+        // Retrieve the list of meals for the given date, or return an empty list if none exist
+        return mealPlans.getOrDefault(date, new ArrayList<>());
+    }
+
+    
+
+    
+    
+    
+
+    
+
+
+    
+    private void loadDailyMeals(LocalDate date) {
+        List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
+    
+        // Initialize default meal names for breakfast, lunch, dinner, and snacks
+        String breakfast = "[No Meal Planned]";
+        String lunch = "[No Meal Planned]";
+        String dinner = "[No Meal Planned]";
+        String snacks = "[No Meal Planned]";
+    
+        for (Map<String, Object> mealData : mealsForDay) {
+            for (String timePartKey : List.of("prepTime", "passiveTime", "cookTime")) {
+                Map<String, Object> timePart = (Map<String, Object>) mealData.get(timePartKey);
+                if (timePart != null) {
+                    String blockDate = (String) timePart.get("date");
+                    int hour = ((Number) timePart.get("hour")).intValue();
+    
+                    // Only process if the block date matches the selected date
+                    if (LocalDate.parse(blockDate).equals(date)) {
+                        String mealName = (String) mealData.get("name");
+                        if (hour >= 7 && hour < 10) {
+                            breakfast = mealName;
+                        } else if (hour >= 12 && hour < 14) {
+                            lunch = mealName;
+                        } else if (hour >= 18 && hour < 20) {
+                            dinner = mealName;
+                        } else {
+                            snacks = mealName;
+                        }
+                    }
+                }
+            }
+        }
+    
+        breakfastMeal.setText("Breakfast: " + breakfast);
+        lunchMeal.setText("Lunch: " + lunch);
+        dinnerMeal.setText("Dinner: " + dinner);
+        snacksMeal.setText("Snacks: " + snacks);
+    }
     
     // Update meal block when dragged
     private void updateMealPlanForDraggedBlock(Label block, LocalDate newDate, int newHour) {
@@ -797,7 +1038,6 @@ public class MealPlannerController {
         }
     }
     
-
     private Ingredient parseIngredient(String ingredient) {
         String[] parts = ingredient.split(":");
         String name = parts[0].trim();
@@ -867,7 +1107,6 @@ public class MealPlannerController {
         return neededIngredients;
     }
     
-
     public void refreshNeededIngredients() {
         List<Map<String, Object>> neededIngredients = generateNeededIngredientsList();
         if (myListsController != null) {
@@ -909,62 +1148,6 @@ public class MealPlannerController {
         }
 
         archiveMadeMeals(); // Archive meals after marking as made
-    }
-
-    private void deductFromInventory(Ingredient ingredient) {
-        List<Map<String, Object>> inventory = getInventory();
-        for (Map<String, Object> item : inventory) {
-            if (item.get("name").equals(ingredient.getName()) &&
-                item.get("unit").equals(ingredient.getUnit())) {
-                int availableQuantity = Integer.parseInt((String) item.get("quantity"));
-                int requiredQuantity = Integer.parseInt(ingredient.getAmount());
-                if (availableQuantity >= requiredQuantity) {
-                    item.put("quantity", String.valueOf(availableQuantity - requiredQuantity));
-                } else {
-                    // Handle case where inventory is insufficient
-                    System.out.println("Not enough inventory for " + ingredient.getName());
-                }
-                break;
-            }
-        }
-        saveInventory(inventory);
-    }
-
-    private void saveInventory(List<Map<String, Object>> inventory) {
-        try (FileWriter writer = new FileWriter("itemInventory.json")) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(inventory, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private void saveMealPlansToJson() {
-        try (FileWriter writer = new FileWriter("mealPlans.json")) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(mealPlans, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadMealPlansFromJson() {
-        try (FileReader reader = new FileReader("mealPlans.json")) {
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-                    .setPrettyPrinting()
-                    .create();
-    
-            Type type = new TypeToken<Map<LocalDate, List<Map<String, Object>>>>() {}.getType();
-            mealPlans = gson.fromJson(reader, type);
-    
-            if (mealPlans == null) {
-                mealPlans = new HashMap<>();
-            }
-        } catch (IOException e) {
-            mealPlans = new HashMap<>();
-            e.printStackTrace();
-        }
     }
 
     public void setMyListController(MyListsController controller) {
@@ -1072,6 +1255,7 @@ public class MealPlannerController {
         }
         saveMealPlansToJson(); // Persist changes to the JSON file
         loadCalendarView(); // Refresh UI
+        calculateMealNutrition();
     }
 
     private LocalDate showDatePickerDialog(String title, LocalDate defaultDate) {
@@ -1123,61 +1307,7 @@ public class MealPlannerController {
         }
     }
 
-    private void openRecipeOnClick(Label block) {
-        block.setOnMouseClicked(event -> {
-            if (event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {
-                String mealName = block.getText();
-                Recipe recipe = getRecipeByName(mealName); // Implement this method to fetch the recipe
-                if (recipe != null) {
-                    openRecipeDetails(recipe); // Implement UI logic for recipe details
-                }
-            }
-        });
-    }
 
-    private Recipe getRecipeByName(String mealName) {
-        try (FileReader reader = new FileReader("recipes.json")) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Recipe>>() {}.getType();
-            List<Recipe> recipes = gson.fromJson(reader, type);
-    
-            return recipes.stream()
-                          .filter(recipe -> recipe.getName().equals(mealName))
-                          .findFirst()
-                          .orElse(null);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private void openRecipeDetails(Recipe recipe) {
-        // Set recipe details in the mealDetailsPane
-        mealNameTXT.setText(recipe.getName());
-        complecityTXT.setText(String.valueOf(recipe.getComplexity()));
-        servingsTXT.setText("Servings: " + String.valueOf(recipe.getServings()));
-        prepTimeTXT.setText("Prep Time: " + String.valueOf(recipe.getPrepTime()));
-        passiveTimeTXT.setText("Passive Time: " + String.valueOf(recipe.getPassiveTime()));
-        cookTimeTXT.setText("Cook Time: " + String.valueOf(recipe.getCookTime()));
-
-        int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime();
-
-        totalTimeTXT.setText("Total Time: " + String.valueOf(totalTime));
-    
-        // Populate ingredients
-        recipeIngredientsListView.getItems().clear();
-        recipeIngredientsListView.getItems().addAll(recipe.getIngredients());
-    
-        // Populate special equipment
-        specialEqupmentListView.getItems().clear();
-        specialEqupmentListView.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
-    
-        // Set description
-        descriptionArea.setText(recipe.getDescription());
-    
-        // Show the details pane
-        mealDetailsPane.setVisible(true);
-    }
 
     private void stylePastDates() {
         dayView.getChildren().forEach(node -> {
@@ -1203,37 +1333,7 @@ public class MealPlannerController {
         }
         return null;
     }
-    
-    private void archiveMadeMeals() {
-        List<Map<String, Object>> archive = new ArrayList<>();
-        mealPlans.forEach((date, meals) -> {
-            meals.removeIf(meal -> {
-                if ((boolean) meal.get("isMealMade")) {
-                    archive.add(meal);
-                    return true; // Remove from current plan
-                }
-                return false;
-            });
-        });
-        saveToJson(archive, "mealArchive.json");
-        saveMealPlansToJson();
-    }
 
-    private void saveToJson(Object data, String fileName) {
-        try (FileWriter writer = new FileWriter(fileName)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(data, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Utility method to show an alert
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 
 }
+

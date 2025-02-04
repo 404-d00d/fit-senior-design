@@ -62,5 +62,50 @@
     "steps": [
       "cook it?"
     ]
+  },
+  {
+    "id": 3,
+    "name": "test",
+    "category": "dinner",
+    "servings": 1,
+    "description": "asd",
+    "prepTime": 2,
+    "passiveTime": 3,
+    "cookTime": 4,
+    "complexity": 1,
+    "tags": [],
+    "specialEquipment": [],
+    "ingredients": [
+      "dsa: 3 g"
+    ],
+    "steps": [
+      "dgf",
+      "hg"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Sample Meal",
+    "category": "dinner",
+    "collection": "Favorites",
+    "servings": 3,
+    "description": "food is made",
+    "prepTime": 1,
+    "passiveTime": 3,
+    "cookTime": 4,
+    "complexity": 1,
+    "tags": [],
+    "specialEquipment": [
+      "asd"
+    ],
+    "ingredients": [
+      "bread: 1 kg",
+      "beef: 1 kg"
+    ],
+    "steps": [
+      "sear it",
+      "pop it",
+      ""
+    ]
   }
 ]

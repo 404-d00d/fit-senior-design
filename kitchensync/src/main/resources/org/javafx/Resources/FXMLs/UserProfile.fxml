@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="inventoryPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.InventoryDashboardController">
+<AnchorPane fx:id="inventoryPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.UserProfileController">
    <children>
       <Rectangle fill="#727272" height="112.0" layoutX="-7.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1932.0" />
       <Text layoutX="122.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="My Profile" wrappingWidth="321.30859375">

@@ -15,6 +15,7 @@ public class Recipe {
     private String[] specialEquipment;
     private String[] ingredients;
     private String[] steps;
+    private int feedback;
 
     public Recipe(int id, String name, String category, String collection, String description, int prepTime, int passiveTime, int cookTime, int complexity, int servings, 
                   String[] tags, String[] ingredients, String[] specialEquipment, String[] steps) {
@@ -32,6 +33,7 @@ public class Recipe {
         this.ingredients = ingredients;
         this.specialEquipment = specialEquipment;
         this.steps = steps;
+        this.feedback = 0;
     }
 
     // Getters and setters for all fields
@@ -76,6 +78,9 @@ public class Recipe {
 
     public String[] getSteps() { return steps; }
     public void setSteps(String[] steps) { this.steps = steps; }
+
+    public int getFeedback() { return feedback; }
+    public void setFeedback(int feedback) { this.feedback = feedback; }
 }
 
 // Custom classes to manage ingredients

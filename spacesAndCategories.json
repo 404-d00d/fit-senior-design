@@ -1,0 +1,30 @@
+{
+  "spaces": [
+    "Fridge",
+    "Freezer",
+    "Pantry"
+  ],
+  "categories": {
+    "Freezer": [
+      "All Items",
+      "Expiring Soon",
+      "Frozen Foods",
+      "Meat \u0026 Seafood",
+      "Vegetables"
+    ],
+    "Pantry": [
+      "All Items",
+      "Expiring Soon",
+      "Canned Goods",
+      "Dry Foods",
+      "Condiments"
+    ],
+    "Fridge": [
+      "All Items",
+      "Expiring Soon",
+      "Ready to Eat",
+      "Dairy",
+      "Meat \u0026 Seafood"
+    ]
+  }
+}

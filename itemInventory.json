@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Orange Juice (No Pulp)",
+    "ID": 1,
+    "quantity": 78,
+    "location": "Fridge",
+    "expirDate": "2026-02-07",
+    "unit": "l",
+    "imagePath": "6515.png",
+    "tags": []
+  },
+  {
+    "name": "Bread",
+    "ID": 2,
+    "quantity": 1,
+    "location": "Pantry",
+    "expirDate": "2025-02-03",
+    "unit": "kg",
+    "imagePath": "IMG_20250124_135600_946.jpg",
+    "tags": []
+  },
+  {
+    "name": "Olive oil",
+    "ID": 3,
+    "quantity": 2,
+    "location": "Pantry",
+    "expirDate": "2025-01-29",
+    "unit": "ml",
+    "imagePath": "IMG_20250122_203056_680.jpg",
+    "tags": []
+  },
+  {
+    "name": "Blue Cheese",
+    "ID": 4,
+    "quantity": 34,
+    "location": "Freezer",
+    "expirDate": "2024-12-30",
+    "unit": "g",
+    "imagePath": "IMG_20250122_203056_680.jpg",
+    "tags": []
+  }
+]

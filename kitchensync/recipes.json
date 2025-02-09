@@ -1,25 +1,5 @@
 [
   {
-    "id": 0,
-    "name": "test",
-    "category": "dinner",
-    "servings": 1,
-    "description": "asd",
-    "prepTime": 2,
-    "passiveTime": 3,
-    "cookTime": 4,
-    "complexity": 1,
-    "tags": [],
-    "specialEquipment": [],
-    "ingredients": [
-      "dsa: 3 g"
-    ],
-    "steps": [
-      "dgf",
-      "hg"
-    ]
-  },
-  {
     "id": 1,
     "name": "Test 2",
     "category": "dinner",
@@ -43,69 +23,20 @@
   },
   {
     "id": 2,
-    "name": "A",
-    "category": "dinner",
-    "collection": "All Recipes",
-    "servings": 3,
-    "description": "food",
-    "prepTime": 2,
-    "passiveTime": 1,
-    "cookTime": 54,
-    "complexity": 2,
-    "tags": [
-      "food"
-    ],
-    "specialEquipment": [],
-    "ingredients": [
-      "asd: 3 kg"
-    ],
-    "steps": [
-      "cook it?"
-    ]
-  },
-  {
-    "id": 3,
-    "name": "test",
-    "category": "dinner",
-    "servings": 1,
-    "description": "asd",
-    "prepTime": 2,
-    "passiveTime": 3,
-    "cookTime": 4,
-    "complexity": 1,
-    "tags": [],
-    "specialEquipment": [],
-    "ingredients": [
-      "dsa: 3 g"
-    ],
-    "steps": [
-      "dgf",
-      "hg"
-    ]
-  },
-  {
-    "id": 4,
-    "name": "Sample Meal",
-    "category": "dinner",
+    "name": "asdw12",
+    "category": "lunch",
     "collection": "Favorites",
-    "servings": 3,
-    "description": "food is made",
-    "prepTime": 1,
-    "passiveTime": 3,
-    "cookTime": 4,
+    "servings": 2,
+    "description": "asdf",
+    "prepTime": 3,
+    "passiveTime": 4,
+    "cookTime": 5,
     "complexity": 1,
     "tags": [],
-    "specialEquipment": [
-      "asd"
-    ],
+    "specialEquipment": [],
     "ingredients": [
-      "bread: 1 kg",
-      "beef: 1 kg"
+      "das: w kg"
     ],
-    "steps": [
-      "sear it",
-      "pop it",
-      ""
-    ]
+    "steps": []
   }
 ]

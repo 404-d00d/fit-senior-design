@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -551,102 +553,70 @@ public class MyRecipesController {
    }
 
    private void saveRecipe() {
-
-      //check if last step was saved
-      if (preparationSteps.isEmpty() && prepStepField.getText() != "") {
-         preparationSteps.add(currentStep, prepStepField.getText().trim());
+      // Validate inputs
+      if (!isFormValid(recipeName.getText(), recipeCategory.getValue(), recipeYield.getText(), 
+                       recipeDescription.getText(), recipeETAPrep.getText(), recipeETAPassive.getText(), 
+                       recipeETA.getText(), ingredients.stream().map(Ingredient::getName).toArray(String[]::new), 
+                       preparationSteps.toArray(new String[0]))) {
+          return;
       }
-      else if (preparationSteps.get(currentStep).isEmpty() && prepStepField.getText() != "") {
-         preparationSteps.set(currentStep, prepStepField.getText().trim());
-      }
-
-      // Get values from input fields
-      String name = recipeName.getText(); //Required
-      String category = recipeCategory.getValue(); //Required
-      String collection = recipeCollection.getValue();
-      int servings = Integer.parseInt(recipeYield.getText()); //Required
-      String description = recipeDescription.getText(); //Required
-      int prepTime = Integer.parseInt(recipeETAPrep.getText()); //Required
-      int passiveTime = Integer.parseInt(recipeETAPassive.getText()); //Required
-      int cookTime = Integer.parseInt(recipeETA.getText()); //Required
-      String[] tagsArray = tags.toArray(new String[0]); 
-      String[] equipmentArray = equipment.toArray(new String[0]);
-
-      // Convert ingredients to a string array representation
-      String[] ingredientsArray = ingredients.stream()
-      .map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit())
-      .toArray(String[]::new);
-
-      String[] stepsArray = preparationSteps.toArray(new String[0]); //Required
-
-      // Set a unique ID for the new recipe
+  
       int id = recipeList.size();
-
-      int complexity = calculateRecipeComplexity(); 
-
-      // Create a new Recipe object with all required fields
-      Recipe newRecipe = new Recipe(id, name, category, collection, description, prepTime, passiveTime, cookTime, complexity, servings, tagsArray, ingredientsArray, equipmentArray, stepsArray);
-      //item.put("Recipe", AttributeValue.builder().s(Integer.toString(id)).build());
-      //item.put(Integer.toString(id), AttributeValue.builder().s(newRecipe.getName()).build());
-      //PutItemRequest request = PutItemRequest.builder().tableName("Recipes").item(item).build();
-      //database.putItem(request);
-
-      if (isFormValid(name, category, recipeYield.getText(), description, recipeETAPrep.getText(), recipeETAPassive.getText(), recipeETA.getText(), ingredientsArray, stepsArray)) {
-
-         // Concatenate all preparation steps
-        String PrepSteps = String.join("\n", preparationSteps);
-
-        recipeList.add(newRecipe);
-        saveRecipesToJson(recipeList);
-         
-         try {
-            VBox recipeCard = null;
-
-            if (recipeWidgets.containsKey(id)) {
-               // Update the existing recipe card with new details
-               recipeCard = recipeWidgets.get(id);
-               RecipeCardController controller = (RecipeCardController) recipeCard.getUserData();
-               if (controller != null) {
-                  controller.setRecipeData(newRecipe, selectedImage, this); // Update the existing card with new data
-               }
-            }
-            else {
-               // Otherwise, create a new recipe card
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
-               recipeCard = loader.load();
-
-               // Get the RecipeCardController and pass `this` as MyRecipesController
-               RecipeCardController controller = loader.getController();
-               controller.setRecipeData(newRecipe, selectedImage, this); // Pass the new Recipe object
-
-               // Add the recipe card to the FlowPane
-               recipeFlowPane.getChildren().add(recipeCard);
-
-               // Store the card and its controller in recipeWidgets for future updates
-               recipeWidgets.put(id, recipeCard);
-               recipeCard.setUserData(controller); // Store the controller for easy retrieval later
-
-               if (noRecipesTXT.isVisible()) {
-                   noRecipesTXT.setVisible(false);
-               }
-            }
-
-            // Apply hover effect for short recipe details
-            applyHoverEffect(recipeCard, newRecipe);
-
-            clearForms();
-
-            updateTagView();
-            updateStepView();
-
-            addRecipePaneP2.setVisible(false);
-            myRecipesPane.setVisible(true);
-         
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
+      Recipe newRecipe = new Recipe(id, recipeName.getText(), recipeCategory.getValue(), recipeCollection.getValue(), 
+                                    recipeDescription.getText(), Integer.parseInt(recipeETAPrep.getText()), 
+                                    Integer.parseInt(recipeETAPassive.getText()), Integer.parseInt(recipeETA.getText()), 
+                                    calculateRecipeComplexity(), Integer.parseInt(recipeYield.getText()), 
+                                    tags.toArray(new String[0]), 
+                                    ingredients.stream().map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit()).toArray(String[]::new), 
+                                    equipment.toArray(new String[0]), 
+                                    preparationSteps.toArray(new String[0]));
+  
+      // **Add the new recipe to the list before saving**
+      recipeList.add(newRecipe);
+  
+      // Remove old card if it exists (prevents duplicate recipe cards)
+      if (recipeWidgets.containsKey(id)) {
+          VBox oldRecipeCard = recipeWidgets.get(id);
+          recipeFlowPane.getChildren().remove(oldRecipeCard);
+          recipeWidgets.remove(id);
       }
-   }
+  
+      try {
+          FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
+          VBox recipeCard = loader.load();
+          RecipeCardController controller = loader.getController();
+  
+          // Save the image in "Recipe Images"
+          String imageName = recipeName.getText() + ".png";
+          if (selectedImageFile != null) {
+              copyImageToResources(selectedImageFile, imageName);
+          }
+  
+          // Load the saved image
+          File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + imageName);
+          Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
+  
+          controller.setRecipeData(newRecipe, image, this);
+          recipeFlowPane.getChildren().add(recipeCard);
+          recipeWidgets.put(id, recipeCard);
+          recipeCard.setUserData(controller);
+  
+          applyHoverEffect(recipeCard, newRecipe);
+          clearForms();
+          updateTagView();
+          updateStepView();
+          loadRecipesCards();
+  
+          addRecipePaneP2.setVisible(false);
+          myRecipesPane.setVisible(true);
+  
+          // **Save the updated list to JSON**
+          saveRecipesToJson(recipeList);
+  
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+  }
 
    private int calculateRecipeComplexity() {
       int complexity = 1; // Start with a base complexity
@@ -762,25 +732,6 @@ public class MyRecipesController {
       alert.showAndWait();
    }
 
-   private void SelectImage() {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Select Ingredient Image");
-
-      // Restrict to image file types
-      fileChooser.getExtensionFilters().add(
-         new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-      );
-
-      Stage stage = (Stage) imageSelectButton.getScene().getWindow();  // Get the current stage
-      selectedImageFile = fileChooser.showOpenDialog(stage);
-
-      if (selectedImageFile != null) {
-         // Convert file to Image
-        selectedImage = new Image(selectedImageFile.toURI().toString());
-        imagePreview.setImage(selectedImage);
-      }
-   }
-
    public void showRecipeDetails(int recipeId, String name, Image image, Recipe recipe) {
 
       displayStep = 0;
@@ -879,18 +830,22 @@ public class MyRecipesController {
 
    // Method to delete the recipe by ID
    public void deleteRecipe(Recipe recipe) {
-      // Logic to remove the recipe from data source and refresh UI
-      System.out.println("Delete recipe with ID: " + recipe.getID());
-
-      // Remove from database, then remove from frontend
-
-      // Access and remove the recipe card widget
+      System.out.println("Deleting recipe: " + recipe.getName());
+  
+      // Remove the recipe from the JSON list
+      recipeList.removeIf(r -> r.getID() == recipe.getID());
+      saveRecipesToJson(recipeList);
+  
+      // Remove the recipe card from the UI
       VBox recipeCard = recipeWidgets.get(recipe.getID());
       if (recipeCard != null) {
           recipeFlowPane.getChildren().remove(recipeCard);
-          recipeWidgets.remove(recipe.getID());  // Clean up from the map
+          recipeWidgets.remove(recipe.getID());
       }
-   }
+  
+      // Remove the corresponding image file
+      deleteRecipeImage(recipe.getName());
+  }
 
    private void saveRecipesToJson(List<Recipe> recipes) {
       File file = new File(RECIPES_FILE_PATH);
@@ -928,38 +883,34 @@ public class MyRecipesController {
    }
 
    private void loadRecipesCards() {
-   
-      // Populate recipe cards to the UI
-    recipeFlowPane.getChildren().clear(); // Clear any existing children before repopulating
-    for (Recipe recipe : recipeList) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
-            VBox recipeCard = loader.load();
-
-            // Get the RecipeCardController and pass `this` as MyRecipesController
-            RecipeCardController controller = loader.getController();
-            controller.setRecipeData(recipe, null, this); // Pass the Recipe object to set its data
-
-            // Add the recipe card to the FlowPane
-            recipeFlowPane.getChildren().add(recipeCard);
-
-            // Store the card and its controller in recipeWidgets for future reference
-            recipeWidgets.put(recipe.getID(), recipeCard);
-            recipeCard.setUserData(controller); // Store the controller for easy retrieval later
-
-            // Apply hover effect to show more details of each recipe
-            applyHoverEffect(recipeCard, recipe);
-
-            // Hide the "No Recipes" text if there are recipes to show
-            if (noRecipesTXT.isVisible()) {
-                noRecipesTXT.setVisible(false);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+      recipeFlowPane.getChildren().clear(); // Clear any existing children before repopulating
+  
+      for (Recipe recipe : recipeList) {
+          try {
+              FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
+              VBox recipeCard = loader.load();
+              RecipeCardController controller = loader.getController();
+  
+              // Load the recipe's image from the "Recipe Images" folder
+              File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
+              Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
+  
+              controller.setRecipeData(recipe, image, this); // Pass recipe data and image
+              
+              recipeFlowPane.getChildren().add(recipeCard);
+              recipeWidgets.put(recipe.getID(), recipeCard);
+              recipeCard.setUserData(controller);
+  
+              applyHoverEffect(recipeCard, recipe);
+  
+              if (noRecipesTXT.isVisible()) {
+                  noRecipesTXT.setVisible(false);
+              }
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
       }
-   }
+  }
 
    // Method to apply hover effect for displaying short recipe details
    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
@@ -1001,7 +952,8 @@ public class MyRecipesController {
           tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
       });
   }
-   /*
+   
+  /*
   
   Recipe Cards
 
@@ -1230,6 +1182,85 @@ public class MyRecipesController {
 
    private String getCurrentCollection() {
       return currentCollection;
+   }
+
+   /*
+    * Recipe Image Handlers
+   */
+
+   private void SelectImage() {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Select Recipe Image");
+
+      // Restrict to image file types
+      fileChooser.getExtensionFilters().add(
+         new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+      );
+
+      Stage stage = (Stage) imageSelectButton.getScene().getWindow();  // Get the current stage
+      selectedImageFile = fileChooser.showOpenDialog(stage);
+
+      if (selectedImageFile != null) {
+         // Convert file to Image
+         selectedImage = new Image(selectedImageFile.toURI().toString());
+         imagePreview.setImage(selectedImage);
+
+         // Copy the image to the resources folder
+         String destinationFileName = selectedImageFile.getName();
+         try {
+               copyImageToResources(selectedImageFile, destinationFileName);
+               System.out.println("Image copied to resources folder: " + destinationFileName);
+         } catch (IOException e) {
+               e.printStackTrace();
+               showAlert("Error", "Failed to copy image to resources folder.");
+         }
+      }
+   }
+
+   private void copyImageToResources(File sourceFile, String destinationFileName) throws IOException {
+      File destinationFolder = new File("src/main/resources/org/javafx/Resources/Recipe Images");
+  
+      if (!destinationFolder.exists()) {
+          boolean created = destinationFolder.mkdirs();
+          if (!created) {
+              throw new IOException("Failed to create directory: " + destinationFolder.getAbsolutePath());
+          }
+      }
+  
+      File destinationFile = new File(destinationFolder, destinationFileName);
+      Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+  
+      System.out.println("Image successfully copied to: " + destinationFile.getAbsolutePath());
+  }
+
+      /**
+       * Deletes the image file associated with a recipe.
+      * @param recipeName The name of the recipe (used as filename).
+      */
+   private void deleteRecipeImage(String recipeName) {
+      File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipeName + ".png");
+
+      if (imageFile.exists()) {
+         if (imageFile.delete()) {
+            System.out.println("Image deleted: " + imageFile.getName());
+         } else {
+            System.err.println("Failed to delete image: " + imageFile.getName());
+         }
+      } else {
+         System.out.println("No image found for: " + recipeName);
+      }
+   }
+
+    /*
+    * Helper Functions // Utilities 
+   */
+
+   private void showAlert(String title, String content) {
+      Alert alert = new Alert(Alert.AlertType.WARNING);
+      alert.setTitle(title);
+      alert.setHeaderText(null);
+      alert.setContentText(content);
+      alert.showAndWait();
    }
 }
 

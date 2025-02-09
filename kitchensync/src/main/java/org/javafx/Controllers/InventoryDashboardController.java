@@ -1626,7 +1626,6 @@ public class InventoryDashboardController {
       // In the future, replace this with an actual database call.
   }
       
-  
    private void updateSpacesItemCards() {
       // Update categories for spaces after loading ingredients
       for (Item ingredient : ingredientInventory) {
@@ -1658,7 +1657,23 @@ public class InventoryDashboardController {
   }
 
    private void copyImageToResources(File sourceFile, String destinationFileName) throws IOException {
-      File destinationFile = new File("/org/javafx/Resources/Item Images", destinationFileName);
+      // Get the working directory and construct a relative path
+      File destinationFolder = new File("src/main/resources/org/javafx/Resources/Item Images");
+
+      // Ensure the folder exists
+      if (!destinationFolder.exists()) {
+         boolean created = destinationFolder.mkdirs(); // Create directories if missing
+         if (!created) {
+            throw new IOException("Failed to create directory: " + destinationFolder.getAbsolutePath());
+         }
+      }
+
+      // Construct the full path to the destination file
+      File destinationFile = new File(destinationFolder, destinationFileName);
+
+      // Copy the file
       Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+      System.out.println("Image successfully copied to: " + destinationFile.getAbsolutePath());
    }
 }

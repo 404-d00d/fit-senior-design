@@ -1,5 +1,6 @@
 package org.javafx.Controllers;
 
+// Java Imports
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,14 +10,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 
+// External Libraries
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
+// JavaFX Imports
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -29,9 +31,17 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+
+// ==============================================================================
+//  MealPlannerController handles meal planning, navigation, and UI interactions
+// ==============================================================================
+
 public class MealPlannerController {
 
-    // 🔹 FXML UI COMPONENTS
+    // ==================
+    // FXML UI COMPONENTS
+    // ==================
+
     @FXML private ComboBox<String> calanderViewDropdown, nutritionalMeals, mealSlot;
     @FXML private Button addMealButton, userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
                         closeButton, inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton, 
@@ -47,16 +57,21 @@ public class MealPlannerController {
     @FXML private GridPane dayView, weekView, monthView;
     @FXML private ImageView recipeImages;
 
-    // 🔹 DATA STORAGE
+    // ==============================
+    // DATA STORAGE & CONSTANTS
+    // ==============================
+    
     private Map<LocalDate, List<Map<String, Object>>> mealPlans = new HashMap<>();
     private Label draggedBlock;
     private MyListsController myListsController;
     private int currentStep = 0, displayStep = 0;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d'th'");
 
-    /**
-     * 🔹 Initialization (initialize method): Runs on controller load
-     */
+    // ====================================================================
+    // INITIALIZATION
+    // These methods handle the controller setup when the FXML is loaded
+    // ====================================================================
+
     @FXML
     private void initialize() {
 
@@ -99,9 +114,11 @@ public class MealPlannerController {
         closeRecipeButton.setOnAction(event -> closeRecipeCookingPane());
     }
 
-    /**
-     * 🔹 UI & Menu Navigation BUTTON HANDLERS
-     */
+    // =============================================
+    // Navigation & UI Handling
+    // Handles menu navigation and button actions
+    // =============================================
+
     private void setNavigationButtonHandlers() {
         inventoryButton.setOnAction(event -> navigateToScreen("Inventory"));
         myRecipesButton.setOnAction(event -> navigateToScreen("MyRecipes"));
@@ -143,9 +160,21 @@ public class MealPlannerController {
         recipeCookingPane.setVisible(false);
     }
 
-    private void addMeal() {
-        openAddMealDialog();
-        calculateMealNutrition();
+    private void setHoverEffect(Button button) {
+        button.setOnMouseEntered(this::handleMouseEntered);
+        button.setOnMouseExited(this::handleMouseExited);
+    }  
+
+    private void handleMouseEntered(MouseEvent event) {
+        Button button = (Button) event.getSource();
+        // Change style when mouse enters
+        button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+    }
+
+    private void handleMouseExited(MouseEvent event) {
+        Button button = (Button) event.getSource();
+        // Reset style when mouse exits
+        button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
     }
 
     private void toggleMenuPane() {
@@ -156,9 +185,12 @@ public class MealPlannerController {
         }
     }
 
-    /**
-     * 🔹 Meal Planner Views (Day, Week, Month)
-     */
+
+    // ===================================================================
+    // Meal Planning & Calendar Views: 
+    // Handles calendar UI updates, date changes, and meal organization
+    // ===================================================================
+
     private void updateDateInView() {
         LocalDate selectedDate = dateInView.getValue();
         if (selectedDate != null) {
@@ -378,9 +410,50 @@ public class MealPlannerController {
         stylePastDates();
     }
 
-    /**
-     * 🔹 Meal Plan Handling
-     */
+    private void loadDailyMeals(LocalDate date) {
+        List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
+    
+        // Initialize default meal names for breakfast, lunch, dinner, and snacks
+        String breakfast = "[No Meal Planned]";
+        String lunch = "[No Meal Planned]";
+        String dinner = "[No Meal Planned]";
+        String snacks = "[No Meal Planned]";
+    
+        for (Map<String, Object> mealData : mealsForDay) {
+            for (String timePartKey : List.of("prepTime", "passiveTime", "cookTime")) {
+                Map<String, Object> timePart = (Map<String, Object>) mealData.get(timePartKey);
+                if (timePart != null) {
+                    String blockDate = (String) timePart.get("date");
+                    int hour = ((Number) timePart.get("hour")).intValue();
+    
+                    // Only process if the block date matches the selected date
+                    if (LocalDate.parse(blockDate).equals(date)) {
+                        String mealName = (String) mealData.get("name");
+                        if (hour >= 7 && hour < 10) {
+                            breakfast = mealName;
+                        } else if (hour >= 12 && hour < 14) {
+                            lunch = mealName;
+                        } else if (hour >= 18 && hour < 20) {
+                            dinner = mealName;
+                        } else {
+                            snacks = mealName;
+                        }
+                    }
+                }
+            }
+        }
+    
+        breakfastMeal.setText("Breakfast: " + breakfast);
+        lunchMeal.setText("Lunch: " + lunch);
+        dinnerMeal.setText("Dinner: " + dinner);
+        snacksMeal.setText("Snacks: " + snacks);
+    }
+
+    // ===========================================================
+    // Meal Plan Handling: 
+    // Handles adding, modifying, and removing meals in the plan
+    // ===========================================================
+    
     private void openAddMealDialog() {
         // TODO: Implement a dialog where the user can select the meal and times.
     
@@ -411,10 +484,71 @@ public class MealPlannerController {
         saveMealPlansToJson();
     }
 
+    private void addMeal() {
+        openAddMealDialog();
+        calculateMealNutrition();
+    }
 
-    /**
-     * 🔹 Time Blocks and Their Interactions (Click, Drag, Drop)
-     */
+    private void deleteMealFromPlan(String mealName) {
+        for (LocalDate date : new ArrayList<>(mealPlans.keySet())) { // Iterate over a copy of the keys
+            List<Map<String, Object>> mealsForDay = mealPlans.get(date);
+            if (mealsForDay != null) {
+                mealsForDay.removeIf(meal -> {
+                    // Remove the meal if the name matches
+                    return mealName.equals(meal.get("name"));
+                });
+                // Remove the date entry if no meals are left
+                if (mealsForDay.isEmpty()) {
+                    mealPlans.remove(date);
+                }
+            }
+        }
+        saveMealPlansToJson(); // Persist changes to the JSON file
+        loadCalendarView(); // Refresh UI
+        calculateMealNutrition();
+    }
+
+    private void markMealAsMade(LocalDate date, String blockId) {
+        try {
+            Map<String, String> blockData = parseBlockId(blockId);
+            String mealName = blockData.get("mealName");
+    
+            List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
+            for (Map<String, Object> meal : mealsForDay) {
+                if (mealName.equals(meal.get("name"))) {
+                    meal.put("isMealMade", true);
+                    break;
+                }
+            }
+    
+            saveMealPlansToJson();
+            loadDailyMeals(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        archiveMadeMeals(); // Archive meals after marking as made
+    }
+
+    private void archiveMadeMeals() {
+        List<Map<String, Object>> archive = new ArrayList<>();
+        mealPlans.forEach((date, meals) -> {
+            meals.removeIf(meal -> {
+                if ((boolean) meal.get("isMealMade")) {
+                    archive.add(meal);
+                    return true; // Remove from current plan
+                }
+                return false;
+            });
+        });
+        saveToJson(archive, "mealArchive.json");
+        saveMealPlansToJson();
+    }
+
+    // ===========================================================================
+    // Time Blocks & Drag-Drop Interactions
+    // Handles time blocks within the calendar, including drag-and-drop movement
+    // ===========================================================================
 
     private void enableTimeBlockInteraction(Label block, GridPane targetView) {
         final long[] pressTime = new long[1]; // Stores the time of press
@@ -603,9 +737,59 @@ public class MealPlannerController {
         });
     }
 
-    /**
-     * 🔹 Recipe Details & Cooking Steps
-     */
+    // Update meal block when dragged
+    private void updateMealPlanForDraggedBlock(Label block, LocalDate newDate, int newHour) {
+        try {
+            Map<String, String> blockData = parseBlockId(block.getId());
+            String blockType = blockData.get("timeBlockType");
+            LocalDate oldDate = LocalDate.parse(blockData.get("date"));
+            int oldHour = Integer.parseInt(blockData.get("hour"));
+    
+            List<Map<String, Object>> mealsForOldDate = mealPlans.getOrDefault(oldDate, new ArrayList<>());
+            Map<String, Object> targetMeal = null;
+            Map<String, Object> targetBlock = null;
+    
+            // Find the target meal and block
+            for (Map<String, Object> meal : mealsForOldDate) {
+                if (meal.containsKey(blockType)) {
+                    Map<String, Object> timeBlock = (Map<String, Object>) meal.get(blockType);
+                    if (oldDate.toString().equals(timeBlock.get("date")) && oldHour == ((Number) timeBlock.get("hour")).intValue()) {
+                        targetBlock = timeBlock;
+                        targetMeal = meal;
+                        break;
+                    }
+                }
+            }
+    
+            if (targetMeal != null && targetBlock != null) {
+                // Remove the block from the old date's meal list
+                mealsForOldDate.remove(targetMeal);
+                if (mealsForOldDate.isEmpty()) {
+                    mealPlans.remove(oldDate);
+                }
+    
+                // Update the block's date and hour
+                targetBlock.put("date", newDate.toString());
+                targetBlock.put("hour", newHour);
+    
+                // Add the updated meal back to the new date's meal list
+                List<Map<String, Object>> mealsForNewDate = mealPlans.computeIfAbsent(newDate, k -> new ArrayList<>());
+                mealsForNewDate.add(targetMeal);
+    
+                saveMealPlansToJson();
+            }
+
+            loadDailyMeals(newDate); // Refresh UI for the new date
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // =====================================================
+    // Recipe Handling:
+    // Handles retrieving, displaying, and editing recipes
+    // =====================================================
+
     public void showRecipeDetails(String name, Image image, Recipe recipe) {
 
         recipeCookingPane.setVisible(true);
@@ -684,9 +868,51 @@ public class MealPlannerController {
         mealDetailsPane.setVisible(true);
     }
 
-    /**
-     * 🔹 Inventory & Nutritional Breakdown
-     */
+    private Recipe getRecipeById(int id) {
+        try (FileReader reader = new FileReader("recipes.json")) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Recipe>>() {}.getType();
+            List<Recipe> recipes = gson.fromJson(reader, type);
+
+            for (Recipe recipe : recipes) {
+                System.out.println("Checking recipe: " + recipe.getID());
+                if (recipe.getID() == (id)) {
+                    return recipe;
+                }
+            }
+            System.out.println("No recipe found with name: " + id);
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Recipe getRecipeByName(String mealName) {
+        try (FileReader reader = new FileReader("recipes.json")) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<List<Recipe>>() {}.getType();
+            List<Recipe> recipes = gson.fromJson(reader, type);
+    
+            for (Recipe recipe : recipes) {
+                System.out.println("Checking recipe: " + recipe.getName());
+                if (recipe.getName().equals(mealName)) {
+                    return recipe;
+                }
+            }
+            System.out.println("No recipe found with name: " + mealName);
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // =========================================================
+    // Inventory & Nutritional Breakdown
+    // Handles inventory tracking and displaying nutrition data
+    // ==========================================================
+
     private void calculateMealNutrition() {
         LocalDate selectedDate = datePicker.getValue();  // Get selected date
         List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(selectedDate, new ArrayList<>());
@@ -781,273 +1007,6 @@ public class MealPlannerController {
         saveInventory(inventory);
     }
 
-
-    /**
-     * 🔹 Data Persistence (Load/Save JSON)
-     */
-    private void saveInventory(List<Map<String, Object>> inventory) {
-        try (FileWriter writer = new FileWriter("itemInventory.json")) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(inventory, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void archiveMadeMeals() {
-        List<Map<String, Object>> archive = new ArrayList<>();
-        mealPlans.forEach((date, meals) -> {
-            meals.removeIf(meal -> {
-                if ((boolean) meal.get("isMealMade")) {
-                    archive.add(meal);
-                    return true; // Remove from current plan
-                }
-                return false;
-            });
-        });
-        saveToJson(archive, "mealArchive.json");
-        saveMealPlansToJson();
-    }
-
-    private void saveToJson(Object data, String fileName) {
-        try (FileWriter writer = new FileWriter(fileName)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(data, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private void saveMealPlansToJson() {
-        try (FileWriter writer = new FileWriter("mealPlans.json")) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(mealPlans, writer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadMealPlansFromJson() {
-        try (FileReader reader = new FileReader("mealPlans.json")) {
-            Gson gson = new GsonBuilder()
-                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
-                    .setPrettyPrinting()
-                    .create();
-    
-            Type type = new TypeToken<Map<LocalDate, List<Map<String, Object>>>>() {}.getType();
-            mealPlans = gson.fromJson(reader, type);
-    
-            if (mealPlans == null) {
-                mealPlans = new HashMap<>();
-            }
-        } catch (IOException e) {
-            mealPlans = new HashMap<>();
-            e.printStackTrace();
-        }
-    }   
-
-
-    /**
-     * 🔹 Utility Methods (Alerts, Parsing, Miscellaneous)  
-     */
-
-    private void setHoverEffect(Button button) {
-        button.setOnMouseEntered(this::handleMouseEntered);
-        button.setOnMouseExited(this::handleMouseExited);
-    }  
-
-    private void handleMouseEntered(MouseEvent event) {
-        Button button = (Button) event.getSource();
-        // Change style when mouse enters
-        button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
-    }
-
-    private void handleMouseExited(MouseEvent event) {
-        Button button = (Button) event.getSource();
-        // Reset style when mouse exits
-        button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
-    }
-
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    private Recipe getRecipeById(int id) {
-        try (FileReader reader = new FileReader("recipes.json")) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Recipe>>() {}.getType();
-            List<Recipe> recipes = gson.fromJson(reader, type);
-
-            for (Recipe recipe : recipes) {
-                System.out.println("Checking recipe: " + recipe.getID());
-                if (recipe.getID() == (id)) {
-                    return recipe;
-                }
-            }
-            System.out.println("No recipe found with name: " + id);
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private String getMealName(List<Recipe> meals, int index) {
-        if (index < meals.size()) {
-            return meals.get(index).getName();
-        }
-        return "[No Meal Planned]";
-    }
-
-    private Recipe getRecipeByName(String mealName) {
-        try (FileReader reader = new FileReader("recipes.json")) {
-            Gson gson = new Gson();
-            Type type = new TypeToken<List<Recipe>>() {}.getType();
-            List<Recipe> recipes = gson.fromJson(reader, type);
-    
-            for (Recipe recipe : recipes) {
-                System.out.println("Checking recipe: " + recipe.getName());
-                if (recipe.getName().equals(mealName)) {
-                    return recipe;
-                }
-            }
-            System.out.println("No recipe found with name: " + mealName);
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private Map<String, String> parseBlockId(String blockId) {
-        String[] parts = blockId.split("\\|");
-        if (parts.length != 4) {
-            throw new IllegalArgumentException("Invalid block ID format: " + blockId);
-        }
-    
-        Map<String, String> parsedData = new HashMap<>();
-        parsedData.put("mealName", parts[0]);
-        parsedData.put("timeBlockType", parts[1]);
-        parsedData.put("date", parts[2]);
-        parsedData.put("hour", parts[3]);
-        return parsedData;
-    }
-
-    private List<Map<String, Object>> getMealsForDay(LocalDate date) {
-        // Retrieve the list of meals for the given date, or return an empty list if none exist
-        return mealPlans.getOrDefault(date, new ArrayList<>());
-    }
-
-    
-
-    
-    
-    
-
-    
-
-
-    
-    private void loadDailyMeals(LocalDate date) {
-        List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
-    
-        // Initialize default meal names for breakfast, lunch, dinner, and snacks
-        String breakfast = "[No Meal Planned]";
-        String lunch = "[No Meal Planned]";
-        String dinner = "[No Meal Planned]";
-        String snacks = "[No Meal Planned]";
-    
-        for (Map<String, Object> mealData : mealsForDay) {
-            for (String timePartKey : List.of("prepTime", "passiveTime", "cookTime")) {
-                Map<String, Object> timePart = (Map<String, Object>) mealData.get(timePartKey);
-                if (timePart != null) {
-                    String blockDate = (String) timePart.get("date");
-                    int hour = ((Number) timePart.get("hour")).intValue();
-    
-                    // Only process if the block date matches the selected date
-                    if (LocalDate.parse(blockDate).equals(date)) {
-                        String mealName = (String) mealData.get("name");
-                        if (hour >= 7 && hour < 10) {
-                            breakfast = mealName;
-                        } else if (hour >= 12 && hour < 14) {
-                            lunch = mealName;
-                        } else if (hour >= 18 && hour < 20) {
-                            dinner = mealName;
-                        } else {
-                            snacks = mealName;
-                        }
-                    }
-                }
-            }
-        }
-    
-        breakfastMeal.setText("Breakfast: " + breakfast);
-        lunchMeal.setText("Lunch: " + lunch);
-        dinnerMeal.setText("Dinner: " + dinner);
-        snacksMeal.setText("Snacks: " + snacks);
-    }
-    
-    // Update meal block when dragged
-    private void updateMealPlanForDraggedBlock(Label block, LocalDate newDate, int newHour) {
-        try {
-            Map<String, String> blockData = parseBlockId(block.getId());
-            String blockType = blockData.get("timeBlockType");
-            LocalDate oldDate = LocalDate.parse(blockData.get("date"));
-            int oldHour = Integer.parseInt(blockData.get("hour"));
-    
-            List<Map<String, Object>> mealsForOldDate = mealPlans.getOrDefault(oldDate, new ArrayList<>());
-            Map<String, Object> targetMeal = null;
-            Map<String, Object> targetBlock = null;
-    
-            // Find the target meal and block
-            for (Map<String, Object> meal : mealsForOldDate) {
-                if (meal.containsKey(blockType)) {
-                    Map<String, Object> timeBlock = (Map<String, Object>) meal.get(blockType);
-                    if (oldDate.toString().equals(timeBlock.get("date")) && oldHour == ((Number) timeBlock.get("hour")).intValue()) {
-                        targetBlock = timeBlock;
-                        targetMeal = meal;
-                        break;
-                    }
-                }
-            }
-    
-            if (targetMeal != null && targetBlock != null) {
-                // Remove the block from the old date's meal list
-                mealsForOldDate.remove(targetMeal);
-                if (mealsForOldDate.isEmpty()) {
-                    mealPlans.remove(oldDate);
-                }
-    
-                // Update the block's date and hour
-                targetBlock.put("date", newDate.toString());
-                targetBlock.put("hour", newHour);
-    
-                // Add the updated meal back to the new date's meal list
-                List<Map<String, Object>> mealsForNewDate = mealPlans.computeIfAbsent(newDate, k -> new ArrayList<>());
-                mealsForNewDate.add(targetMeal);
-    
-                saveMealPlansToJson();
-            }
-
-            loadDailyMeals(newDate); // Refresh UI for the new date
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private Ingredient parseIngredient(String ingredient) {
-        String[] parts = ingredient.split(":");
-        String name = parts[0].trim();
-        String[] quantityUnit = parts[1].trim().split(" ");
-        String amount = quantityUnit[0];
-        String unit = quantityUnit[1];
-    
-        return new Ingredient(name, amount, unit);
-    }
-
     private List<Map<String, Object>> generateNeededIngredientsList() {
         List<Map<String, Object>> neededIngredients = new ArrayList<>();
     
@@ -1106,7 +1065,7 @@ public class MealPlannerController {
         }
         return neededIngredients;
     }
-    
+
     public void refreshNeededIngredients() {
         List<Map<String, Object>> neededIngredients = generateNeededIngredientsList();
         if (myListsController != null) {
@@ -1128,32 +1087,63 @@ public class MealPlannerController {
         }
     }
 
-    private void markMealAsMade(LocalDate date, String blockId) {
-        try {
-            Map<String, String> blockData = parseBlockId(blockId);
-            String mealName = blockData.get("mealName");
+    // ======================================================================
+    // Data Persistence (Saving & Loading JSON):
+    // Handles reading and writing meal plans, inventory, and archived data
+    // ======================================================================
     
-            List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
-            for (Map<String, Object> meal : mealsForDay) {
-                if (mealName.equals(meal.get("name"))) {
-                    meal.put("isMealMade", true);
-                    break;
-                }
-            }
-    
-            saveMealPlansToJson();
-            loadDailyMeals(date);
-        } catch (Exception e) {
+    private void saveInventory(List<Map<String, Object>> inventory) {
+        try (FileWriter writer = new FileWriter("itemInventory.json")) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(inventory, writer);
+        } catch (IOException e) {
             e.printStackTrace();
         }
-
-        archiveMadeMeals(); // Archive meals after marking as made
     }
 
-    public void setMyListController(MyListsController controller) {
-        this.myListsController = controller;
+    private void saveToJson(Object data, String fileName) {
+        try (FileWriter writer = new FileWriter(fileName)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(data, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
+    private void saveMealPlansToJson() {
+        try (FileWriter writer = new FileWriter("mealPlans.json")) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            gson.toJson(mealPlans, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadMealPlansFromJson() {
+        try (FileReader reader = new FileReader("mealPlans.json")) {
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+                    .setPrettyPrinting()
+                    .create();
+    
+            Type type = new TypeToken<Map<LocalDate, List<Map<String, Object>>>>() {}.getType();
+            mealPlans = gson.fromJson(reader, type);
+    
+            if (mealPlans == null) {
+                mealPlans = new HashMap<>();
+            }
+        } catch (IOException e) {
+            mealPlans = new HashMap<>();
+            e.printStackTrace();
+        }
+    }   
+
+
+    // ==============================================================================
+    // Right-Click Context Menu Actions: 
+    // Handles meal editing, deletion, and marking as made via right-click options
+    // ==============================================================================  
+
     private void addRightClickOptions(Label block, LocalDate date) {
         block.setOnContextMenuRequested(event -> {
             ContextMenu contextMenu = new ContextMenu();
@@ -1239,25 +1229,6 @@ public class MealPlannerController {
         });
     }
 
-    private void deleteMealFromPlan(String mealName) {
-        for (LocalDate date : new ArrayList<>(mealPlans.keySet())) { // Iterate over a copy of the keys
-            List<Map<String, Object>> mealsForDay = mealPlans.get(date);
-            if (mealsForDay != null) {
-                mealsForDay.removeIf(meal -> {
-                    // Remove the meal if the name matches
-                    return mealName.equals(meal.get("name"));
-                });
-                // Remove the date entry if no meals are left
-                if (mealsForDay.isEmpty()) {
-                    mealPlans.remove(date);
-                }
-            }
-        }
-        saveMealPlansToJson(); // Persist changes to the JSON file
-        loadCalendarView(); // Refresh UI
-        calculateMealNutrition();
-    }
-
     private LocalDate showDatePickerDialog(String title, LocalDate defaultDate) {
         DatePicker datePicker = new DatePicker(defaultDate);
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -1283,6 +1254,56 @@ public class MealPlannerController {
         return hourPicker.getValue();
     }
 
+    // ==========================
+    // Utility Methods: 
+    // General helper functions
+    // ==========================
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private Map<String, String> parseBlockId(String blockId) {
+        String[] parts = blockId.split("\\|");
+        if (parts.length != 4) {
+            throw new IllegalArgumentException("Invalid block ID format: " + blockId);
+        }
+    
+        Map<String, String> parsedData = new HashMap<>();
+        parsedData.put("mealName", parts[0]);
+        parsedData.put("timeBlockType", parts[1]);
+        parsedData.put("date", parts[2]);
+        parsedData.put("hour", parts[3]);
+        return parsedData;
+    }
+
+    private List<Map<String, Object>> getMealsForDay(LocalDate date) {
+        // Retrieve the list of meals for the given date, or return an empty list if none exist
+        return mealPlans.getOrDefault(date, new ArrayList<>());
+    }
+
+    private Ingredient parseIngredient(String ingredient) {
+        String[] parts = ingredient.split(":");
+        String name = parts[0].trim();
+        String[] quantityUnit = parts[1].trim().split(" ");
+        String amount = quantityUnit[0];
+        String unit = quantityUnit[1];
+    
+        return new Ingredient(name, amount, unit);
+    }
+
+    public void setMyListController(MyListsController controller) {
+        this.myListsController = controller;
+    }
+
+    // =======================================================
+    // Visual Enhancements: 
+    // Handles UI styling for past dates and time indicators
+    // =======================================================
+
     private void addCurrentTimeIndicator(GridPane view) {
         LocalDate today = LocalDate.now();
         if (datePicker.getValue().equals(today)) {
@@ -1306,8 +1327,6 @@ public class MealPlannerController {
             }, 0, 60000); // Update every minute
         }
     }
-
-
 
     private void stylePastDates() {
         dayView.getChildren().forEach(node -> {

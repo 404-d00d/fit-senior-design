@@ -26,17 +26,21 @@ public class IngredientCardController {
    private InventoryDashboardController InventoryDashboardController;
 
    public void setIngredientData(int id, String name, String imagePath, InventoryDashboardController controller) {
-      this.ingredientId = id;
-      this.InventoryDashboardController = controller; 
-      ingredientName.setText(name);
-      if (imagePath != null) {
-         try {
-               Image image = new Image(new File("/org/javafx/Resources/Item Images", imagePath).toURI().toString());
+         this.ingredientId = id;
+         this.InventoryDashboardController = controller;
+         ingredientName.setText(name);
+   
+         if (imagePath != null) {
+            try {
+               Image image = new Image(new File("src/main/resources/org/javafx/Resources/Item Images", imagePath).toURI().toString());
                this.ingredientImage.setImage(image);
-         } catch (Exception e) {
+            } catch (Exception e) {
                e.printStackTrace();
+            }
          }
-      }
+   
+         // Store this controller instance in the VBox node for later access
+         ingredientCardPane.getProperties().put("controller", this);
    }
 
    // Getter methods to access data for duplication
@@ -66,7 +70,7 @@ public class IngredientCardController {
       contextMenu.getItems().addAll(deleteItem);
 
       // Add event handlers for Edit and Delete, linking to MyRecipesController
-      deleteItem.setOnAction(e -> InventoryDashboardController.deleteIngriendent(ingredientId));
+      deleteItem.setOnAction(e -> InventoryDashboardController.deleteIngredient(ingredientId));
 
 
       // Handle right-click for context menu and left-click for details
@@ -75,7 +79,7 @@ public class IngredientCardController {
          if (event.getButton() == MouseButton.SECONDARY) {
             contextMenu.show(ingredientCardPane, event.getScreenX(), event.getScreenY());
          } else if (event.getButton() == MouseButton.PRIMARY) {
-            InventoryDashboardController.openEditIngriedent(ingredientId);
+            InventoryDashboardController.openEditIngredient(ingredientId);
          }
       });
    }

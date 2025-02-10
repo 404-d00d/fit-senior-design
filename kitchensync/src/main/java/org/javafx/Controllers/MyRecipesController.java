@@ -1,215 +1,122 @@
 package org.javafx.Controllers;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+// Java Imports
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+// External Libraries
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+
+//JavaFX Imports
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import javafx.stage.FileChooser;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
+import javafx.scene.text.Text;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
+// =================================================================================
+//  MyRecipesController handles user made recipes, navigation, and UI interactions
+// =================================================================================
 
 public class MyRecipesController {
 
-   @FXML
-   private Button menuButton, inventoryButton, myRecipesButton, inboxButton, browseRecipesButton, profileButton, settingsButton,
-                  closeP1Button, closeP2Button, addRecipeButton, closeRecipeButton, addTagButton, addIngredientButton, imageSelectButton, saveButton,
-                  nextStep, prevStep, userDashboardButton, mealPlannerButton, myListsButton, addEquipmentButton, prevStepButton, nextStepButton,
-                  addStepButton, backButton, nextButton, cookItButton, closeRecipeDetailsButton, addCollectionButton;
+   // ==================
+   // FXML UI COMPONENTS
+   // ==================
 
-   @FXML
-   private VBox menuPane, collectionsButtons;
+   // Navigation Buttons
+   @FXML private Button menuButton, inventoryButton, myRecipesButton, inboxButton, browseRecipesButton, 
+                     profileButton, settingsButton, myListsButton, mealPlannerButton, userDashboardButton;
 
-   @FXML
-   private TextField recipeName, recipeTag, ingredientEntry, recipeETAPassive, recipeETA, recipeETAPrep, recipeYield, amountEntry, equipmentEntry;
+   // Recipe Managment Buttons
+   @FXML private Button addRecipeButton, closeRecipeButton, addTagButton, addIngredientButton, imageSelectButton, 
+                     saveButton, addStepButton, addEquipmentButton, prevStepButton, nextStepButton;
    
-   @FXML
-   private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry, sortBy, ingredientFilter, categoryFilter, tagsFilter;
+   // Popup & Step Navigation 
+   @FXML private Button closeP1Button, closeP2Button, backButton, nextButton, cookItButton, closeRecipeDetailsButton,
+                     prevStep, nextStep, addCollectionButton;
 
-   @FXML
-   private Pane myRecipesPane, myRecipeMainPane, addRecipePaneP1, addRecipePaneP2, recipeDetailsPane, recipeCookingPane;
+   // UI Containers & Layouts
+   @FXML private VBox menuPane, collectionsButtons;
+   @FXML private Pane myRecipesPane, myRecipeMainPane, addRecipePaneP1, addRecipePaneP2, 
+                  recipeDetailsPane, recipeCookingPane;
+   @FXML private FlowPane recipeFlowPane, chipPreview, recipeTagFlowPane;
+   @FXML private ComboBox<String> ingredientFilter, categoryFilter, tagsFilter;
 
-   private File selectedImageFile;
+   // Recipe Form Inputs
+   @FXML private TextField recipeName, recipeTag, ingredientEntry, amountEntry, equipmentEntry;
+   @FXML private TextField recipeETAPassive, recipeETA, recipeETAPrep, recipeYield;
+   @FXML private TextArea prepStepField, stepArea, recipeDetailDescription, recipeDescription;
+   @FXML private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry, sortBy;
 
-   @FXML
-   private TextArea prepStepField, stepArea, recipeDetailDescription, recipeDescription;
+   // Recipe Detail & Cooking Display
+   @FXML private Text recipePrepTimeTXT, recipePassiveTimeTXT, recipeCookTimeTXT, recipeTotalTimeTXT, 
+                   recipeComplexityTXT, recipeServingsTXT, stepIndex, stepOfTXT, noRecipesTXT, recipeNameTXT, 
+                   recipeCookingNameTXT;
+   @FXML private ListView<String> ingredientsArea, specialEquipmentTXTArea, recipeIngredients;
+   @FXML private ImageView recipeImages, imagePreview, recipeDetailsImages;
 
-   @FXML
-   private Text   yieldTXT, recipePrepTimeTXT, recipePassiveTimeTXT, recipeCookTimeTXT, recipeTotalTimeTXT, 
-                  recipeComplexityTXT, specialEquipmentTXT, stepOfTXT, noRecipesTXT, recipeNameTXT, stepIndex, 
-                  recipeServingsTXT, recipeCookingNameTXT;
+   // Table Views for Ingredients & Equipment
+   @FXML private TableView<Ingredient> ingredientTable;
+   @FXML private TableView<String> equipmentTable;
+   @FXML private TableColumn<String, String> equipmentList;
+   @FXML private TableColumn<Ingredient, String> ingredientList, amountList;
 
-   @FXML
-   private ImageView recipeImages, imagePreview, recipeDetailsImages;
+   // ==============================
+   // DATA STORAGE & CONSTANTS
+   // ==============================
 
-   private Image selectedImage;
-
-   @FXML
-   private FlowPane recipeFlowPane, chipPreview, recipeTagFlowPane;
-
-   @FXML
-   private TableView<Ingredient> ingredientTable;
-
-   @FXML
-   private TableView<String> equipmentTable;
-
-   @FXML
-   private TableColumn<String, String> equipmentList;
-
-   @FXML
-   private TableColumn<Ingredient, String> ingredientList;
-
-   @FXML
-   private TableColumn<Ingredient, String> amountList;
-
-   @FXML
-   private ListView<String> ingredientsArea, specialEquipmentTXTArea, recipeIngredients;
-
-   @FXML
+   // Data Storage & Processing
    private ObservableList<String> tags = FXCollections.observableArrayList();
    private ObservableList<Ingredient> ingredients = FXCollections.observableArrayList();
-   private Map<Integer, VBox> recipeWidgets = new HashMap<>();
    private ObservableList<String> equipment = FXCollections.observableArrayList();
    private List<String> preparationSteps = new ArrayList<>();
-   private int currentStep = 0;
-   private int displayStep = 0;
-
-   private DynamoDbClient database;
-   private Map<String, AttributeValue> item = new HashMap<>();
+   private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
+   private Map<String, List<Integer>> recipeCollections = new HashMap<>();
+   private Map<Integer, VBox> recipeWidgets = new HashMap<>();
 
    private static final String RECIPES_FILE_PATH = "recipes.json";
    private static final String COLLECTIONS_FILE_PATH = "collections.json";
 
-   private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
-   private Map<String, List<Integer>> recipeCollections = new HashMap<>();
-
+   private File selectedImageFile;
+   private Image selectedImage;
+   private int currentStep = 0;
+   private int displayStep = 0;
    private String currentCollection = "All Recipes";
+
+   // ====================================================================
+   // Initialization & UI Setup
+   // Handles controller startup logic and UI initialization
+   // ====================================================================
 
    @FXML
    private void initialize() {
-      
-      //database = DynamoDbClient.builder().credentialsProvider(StaticCredentialsProvider.create(awsCreds)).region(Region.US_EAST_1).build();
-
-      loadCollectionsFromJson();
-      
-      // Ensure default collections are always present
-      recipeCollections.putIfAbsent("All Recipes", new ArrayList<>());
-      recipeCollections.putIfAbsent("Favorites", new ArrayList<>());
-
-      // Save default collections
-      saveCollectionsToJson();
-
-      loadCollectionButtons();
-      recipeList.addAll(loadRecipesFromJson());
-      loadRecipesCards();
-
-      recipeCollection.getItems().clear();
-      recipeCollection.getItems().addAll(recipeCollections.keySet());
-
-      recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
-      ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
-      sortBy.getItems().addAll("A-Z", "Z-A", "Complexity", "Prep Time", "Cook Time");
-
-      sortBy.setOnAction(event -> handleSortBySelection());
-
-      // Set up TableView columns for ingredients
-      ingredientList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
-      amountList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAmount() + " " + data.getValue().getUnit()));
-      ingredientTable.setItems(ingredients);
-
-      // Enable table editing
-      ingredientTable.setEditable(true);
-      ingredientList.setCellFactory(TextFieldTableCell.forTableColumn());
-      amountList.setCellFactory(TextFieldTableCell.forTableColumn());
-
-      // Context menu for deletion
-      ingredientTable.setRowFactory(tv -> {
-         TableRow<Ingredient> row = new TableRow<>();
-         ContextMenu contextMenu = new ContextMenu();
-         MenuItem deleteItem = new MenuItem("Delete");
-         deleteItem.setOnAction(event -> ingredients.remove(row.getItem()));
-         contextMenu.getItems().add(deleteItem);
-         row.setContextMenu(contextMenu);
-         return row;
-      });
-
-      // Set up TableView for equipment
-      equipmentList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue()));
-      equipmentTable.setItems(equipment);
-
-      // Enable table editing
-      equipmentTable.setEditable(true);
-      equipmentList.setCellFactory(TextFieldTableCell.forTableColumn());
-
-         // Context menu for deletion
-         equipmentTable.setRowFactory(tv -> {
-         TableRow<String> row = new TableRow<>();
-         ContextMenu contextMenu = new ContextMenu();
-         MenuItem deleteItem = new MenuItem("Delete");
-         deleteItem.setOnAction(event -> equipment.remove(row.getItem()));
-         contextMenu.getItems().add(deleteItem);
-         row.setContextMenu(contextMenu);
-         return row;
-      });
-
-      addTagButton.setOnAction(event -> addTag());
-      addIngredientButton.setOnAction(event -> addIngredient());
-      imageSelectButton.setOnAction(event -> SelectImage());
-      saveButton.setOnAction(event -> saveRecipe());
-      addStepButton.setOnAction(event -> addStep());
-      prevStepButton.setOnAction(event -> navigateStep(-1));
-      nextStepButton.setOnAction(event -> navigateStep(1));
-      addEquipmentButton.setOnAction(event -> addEquipment());
-      prevStep.setOnAction(event -> detailsSteps(-1));
-      nextStep.setOnAction(event -> detailsSteps(1));
-      addCollectionButton.setOnAction(event -> openAddCollectionForm());
+      initializeCollections();   // Load collections and ensure default ones exist
+      loadRecipes();            // Load recipes from JSON
+      configureDropdowns();      // Set up dropdown values
+      configureIngredientTable(); // Configure ingredient table
+      configureEquipmentTable();  // Configure equipment table
+      setSortingHandlers();      // Set up sorting for recipes
+      setNavigationButtonHandlers();   // Assign button actions for navigation
+      setHoverEffects();         // Apply hover effects to UI elements
+      setupUIEventHandlers();    // Configure buttons and step navigation
 
       // Initialize the first step
       preparationSteps.add("");
@@ -304,106 +211,148 @@ public class MyRecipesController {
             e.printStackTrace();
          }
       });
+   }
 
-      // Switch to Inventroy Screen
-      inventoryButton.setOnAction(event -> {
+   private void initializeCollections() {
+      loadCollectionsFromJson(); 
+      recipeCollections.putIfAbsent("All Recipes", new ArrayList<>());
+      recipeCollections.putIfAbsent("Favorites", new ArrayList<>());
+      saveCollectionsToJson(); 
+      loadCollectionButtons();
+   }
+
+   private void loadRecipes() {
+      recipeList.addAll(loadRecipesFromJson()); 
+      loadRecipesCards(); 
+      recipeCollection.getItems().clear();
+      recipeCollection.getItems().setAll(recipeCollections.keySet());
+   }
+
+   private void configureDropdowns() {
+      recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
+      ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
+      sortBy.getItems().addAll("A-Z", "Z-A", "Complexity", "Prep Time", "Cook Time");
+   }
+
+   private void configureIngredientTable() {
+      ingredientList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+      amountList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAmount() + " " + data.getValue().getUnit()));
+      ingredientTable.setItems(ingredients);
+      ingredientTable.setEditable(true);
+      ingredientList.setCellFactory(TextFieldTableCell.forTableColumn());
+      amountList.setCellFactory(TextFieldTableCell.forTableColumn());
+      ingredientTable.setRowFactory(tv -> {
+          TableRow<Ingredient> row = new TableRow<>();
+          ContextMenu contextMenu = new ContextMenu();
+          MenuItem deleteItem = new MenuItem("Delete");
+          deleteItem.setOnAction(event -> ingredients.remove(row.getItem()));
+          contextMenu.getItems().add(deleteItem);
+          row.setContextMenu(contextMenu);
+          return row;
+      });
+  }
+
+   private void configureEquipmentTable() {
+      equipmentList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue()));
+      equipmentTable.setItems(equipment);
+      equipmentTable.setEditable(true);
+      equipmentList.setCellFactory(TextFieldTableCell.forTableColumn());
+      equipmentTable.setRowFactory(tv -> {
+         TableRow<String> row = new TableRow<>();
+         ContextMenu contextMenu = new ContextMenu();
+         MenuItem deleteItem = new MenuItem("Delete");
+         deleteItem.setOnAction(event -> equipment.remove(row.getItem()));
+         contextMenu.getItems().add(deleteItem);
+         row.setContextMenu(contextMenu);
+         return row;
+      });
+   }
+
+   private void setNavigationButtonHandlers() {
+      inventoryButton.setOnAction(event -> navigateToScreen("Inventory"));
+      myRecipesButton.setOnAction(event -> navigateToScreen("MyRecipes"));
+      inboxButton.setOnAction(event -> navigateToScreen("Inbox"));
+      browseRecipesButton.setOnAction(event -> navigateToScreen("CommunityRecipes"));
+      profileButton.setOnAction(event -> navigateToScreen("Profile"));
+      settingsButton.setOnAction(event -> navigateToScreen("Settings"));
+      myListsButton.setOnAction(event -> navigateToScreen("MyLists"));
+      userDashboardButton.setOnAction(event -> navigateToScreen("UserDashboard"));
+   }
+
+   private void navigateToScreen(String screen) {
          try {
-            Main.showInventoryScreen(); // Switch to Inventory Screen
+            switch (screen) {
+               case "Inventory": Main.showInventoryScreen(); break;
+               case "MyRecipes": Main.showMyRecipesScreen(); break;
+               case "Inbox": Main.showInboxScreen(); break;
+               case "CommunityRecipes": Main.showCommunityRecipesScreen(); break;
+               case "Profile": Main.showUserProfileScreen(); break;
+               case "Settings": Main.showUserSettingsScreen(); break;
+               case "MyLists": Main.showMyListsScreen(); break;
+               case "UserDashboard": Main.showUserDashboardScreen(); break;
+               default: System.out.println("Screen not implemented: " + screen);
+            }
          } catch (Exception e) {
             e.printStackTrace();
          }
-      });
+   }
 
+   private void setHoverEffects() {
       setHoverEffect(inventoryButton);
-
-      // Switch to MyRecipes Screen
-      myRecipesButton.setOnAction(event -> {
-         try {
-            Main.showMyRecipesScreen();  // Switch to MyRecipes
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(myRecipesButton);
-
-      // Switch to Inbox Screen
-      inboxButton.setOnAction(event -> {
-         try {
-            //Main.  // Switch to ...
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(inboxButton);
-
-      // Switch to Browse Recipes Screen
-      browseRecipesButton.setOnAction(event -> {
-         try {
-            Main.showCommunityRecipesScreen();
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(browseRecipesButton);
-
-      // Switch to Profile Screen
-      profileButton.setOnAction(event -> {
-         try {
-            //Main.  // Switch to ...
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(profileButton);
-      
-      // Switch to Browse Settings Screen
-      settingsButton.setOnAction(event -> {
-         try {
-            //Main.  // Switch to ...
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(settingsButton);
-
-      // Switch to My Lists Screen
-      myListsButton.setOnAction(event -> {
-         try {
-            Main.showMyListsScreen();
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(myListsButton);
-
-      // Switch to userDashboard Screen
-      userDashboardButton.setOnAction(event -> {
-         try {
-            Main.showUserDashboardScreen();
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(userDashboardButton);
-
-      // Switch to mealPlanner Screen
-      mealPlannerButton.setOnAction(event -> {
-         try {
-            Main.showMealPlannerScreen();
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
       setHoverEffect(mealPlannerButton);
    }
+
+   private void setupUIEventHandlers() {
+      addTagButton.setOnAction(event -> addTag());
+      addIngredientButton.setOnAction(event -> addIngredient());
+      imageSelectButton.setOnAction(event -> SelectImage());
+      saveButton.setOnAction(event -> saveRecipe());
+      addStepButton.setOnAction(event -> addStep());
+      prevStepButton.setOnAction(event -> navigateStep(-1));
+      nextStepButton.setOnAction(event -> navigateStep(1));
+      addEquipmentButton.setOnAction(event -> addEquipment());
+      prevStep.setOnAction(event -> detailsSteps(-1));
+      nextStep.setOnAction(event -> detailsSteps(1));
+      addCollectionButton.setOnAction(event -> openAddCollectionForm());
+   }
+
+   private void setSortingHandlers() {
+      sortBy.setOnAction(event -> handleSortBySelection());
+   }
+
+   // ===================================================
+   // Navigation & UI Handling
+   // Handles menu interactions and screen transitions
+   // ===================================================
+
+   private void setHoverEffect(Button button) {
+      button.setOnMouseEntered(this::handleMouseEntered);
+      button.setOnMouseExited(this::handleMouseExited);
+   }
+
+   private void handleMouseEntered(MouseEvent event) {
+      Button button = (Button) event.getSource();
+      // Change style when mouse enters
+      button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+   }
+
+   private void handleMouseExited(MouseEvent event) {
+      Button button = (Button) event.getSource();
+      // Reset style when mouse exits
+      button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+   }
+
+   // =======================================================
+   // Recipe Management
+   // Handles adding, editing, deleting, and saving recipes
+   // =======================================================
 
    // Add ingredient to table
    private void addIngredient() {
@@ -500,8 +449,8 @@ public class MyRecipesController {
       }
    }
 
-    // Add tag as a chip in FlowPane
-    private void addTag() {
+   // Add tag as a chip in FlowPane
+   private void addTag() {
       String tag = recipeTag.getText().trim();
       if (!tag.isEmpty() && !tags.contains(tag)) {
          tags.add(tag);
@@ -535,25 +484,7 @@ public class MyRecipesController {
       return tagChip;
    }
 
-   private void setHoverEffect(Button button) {
-      button.setOnMouseEntered(this::handleMouseEntered);
-      button.setOnMouseExited(this::handleMouseExited);
-  }
-
-   private void handleMouseEntered(MouseEvent event) {
-      Button button = (Button) event.getSource();
-      // Change style when mouse enters
-      button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
-   }
-
-   private void handleMouseExited(MouseEvent event) {
-      Button button = (Button) event.getSource();
-      // Reset style when mouse exits
-      button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
-   }
-
    private void saveRecipe() {
-      // Validate inputs
       if (!isFormValid(recipeName.getText(), recipeCategory.getValue(), recipeYield.getText(), 
                        recipeDescription.getText(), recipeETAPrep.getText(), recipeETAPassive.getText(), 
                        recipeETA.getText(), ingredients.stream().map(Ingredient::getName).toArray(String[]::new), 
@@ -561,20 +492,46 @@ public class MyRecipesController {
           return;
       }
   
-      int id = recipeList.size();
-      Recipe newRecipe = new Recipe(id, recipeName.getText(), recipeCategory.getValue(), recipeCollection.getValue(), 
-                                    recipeDescription.getText(), Integer.parseInt(recipeETAPrep.getText()), 
-                                    Integer.parseInt(recipeETAPassive.getText()), Integer.parseInt(recipeETA.getText()), 
-                                    calculateRecipeComplexity(), Integer.parseInt(recipeYield.getText()), 
-                                    tags.toArray(new String[0]), 
-                                    ingredients.stream().map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit()).toArray(String[]::new), 
-                                    equipment.toArray(new String[0]), 
-                                    preparationSteps.toArray(new String[0]));
+      int id = -1;
+      Recipe existingRecipe = null;
+      
+      // Find existing recipe by name
+      for (int i = 0; i < recipeList.size(); i++) {
+          if (recipeList.get(i).getName().equalsIgnoreCase(recipeName.getText())) {
+              id = i;
+              existingRecipe = recipeList.get(i);
+              break;
+          }
+      }
   
-      // **Add the new recipe to the list before saving**
-      recipeList.add(newRecipe);
+      Recipe updatedRecipe = new Recipe(
+          (id == -1 ? recipeList.size() : id), // Assign new ID only if new recipe
+          recipeName.getText(),
+          recipeCategory.getValue(),
+          recipeCollection.getValue(),
+          recipeDescription.getText(),
+          Integer.parseInt(recipeETAPrep.getText()),
+          Integer.parseInt(recipeETAPassive.getText()),
+          Integer.parseInt(recipeETA.getText()),
+          calculateRecipeComplexity(),
+          Integer.parseInt(recipeYield.getText()),
+          tags.toArray(new String[0]),
+          ingredients.stream()
+              .map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit())
+              .toArray(String[]::new),
+          equipment.toArray(new String[0]),
+          preparationSteps.toArray(new String[0])
+      );
   
-      // Remove old card if it exists (prevents duplicate recipe cards)
+      if (existingRecipe != null) {
+          // Update the existing recipe in the list safely
+          recipeList.set(id, updatedRecipe);
+      } else {
+          // If recipe is new, add it instead of trying to update an index that doesn't exist
+          recipeList.add(updatedRecipe);
+      }
+  
+      // Remove old recipe card if it exists
       if (recipeWidgets.containsKey(id)) {
           VBox oldRecipeCard = recipeWidgets.get(id);
           recipeFlowPane.getChildren().remove(oldRecipeCard);
@@ -586,22 +543,21 @@ public class MyRecipesController {
           VBox recipeCard = loader.load();
           RecipeCardController controller = loader.getController();
   
-          // Save the image in "Recipe Images"
+          // Save the image
           String imageName = recipeName.getText() + ".png";
           if (selectedImageFile != null) {
               copyImageToResources(selectedImageFile, imageName);
           }
   
-          // Load the saved image
           File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + imageName);
           Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
   
-          controller.setRecipeData(newRecipe, image, this);
+          controller.setRecipeData(updatedRecipe, image, this);
           recipeFlowPane.getChildren().add(recipeCard);
-          recipeWidgets.put(id, recipeCard);
+          recipeWidgets.put(updatedRecipe.getID(), recipeCard);
           recipeCard.setUserData(controller);
   
-          applyHoverEffect(recipeCard, newRecipe);
+          applyHoverEffect(recipeCard, updatedRecipe);
           clearForms();
           updateTagView();
           updateStepView();
@@ -610,7 +566,7 @@ public class MyRecipesController {
           addRecipePaneP2.setVisible(false);
           myRecipesPane.setVisible(true);
   
-          // **Save the updated list to JSON**
+          // Save the updated list to JSON
           saveRecipesToJson(recipeList);
   
       } catch (Exception e) {
@@ -724,14 +680,6 @@ public class MyRecipesController {
       return true;
    }
 
-   private void showAlert(String title, String header, String content) {
-      Alert alert = new Alert(AlertType.ERROR);
-      alert.setTitle(title);
-      alert.setHeaderText(header);
-      alert.setContentText(content);
-      alert.showAndWait();
-   }
-
    public void showRecipeDetails(int recipeId, String name, Image image, Recipe recipe) {
 
       displayStep = 0;
@@ -795,8 +743,10 @@ public class MyRecipesController {
       recipeETAPassive.setText(Integer.toString(recipe.getPassiveTime()));
       recipeETA.setText(Integer.toString(recipe.getCookTime()));
 
-      //set up image refs
-      //recipeImages.setImage(selectedImage);
+      // Load the image preview
+      File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
+      Image existingImage = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
+      imagePreview.setImage(existingImage);
 
       tags.clear();
       tags.addAll(recipe.getTags());
@@ -828,7 +778,6 @@ public class MyRecipesController {
       updateStepView(); // Update the UI to show the first step
    }
 
-   // Method to delete the recipe by ID
    public void deleteRecipe(Recipe recipe) {
       System.out.println("Deleting recipe: " + recipe.getName());
   
@@ -847,39 +796,50 @@ public class MyRecipesController {
       deleteRecipeImage(recipe.getName());
   }
 
-   private void saveRecipesToJson(List<Recipe> recipes) {
-      File file = new File(RECIPES_FILE_PATH);
-   
-      try (Writer writer = new FileWriter(file)) {
-         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-         gson.toJson(recipes, writer);
-         System.out.println("Recipes successfully saved to JSON.");
-      } catch (IOException e) {
-         e.printStackTrace();
-         System.out.println("Save Error - Failed to save recipes to JSON file.");
+
+   // ==================================================
+   // Recipe Sorting & Filtering
+   // Handles sorting and filtering of recipe cards
+   // ==================================================
+
+   private void handleSortBySelection() {
+      String selectedSort = sortBy.getValue();
+
+      if (selectedSort == null) return; // Do nothing if no sort option is selected
+
+      switch (selectedSort) {
+         case "A-Z":
+               recipeList.sort((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()));
+               break;
+         case "Z-A":
+               recipeList.sort((r1, r2) -> r2.getName().compareToIgnoreCase(r1.getName()));
+               break;
+         case "Complexity":
+               recipeList.sort((r1, r2) -> Integer.compare(r1.getComplexity(), r2.getComplexity()));
+               break;
+         case "Prep Time":
+               recipeList.sort((r1, r2) -> Integer.compare(r1.getPrepTime(), r2.getPrepTime()));
+               break;
+         case "Cook Time":
+               recipeList.sort((r1, r2) -> Integer.compare(r1.getCookTime(), r2.getCookTime()));
+               break;
+         default:
+               break;
       }
+
+      // Refresh the recipe cards in the FlowPane
+      updateRecipeCards();
    }
 
-   private List<Recipe> loadRecipesFromJson() {
-      File file = new File(RECIPES_FILE_PATH);
-      boolean isFileValid = file.exists() && file.length() > 0;
-   
-      if (isFileValid) {
-         try (Reader reader = new FileReader(file)) {
-            Gson gson = new Gson();
-            Recipe[] recipesArray = gson.fromJson(reader, Recipe[].class);
-            if (recipesArray != null) {
-               System.out.println("Recipes successfully loaded from JSON.");
-               return new ArrayList<>(List.of(recipesArray));
-            }
-         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Load Error - Failed to load recipes from JSON file.");
-         }
-      } else {
-         System.out.println("No recipe file found. Starting with an empty recipe list.");
+   private void updateRecipeCards() {
+      recipeFlowPane.getChildren().clear();
+  
+      for (Recipe recipe : recipeList) {
+          VBox recipeCard = recipeWidgets.get(recipe.getID());
+          if (recipeCard != null) {
+              recipeFlowPane.getChildren().add(recipeCard);
+          }
       }
-      return new ArrayList<>();
    }
 
    private void loadRecipesCards() {
@@ -952,60 +912,11 @@ public class MyRecipesController {
           tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
       });
   }
-   
-  /*
-  
-  Recipe Cards
 
-  */
-
-   // Sort Recipe Cards by: X
-   @FXML
-   private void handleSortBySelection() {
-      String selectedSort = sortBy.getValue();
-
-      if (selectedSort == null) return; // Do nothing if no sort option is selected
-
-      switch (selectedSort) {
-         case "A-Z":
-               recipeList.sort((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()));
-               break;
-         case "Z-A":
-               recipeList.sort((r1, r2) -> r2.getName().compareToIgnoreCase(r1.getName()));
-               break;
-         case "Complexity":
-               recipeList.sort((r1, r2) -> Integer.compare(r1.getComplexity(), r2.getComplexity()));
-               break;
-         case "Prep Time":
-               recipeList.sort((r1, r2) -> Integer.compare(r1.getPrepTime(), r2.getPrepTime()));
-               break;
-         case "Cook Time":
-               recipeList.sort((r1, r2) -> Integer.compare(r1.getCookTime(), r2.getCookTime()));
-               break;
-         default:
-               break;
-      }
-
-      // Refresh the recipe cards in the FlowPane
-      updateRecipeCards();
-   }
-
-   private void updateRecipeCards() {
-      recipeFlowPane.getChildren().clear();
-  
-      for (Recipe recipe : recipeList) {
-          VBox recipeCard = recipeWidgets.get(recipe.getID());
-          if (recipeCard != null) {
-              recipeFlowPane.getChildren().add(recipeCard);
-          }
-      }
-   }
-
-  /*
-  
-  Collections
-
-  */
+   // ===================================================
+   // Recipe Collections Management
+   // Handles recipe categorization into collections
+   // ===================================================
 
    public void addRecipeToFavorites(Recipe recipe) {
       if (!recipeCollections.get("Favorites").contains(recipe.getID())) {
@@ -1126,39 +1037,12 @@ public class MyRecipesController {
       }
    }
 
-   private void saveCollectionsToJson() {
-      File file = new File(COLLECTIONS_FILE_PATH);
-      try (Writer writer = new FileWriter(file)) {
-         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-         gson.toJson(recipeCollections, writer);
-         System.out.println("Collections successfully saved to JSON.");
-      } catch (IOException e) {
-         e.printStackTrace();
-         System.out.println("Save Error - Failed to save collections to JSON file.");
-      }
-   }
-
    private void loadCollectionButtons() {
       collectionsButtons.getChildren().clear(); // Clear existing buttons
   
       for (String collectionName : recipeCollections.keySet()) {
           Button collectionButton = createCollectionButton(collectionName);
           collectionsButtons.getChildren().add(collectionButton);
-      }
-   }
-
-   private void loadCollectionsFromJson() {
-      File file = new File(COLLECTIONS_FILE_PATH);
-      if (file.exists() && file.length() > 0) {
-         try (Reader reader = new FileReader(file)) {
-            Gson gson = new Gson();
-            recipeCollections = gson.fromJson(reader, Map.class);
-            if (recipeCollections == null) recipeCollections = new HashMap<>();
-            System.out.println("Collections successfully loaded from JSON.");
-         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Load Error - Failed to load collections from JSON file.");
-         }
       }
    }
 
@@ -1184,9 +1068,10 @@ public class MyRecipesController {
       return currentCollection;
    }
 
-   /*
-    * Recipe Image Handlers
-   */
+   // ========================================================
+   // Recipe Image Handling
+   // Handles selecting, copying, and deleting recipe images
+   // ========================================================
 
    private void SelectImage() {
       FileChooser fileChooser = new FileChooser();
@@ -1233,10 +1118,6 @@ public class MyRecipesController {
       System.out.println("Image successfully copied to: " + destinationFile.getAbsolutePath());
   }
 
-      /**
-       * Deletes the image file associated with a recipe.
-      * @param recipeName The name of the recipe (used as filename).
-      */
    private void deleteRecipeImage(String recipeName) {
       File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipeName + ".png");
 
@@ -1251,9 +1132,85 @@ public class MyRecipesController {
       }
    }
 
-    /*
-    * Helper Functions // Utilities 
-   */
+   // =====================================================================
+   // Data Persistence (Saving & Loading JSON)
+   // Handles reading and writing recipes and collections from JSON files
+   // =====================================================================
+
+   private void saveRecipesToJson(List<Recipe> recipes) {
+      File file = new File(RECIPES_FILE_PATH);
+   
+      try (Writer writer = new FileWriter(file)) {
+         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+         gson.toJson(recipes, writer);
+         System.out.println("Recipes successfully saved to JSON.");
+      } catch (IOException e) {
+         e.printStackTrace();
+         System.out.println("Save Error - Failed to save recipes to JSON file.");
+      }
+   }
+
+   private List<Recipe> loadRecipesFromJson() {
+      File file = new File(RECIPES_FILE_PATH);
+      boolean isFileValid = file.exists() && file.length() > 0;
+   
+      if (isFileValid) {
+         try (Reader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            Recipe[] recipesArray = gson.fromJson(reader, Recipe[].class);
+            if (recipesArray != null) {
+               System.out.println("Recipes successfully loaded from JSON.");
+               return new ArrayList<>(List.of(recipesArray));
+            }
+         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Load Error - Failed to load recipes from JSON file.");
+         }
+      } else {
+         System.out.println("No recipe file found. Starting with an empty recipe list.");
+      }
+      return new ArrayList<>();
+   }
+
+   private void saveCollectionsToJson() {
+      File file = new File(COLLECTIONS_FILE_PATH);
+      try (Writer writer = new FileWriter(file)) {
+         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+         gson.toJson(recipeCollections, writer);
+         System.out.println("Collections successfully saved to JSON.");
+      } catch (IOException e) {
+         e.printStackTrace();
+         System.out.println("Save Error - Failed to save collections to JSON file.");
+      }
+   }
+
+   private void loadCollectionsFromJson() {
+      File file = new File(COLLECTIONS_FILE_PATH);
+      if (file.exists() && file.length() > 0) {
+         try (Reader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            recipeCollections = gson.fromJson(reader, Map.class);
+            if (recipeCollections == null) recipeCollections = new HashMap<>();
+            System.out.println("Collections successfully loaded from JSON.");
+         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Load Error - Failed to load collections from JSON file.");
+         }
+      }
+   }
+
+   // ====================================================
+   // Utility & Helper Methods
+   // General helper functions for alerts and validation
+   // ====================================================
+
+   private void showAlert(String title, String header, String content) {
+      Alert alert = new Alert(AlertType.ERROR);
+      alert.setTitle(title);
+      alert.setHeaderText(header);
+      alert.setContentText(content);
+      alert.showAndWait();
+   }
 
    private void showAlert(String title, String content) {
       Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -1262,10 +1219,14 @@ public class MyRecipesController {
       alert.setContentText(content);
       alert.showAndWait();
    }
+   
 }
 
 
-// Custom classes to manage ingredients and steps
+// ===================================================
+// Custom Classes
+// These helper classes manage ingredients and steps
+// ===================================================
 class Ingredient {
    private String name;
    private String amount;

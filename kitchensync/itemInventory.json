@@ -1,27 +1,12 @@
 [
   {
-    "name": "Cheese",
-    "ID": 1,
-    "quantity": 1,
-    "location": "Fridge",
-    "expirDate": "2026-12-12",
-    "unit": "kg"
-  },
-  {
     "name": "Banana Bread",
     "ID": 2,
     "quantity": 2,
     "location": "Pantry",
     "expirDate": "2025-11-22",
-    "unit": "lbs"
-  },
-  {
-    "name": "Orange Juice",
-    "ID": 3,
-    "quantity": 14,
-    "location": "Fridge",
-    "expirDate": "2028-12-02",
-    "unit": "l"
+    "unit": "lbs",
+    "tags": []
   },
   {
     "name": "Bleach",
@@ -29,15 +14,8 @@
     "quantity": 5,
     "location": "Pantry",
     "expirDate": "2028-12-01",
-    "unit": "ml"
-  },
-  {
-    "name": "Apple Juice",
-    "ID": 0,
-    "quantity": 23,
-    "location": "Fridge",
-    "expirDate": "2025-02-28",
-    "unit": "l"
+    "unit": "ml",
+    "tags": []
   },
   {
     "name": "Carrots",
@@ -45,14 +23,35 @@
     "quantity": 2,
     "location": "Freezer",
     "expirDate": "2024-12-19",
-    "unit": "kg"
+    "unit": "kg",
+    "tags": []
   },
   {
-    "name": "Salt",
-    "ID": 6,
-    "quantity": 1,
-    "location": "Pantry",
-    "expirDate": "2042-12-06",
-    "unit": "lbs"
+    "name": "Tacos",
+    "ID": 7,
+    "quantity": 56,
+    "location": "Fridge",
+    "expirDate": "2025-02-28",
+    "unit": "g",
+    "tags": []
+  },
+  {
+    "name": "cake",
+    "ID": 8,
+    "quantity": 8,
+    "location": "Fridge",
+    "expirDate": "2025-02-19",
+    "unit": "lbs",
+    "tags": []
+  },
+  {
+    "name": "Test",
+    "ID": 9,
+    "quantity": 123,
+    "location": "Fridge",
+    "expirDate": "2025-02-22",
+    "unit": "kg",
+    "imagePath": "image0.jpg",
+    "tags": []
   }
 ]

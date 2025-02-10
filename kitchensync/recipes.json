@@ -1,11 +1,11 @@
 [
   {
-    "id": 1,
+    "id": 0,
     "name": "Test 2",
     "category": "dinner",
     "collection": "All Recipes",
     "servings": 3,
-    "description": "food",
+    "description": "food is good",
     "prepTime": 2,
     "passiveTime": 1,
     "cookTime": 54,
@@ -19,24 +19,7 @@
     ],
     "steps": [
       "cook it?"
-    ]
-  },
-  {
-    "id": 2,
-    "name": "asdw12",
-    "category": "lunch",
-    "collection": "Favorites",
-    "servings": 2,
-    "description": "asdf",
-    "prepTime": 3,
-    "passiveTime": 4,
-    "cookTime": 5,
-    "complexity": 1,
-    "tags": [],
-    "specialEquipment": [],
-    "ingredients": [
-      "das: w kg"
     ],
-    "steps": []
+    "feedback": 0
   }
 ]

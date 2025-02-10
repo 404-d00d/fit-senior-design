@@ -46,7 +46,6 @@
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#686868" height="1080.0" stroke="BLACK" strokeType="INSIDE" width="1920.0" />
       <Rectangle arcHeight="50.0" arcWidth="50.0" fill="WHITE" height="983.0" layoutX="1084.0" layoutY="39.0" stroke="BLACK" strokeType="INSIDE" width="756.0" />
-      <PasswordField fx:id="emailField" layoutX="1220.0" layoutY="317.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
       <Button fx:id="signUpButton" layoutX="1389.0" layoutY="752.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="170.0" style="-fx-background-color: orange; -fx-text-fill: black; -fx-font-size: 20; -fx-background-radius: 50;" text="Sign Up" textAlignment="CENTER">
          <font>
             <Font size="41.0" />
@@ -87,5 +86,6 @@
             <Font size="22.0" />
          </font>
       </Text>
+      <TextField fx:id="emailField" layoutX="1220.0" layoutY="317.0" prefHeight="47.0" prefWidth="508.0" style="-fx-background-color: darkgrey;" />
    </children>
 </AnchorPane>

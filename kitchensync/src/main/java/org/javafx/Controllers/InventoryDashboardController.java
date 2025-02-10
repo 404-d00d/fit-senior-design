@@ -985,145 +985,173 @@ public class InventoryDashboardController {
    }
 
    private void saveIngredient() {
-
-      if (isFormValid()) {
-         // Get values from input fields
-         String ingredientName = productName.getText();
-         String quantity = productQuantity.getText();
-         String unit = productUnit.getValue();
-         String location = productLoc.getValue();
-         LocalDate expirationDate = productEXPDate.getValue();
-         String convertedDate = expirationDate.toString();
-
-         // Convert tags to a set
-         Set<String> itemTags = new HashSet<>(tags);
-
-         // Format date for display
-         //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-         //String expirationDateString = expirationDate.format(formatter);
-
-         // Create new ingredient item and add to inventory
-         String imageFileName = selectedImageFile != null ? selectedImageFile.getName() : null;
-         Item newIngredient = new Item(ingredientName, 0, Integer.parseInt(quantity), unit, location, convertedDate, imageFileName);
-         newIngredient.setTags(itemTags);
-         
-         addIngredientToDatabase(newIngredient);
-
-         try {
-            // Load the FXML for the ingredient card
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
-            VBox ingredientCard = loader.load();
-
-            // Set ingredient card details
-            IngredientCardController controller = loader.getController();
-            controller.setIngredientData(newIngredient.getID(), ingredientName + " - " + quantity + " " + unit, newIngredient.getImagePath(), this);
-
-            // Store the controller in the properties map for later access
-            ingredientCard.getProperties().put("controller", controller);
-
-            Map<String, FlowPane> locationCategories = spacesCategories.get(location);
-
-           // 1. Add ingredient to "All Items" by default
-           FlowPane allItemsPane = locationCategories.get("All Items");
-           if (allItemsPane != null) {
-               allItemsPane.getChildren().add(createDuplicateNode(ingredientCard));
-           }
-
-           // 2. Determine additional categories based on tags and expiration date
-           List<String> categories = tags.stream().map(String::toLowerCase).collect(Collectors.toList());
-           if (expirationDate != null && expirationDate.isBefore(LocalDate.now().plusDays(3))) {
-               categories.add("expiring soon");
-           }
-
-            // Add ingredient to each relevant category, matching case-insensitively
-            for (Map.Entry<String, FlowPane> entry : locationCategories.entrySet()) {
-               String category = entry.getKey().toLowerCase(); // Convert category name to lowercase
-               FlowPane categoryPane = entry.getValue();
-               
-               if (categories.contains(category)) {
-                  categoryPane.getChildren().add(createDuplicateNode(ingredientCard));
-               }
-            }
-
-            // Clear the input fields after saving
-            productName.clear();
-            productQuantity.clear();
-            productUnit.setValue(null);
-            productLoc.setValue(null);
-            productEXPDate.setValue(null);
-            tags.clear();
-            imagePreview.setImage(null); // Clear the image preview
-            selectedImage.cancel();
-
-            // Hide add ingredient pane and show main inventory view
-            addIngredientMenuPane.setVisible(false);
-            if (spaces) {
-               spacesPane.setVisible(true);
-            } else if (places) {
-               placesPane.setVisible(true);
-            }
-
-         } catch (IOException e) {
-             e.printStackTrace();
-         }
+      if (!isFormValid()) {
+          return;
+      }
+  
+      int ingredientId = -1;
+      Item existingIngredient = null;
+  
+      // Check if the ingredient already exists (by comparing name or another unique field)
+      for (Item item : ingredientInventory) {
+          if (item.getName().equalsIgnoreCase(productName.getText())) {
+              ingredientId = item.getID();
+              existingIngredient = item;
+              break;
+          }
+      }
+  
+      String ingredientName = productName.getText();
+      int quantity = Integer.parseInt(productQuantity.getText());
+      String unit = productUnit.getValue();
+      String location = productLoc.getValue();
+      LocalDate expirationDate = productEXPDate.getValue();
+      String convertedDate = expirationDate != null ? expirationDate.toString() : null;
+  
+      Set<String> itemTags = new HashSet<>(tags);
+      String imageFileName = selectedImageFile != null ? selectedImageFile.getName() : null;
+  
+      if (existingIngredient != null) {
+          // Remove the old ingredient card from UI before updating
+          removeIngredientCard(existingIngredient.getID());
+  
+          // Update the existing ingredient
+          existingIngredient.setName(ingredientName);
+          existingIngredient.setQuantity(quantity);
+          existingIngredient.setUnit(unit);
+          existingIngredient.setLocation(location);
+          existingIngredient.setExpirDate(convertedDate);
+          existingIngredient.setTags(itemTags);
+          existingIngredient.setImagePath(imageFileName);
+  
+          // Add back the updated ingredient card
+          addIngredientCard(existingIngredient);
       } else {
-         // Show alert if the form is not valid
-         Alert alert = new Alert(AlertType.ERROR);
-         alert.setTitle("Form Error");
-         alert.setHeaderText(null);
-         alert.setContentText("Please fill in all required fields.");
-         alert.showAndWait();
-     }
+          // Find the next available ID (Ensure no duplicate IDs)
+          int newId = ingredientInventory.stream()
+                            .mapToInt(Item::getID)
+                            .max()
+                            .orElse(0) + 1;  // Get the highest existing ID and add 1
+  
+          // Create a new ingredient
+          Item newIngredient = new Item(ingredientName, newId, quantity, unit, location, convertedDate, imageFileName);
+          newIngredient.setTags(itemTags);
+          ingredientInventory.add(newIngredient);
+  
+          // Add the new ingredient card to UI
+          addIngredientCard(newIngredient);
+      }
+  
+      // Save updated inventory to JSON
+      saveIngredientInventoryToJson();
+  
+      // Refresh UI to reflect changes
+      updateSpacesItemCards();
+  
+      // Clear input fields after saving
+      clearIngredientForm();
+  
+      // Hide the edit form
+      addIngredientMenuPane.setVisible(false);
+      spacesPane.setVisible(true);
+  }
+  
+
+   private void clearIngredientForm() {
+      productName.clear();
+      productQuantity.clear();
+      productUnit.setValue(null);
+      productLoc.setValue(null);
+      productEXPDate.setValue(null);
+      tags.clear();
+      chipPreview.getChildren().clear();
+      selectedImageFile = null;
+      imagePreview.setImage(null);
    }
-
+  
    private VBox createIngredientCard(Item ingredient) {
-    try {
-        // Load the FXML for the ingredient card
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
-        VBox ingredientCard = loader.load();
-
-        // Set ingredient card details
-        IngredientCardController controller = loader.getController();
-        controller.setIngredientData(
-            ingredient.getID(),
-            ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
-            null, // Assuming image is null for now
-            this
-        );
-
-        return ingredientCard;
-    } catch (IOException e) {
-        e.printStackTrace();
-        return null;
-    }
-}
-
-   // Helper method to duplicate the ingredient card
-   private Node createDuplicateNode(VBox originalCard) {
       try {
-         // Load the FXML again to create a fresh duplicate
+         // Load the FXML for the ingredient card
          FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
-         VBox duplicateCard = loader.load();
+         VBox ingredientCard = loader.load();
 
-         // Transfer data from the original card to the duplicate
-         IngredientCardController originalController = (IngredientCardController) originalCard.getProperties().get("controller");
-         IngredientCardController duplicateController = loader.getController();
-         
-         // Set the same data on the duplicate
-         duplicateController.setIngredientData(originalController.getIngredientId(), 
-                                                originalController.getIngredientName(), 
-                                                originalController.getImagePath(), 
-                                                this);
-         return duplicateCard;
+         // Set ingredient card details
+         IngredientCardController controller = loader.getController();
+         controller.setIngredientData(
+               ingredient.getID(),
+               ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
+               ingredient.getImagePath(),
+               this
+         );
+
+         return ingredientCard;
       } catch (IOException e) {
          e.printStackTrace();
          return null;
       }
    }
 
-   private boolean isFormValid() {
-      return !productName.getText().trim().isEmpty() && !productQuantity.getText().trim().isEmpty();
+   private void addIngredientCard(Item ingredient) {
+      if (ingredient == null) {
+          System.out.println("Warning: Tried to add a null ingredient card.");
+          return;
+      }
+  
+      try {
+          FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/ingredientCard.fxml"));
+          VBox ingredientCard = loader.load();
+  
+          IngredientCardController controller = loader.getController();
+          controller.setIngredientData(
+              ingredient.getID(),
+              ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
+              ingredient.getImagePath(),
+              this
+          );
+  
+          ingredientGrid.getChildren().add(ingredientCard);
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
    }
+
+  private void removeIngredientCard(int ingredientId) {
+      ingredientGrid.getChildren().removeIf(node -> {
+         if (node instanceof VBox) {
+            IngredientCardController controller = (IngredientCardController) node.getProperties().get("controller");
+            return controller != null && controller.getIngredientId() == ingredientId;
+         }
+         return false;
+      });
+   }
+
+   private boolean isFormValid() {
+      // Check if product name and quantity are filled
+      if (productName.getText().trim().isEmpty() || productQuantity.getText().trim().isEmpty()) {
+          showAlert("Error", "Ingredient name and quantity are required.");
+          return false;
+      }
+  
+      // Check if location is selected
+      if (productLoc.getValue() == null || productLoc.getValue().trim().isEmpty()) {
+          showAlert("Error", "Please select a location for the ingredient.");
+          return false;
+      }
+  
+      // Check if an image is selected
+      if (selectedImageFile == null) {
+          showAlert("Error", "Please select an image for the ingredient.");
+          return false;
+      }
+  
+      // Check if expiration date is selected
+      if (productEXPDate.getValue() == null) {
+          showAlert("Error", "Please select an expiration date for the ingredient.");
+          return false;
+      }
+  
+      return true;
+  }
 
    private void SelectImage() {
       FileChooser fileChooser = new FileChooser();
@@ -1191,27 +1219,79 @@ public class InventoryDashboardController {
 
 
    // Method to open the edit form with the recipe's current details
-   public void openEditIngriedent(int ingredientId) {
-      // Logic to open edit pane and load recipe details by ID
-      System.out.println("Edit recipe with ID: " + ingredientId);
+   public void openEditIngredient(int ingredientId) {
+      Item ingredientToEdit = null;
+  
+      // Find the ingredient by ID
+      for (Item item : ingredientInventory) {
+          if (item.getID() == ingredientId) {
+              ingredientToEdit = item;
+              break;
+          }
+      }
+  
+      if (ingredientToEdit == null) {
+          showAlert("Error", "Ingredient not found!");
+          return;
+      }
+  
+      // Populate the edit form with the ingredient's details
+      productName.setText(ingredientToEdit.getName());
+      productQuantity.setText(String.valueOf(ingredientToEdit.getQuantity()));
+      productUnit.setValue(ingredientToEdit.getUnit());
+      productLoc.setValue(ingredientToEdit.getLocation());
+      
+      // Convert expiration date string to LocalDate
+      if (ingredientToEdit.getExpirDate() != null && !ingredientToEdit.getExpirDate().isEmpty()) {
+          productEXPDate.setValue(LocalDate.parse(ingredientToEdit.getExpirDate()));
+      } else {
+          productEXPDate.setValue(null);
+      }
+  
+      // Set selected tags
+      tags.setAll(ingredientToEdit.getTags());
+  
+      // Load image if available
+      if (ingredientToEdit.getImagePath() != null) {
+          File imageFile = new File("src/main/resources/org/javafx/Resources/Item Images/" + ingredientToEdit.getImagePath());
+          if (imageFile.exists()) {
+              selectedImage = new Image(imageFile.toURI().toString());
+              imagePreview.setImage(selectedImage);
+          }
+      } else {
+          imagePreview.setImage(null);
+      }
+  
+      // Show the edit ingredient pane
+      addIngredientMenuPane.setVisible(true);
+      uploadPane.setVisible(false);
    }
 
    // Method to delete the recipe by ID
-   public void deleteIngriendent(int ingredientId) {
-      // Logic to remove the recipe from data source and refresh UI
-      System.out.println("Delete recipe with ID: " + ingredientId);
+   public void deleteIngredient(int ingredientId) {
+      Optional<ButtonType> confirmation = showConfirmationDialog("Delete Ingredient", "Are you sure you want to delete this ingredient?");
+      if (confirmation.isPresent() && confirmation.get() == ButtonType.OK) {
+         // Find and remove the ingredient
+         ingredientInventory.removeIf(item -> item.getID() == ingredientId);
 
-      // Remove from database, then remove from frontend
+         // Save updated list to JSON
+         saveIngredientInventoryToJson();
+      
+         // Refresh UI
+         updateSpacesItemCards();
+      }
+   }
 
-      // Access and remove the recipe card widget
-
-      //work on having this remove the card from all categories it might be apart of
-
-      //VBox ingredientCard = recipeWidgets.get(ingredientId);
-      //if (ingredientCard != null) {
-          //recipeFlowPane.getChildren().remove(ingredientCard);
-          //recipeWidgets.remove(ingredientId);  // Clean up from the map
-      //}
+   // Method to save ingredient inventory to JSON
+   private void saveIngredientInventoryToJson() {
+      File file = new File("itemInventory.json");
+      try (Writer writer = new FileWriter(file)) {
+         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+         gson.toJson(ingredientInventory, writer);
+      } catch (IOException e) {
+         e.printStackTrace();
+         showAlert("Save Error", "Failed to save inventory to JSON.");
+      }
    }
 
    private void addSpace() {
@@ -1587,46 +1667,15 @@ public class InventoryDashboardController {
           System.out.println("No inventory file found. Starting with an empty inventory.");
       }
   }
-  
-
-   private void addIngredientToDatabase(Item item) {
-      // Placeholder for adding the ingredient to a database
-
-      item.setID(nextIngredientID++);
-      ingredientInventory.add(item);
-      File file = new File("itemInventory.json");
-
-      try {
-          // Read existing items from the file
-          List<Item> existingItems = new ArrayList<>();
-          if (file.exists() && file.length() > 0) {
-              try (Reader reader = new FileReader(file)) {
-                  Gson gson = new Gson();
-                  Item[] items = gson.fromJson(reader, Item[].class);
-                  if (items != null) {
-                      existingItems = new ArrayList<>(List.of(items));
-                  }
-              }
-          }
-  
-          // Add the new item to the list
-          existingItems.add(item);
-  
-          // Write the updated list back to the file
-          try (Writer writer = new FileWriter(file)) {
-              Gson gson = new GsonBuilder().setPrettyPrinting().create();
-              gson.toJson(existingItems, writer);
-              //System.out.println("Item added to inventory: " + item.getName());
-          }
-  
-      } catch (IOException e) {
-          e.printStackTrace();
-          showAlert("Save Error", "Failed to save item to inventory.");
-      }
-      // In the future, replace this with an actual database call.
-  }
       
    private void updateSpacesItemCards() {
+
+      for (Map<String, FlowPane> categoryMap : spacesCategories.values()) {
+         for (FlowPane categoryPane : categoryMap.values()) {
+             categoryPane.getChildren().clear(); // Clear all items before updating
+         }
+      }
+
       // Update categories for spaces after loading ingredients
       for (Item ingredient : ingredientInventory) {
           String location = ingredient.getLocation();
@@ -1655,6 +1704,14 @@ public class InventoryDashboardController {
           }
       }
   }
+
+   // Helper method to show a confirmation dialog
+   private Optional<ButtonType> showConfirmationDialog(String title, String message) {
+      Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+      alert.setTitle(title);
+      alert.setContentText(message);
+      return alert.showAndWait();
+   }
 
    private void copyImageToResources(File sourceFile, String destinationFileName) throws IOException {
       // Get the working directory and construct a relative path

@@ -27,33 +27,26 @@ public class Item {
         this.tags = new HashSet<>();
     }
 
-    public String getName(){
-        return this.name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public Integer getID(){
-        return this.ID;
-    }
+    public Integer getID() { return ID; }
+    public void setID(Integer ID) { this.ID = ID; }
 
-    public Integer getQuantity(){
-        return this.quantity;
-    }
+    public Integer getQuantity() { return quantity; }
+    public void setQuantity(Integer quantity) { this.quantity = quantity; }
 
-    public String getUnit(){
-        return this.unit;
-    }
+    public String getUnit() { return unit; }
+    public void setUnit(String unit) { this.unit = unit; }
 
-    public String getLocation(){
-        return this.location;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public String getExpirDate(){
-        return this.expirDate;
-    }
+    public String getExpirDate() { return expirDate; }
+    public void setExpirDate(String expirDate) { this.expirDate = expirDate; }
 
-    public String  getImagePath(){
-        return this.imagePath;
-    }
+    public String getImagePath() { return imagePath; }
+    public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
     public Set<String> getTags() {
         return this.tags;
@@ -73,10 +66,6 @@ public class Item {
         else {
             this.quantity = newValue;
         }
-    }
-
-    public void setID(Integer value) {
-        this.ID = value;
     }
 
 }

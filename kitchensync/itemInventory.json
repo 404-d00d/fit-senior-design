@@ -36,22 +36,16 @@
     "tags": []
   },
   {
-    "name": "cake",
-    "ID": 8,
-    "quantity": 8,
-    "location": "Fridge",
-    "expirDate": "2025-02-19",
-    "unit": "lbs",
-    "tags": []
-  },
-  {
     "name": "Test",
     "ID": 9,
     "quantity": 123,
     "location": "Fridge",
     "expirDate": "2025-02-22",
     "unit": "kg",
-    "imagePath": "image0.jpg",
-    "tags": []
+    "imagePath": "aa68f44f213f3c3a4b530f2ed569f5d7cb3f1b9a2161dee721338781a7c278d2.jpg",
+    "tags": [
+      "Dairy",
+      "Meat"
+    ]
   }
 ]

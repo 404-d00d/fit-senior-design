@@ -309,6 +309,9 @@ public class InventoryDashboardController {
 
       setClickEffect(placesButton);
 
+      setHoverEffect(placesButton);
+      setHoverEffect(spacesButton);
+
       sortByFilter.setOnAction(event -> handleSorting());
 
       manualButton.setOnAction(event -> {
@@ -466,7 +469,7 @@ public class InventoryDashboardController {
                      setText(null);
                   } else {
                      setText(item);
-                     setStyle("-fx-font-size: 30px;"); // Set the desired font size for placeListView
+                     setStyle("-fx-font-size: 28px;"); // Set the desired font size for placeListView
                   }
             }
          };
@@ -487,8 +490,18 @@ public class InventoryDashboardController {
       // Populate category filter
       categoryFilter.getItems().clear();
       categoryFilter.getItems().add("All Categories");
-      defaultCategories.values().forEach(categories -> categoryFilter.getItems().addAll(categories));
-  
+
+      // Use a Set to ensure unique categories
+      Set<String> uniqueCategories = new HashSet<>();
+
+      defaultCategories.values().forEach(categories -> uniqueCategories.addAll(categories));
+
+      // Remove "All Items" as it is redundant
+      uniqueCategories.remove("All Items");
+
+      // Add unique categories to the filter
+      categoryFilter.getItems().addAll(uniqueCategories);
+   
       // Populate tags filter
       tagsFilter.getItems().clear();
       tagsFilter.getItems().add("All Tags");
@@ -505,21 +518,37 @@ public class InventoryDashboardController {
       // Filter by location
       if (selectedLocation != null && !"All Locations".equals(selectedLocation)) {
           filteredItems = filteredItems.stream()
-              .filter(item -> selectedLocation.equals(item.getLocation()))
+              .filter(item -> selectedLocation.equalsIgnoreCase(item.getLocation()))
               .collect(Collectors.toList());
       }
   
       // Filter by category
       if (selectedCategory != null && !"All Categories".equals(selectedCategory)) {
-          filteredItems = filteredItems.stream()
-              .filter(item -> item.getTags() != null && item.getTags().contains(selectedCategory.toLowerCase()))
-              .collect(Collectors.toList());
-      }
+         String normalizedCategory = selectedCategory.toLowerCase();
+
+         filteredItems = filteredItems.stream()
+            .filter(item -> {
+               // Handle "Expiring Soon" as a special case
+               if (normalizedCategory.equals("expiring soon")) {
+                     return isExpiringSoon(item); // Check expiration logic
+               }
+               // Otherwise, check tags
+               return item.getTags() != null && item.getTags().stream()
+                     .map(String::toLowerCase)
+                     .collect(Collectors.toSet())
+                     .contains(normalizedCategory);
+            })
+            .collect(Collectors.toList());
+   }
   
       // Filter by tag
       if (selectedTag != null && !"All Tags".equals(selectedTag)) {
+          String normalizedTag = selectedTag.toLowerCase();
           filteredItems = filteredItems.stream()
-              .filter(item -> item.getTags() != null && item.getTags().contains(selectedTag.toLowerCase()))
+              .filter(item -> item.getTags() != null && item.getTags().stream()
+                  .map(String::toLowerCase)
+                  .collect(Collectors.toSet())
+                  .contains(normalizedTag))
               .collect(Collectors.toList());
       }
   
@@ -529,7 +558,7 @@ public class InventoryDashboardController {
       } else if (placesList) {
           updateIngredientList(filteredItems);
       }
-  }
+   }
    
    private void clearAllFilters() {
          locationFilter.setValue("All Locations");
@@ -559,13 +588,30 @@ public class InventoryDashboardController {
    private void handleMouseEntered(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Change style when mouse enters
-      button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+      button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
    }
 
    private void handleMouseExited(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Reset style when mouse exits
-      button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+
+      switch (button.getId()) {
+         case "placesButton":
+            if(!places) {
+               button.setStyle("-fx-background-color:  #555555; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+            }
+            break;
+         case "spacesButton":
+            if(!spaces) {
+               button.setStyle("-fx-background-color:  #555555; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+            }
+            break;
+      
+         default: 
+            button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+            break;
+      }
+      
    }
 
    private void setClickEffect(Button button) {
@@ -575,22 +621,22 @@ public class InventoryDashboardController {
    private void handleMouseClicked(MouseEvent event) {
 
       if(spaces) {
-         spacesButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
-         placesButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         spacesButton.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+         placesButton.setStyle("-fx-background-color:  #555555; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
       
       } else if (places) {
-         spacesButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
-         placesButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         spacesButton.setStyle("-fx-background-color:  #555555; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+         placesButton.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
       
       } 
       
       if (placesList) {
-         gridViewButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
-         listViewButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         gridViewButton.setStyle("-fx-border-color: transparent; -fx-text-fill: white; -fx-background-color:  #555555; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 28;");
+         listViewButton.setStyle("-fx-border-color: #FF7F11; -fx-text-fill: white; -fx-background-color:  #555555; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 28;");
 
       } else if (placesGrid) {
-         gridViewButton.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
-         listViewButton.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+         gridViewButton.setStyle("-fx-border-color: #FF7F11; -fx-text-fill: white; -fx-background-color:  #555555; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 28;");
+         listViewButton.setStyle("-fx-border-color: transparent; -fx-text-fill: white; -fx-background-color:  #555555; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 28;");
       
       }
    }
@@ -968,12 +1014,12 @@ public class InventoryDashboardController {
       // Reset styles for all space buttons within the VBox
       for (Node node : spacesButtons.getChildren()) {
           if (node instanceof Button) {
-              ((Button) node).setStyle("-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+              ((Button) node).setStyle("-fx-background-color:  #555555; -fx-background-radius: 50; -fx-border-radius: 50; -fx-font-size: 28; -fx-text-fill: white; -fx-effect:  dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0.5, 0, 2);");
           }
       }
   
       // Highlight the active button
-      activeButton.setStyle("-fx-background-color: orange; -fx-background-radius: 50; -fx-border-color: black; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30;");
+      activeButton.setStyle("-fx-background-color:   #FF7F11; -fx-background-radius: 50; -fx-border-radius: 50; -fx-font-size: 28; -fx-text-fill: white; -fx-effect:  dropshadow(gaussian, rgba(0,0,0,0.4), 5, 0.5, 0, 2);");
   }
 
    private void prefillManualForm(String itemName, String quantity, String unit) {
@@ -1056,7 +1102,6 @@ public class InventoryDashboardController {
       spacesPane.setVisible(true);
   }
   
-
    private void clearIngredientForm() {
       productName.clear();
       productQuantity.clear();
@@ -1217,7 +1262,6 @@ public class InventoryDashboardController {
       return null;
    }
 
-
    // Method to open the edit form with the recipe's current details
    public void openEditIngredient(int ingredientId) {
       Item ingredientToEdit = null;
@@ -1249,18 +1293,21 @@ public class InventoryDashboardController {
       }
   
       // Set selected tags
-      tags.setAll(ingredientToEdit.getTags());
+      tags.setAll(ingredientToEdit.getTags()); // Set the observable list
+      updateTagView(); // Update UI to reflect tags
+
   
       // Load image if available
       if (ingredientToEdit.getImagePath() != null) {
-          File imageFile = new File("src/main/resources/org/javafx/Resources/Item Images/" + ingredientToEdit.getImagePath());
-          if (imageFile.exists()) {
-              selectedImage = new Image(imageFile.toURI().toString());
-              imagePreview.setImage(selectedImage);
-          }
-      } else {
-          imagePreview.setImage(null);
-      }
+         File imageFile = new File("src/main/resources/org/javafx/Resources/Item Images/" + ingredientToEdit.getImagePath());
+         if (imageFile.exists()) {
+             selectedImage = new Image(imageFile.toURI().toString());
+             imagePreview.setImage(selectedImage);
+             selectedImageFile = imageFile; // Store the selected image file reference
+         }
+     } else {
+         imagePreview.setImage(null);
+     }
   
       // Show the edit ingredient pane
       addIngredientMenuPane.setVisible(true);
@@ -1365,7 +1412,7 @@ public class InventoryDashboardController {
 
    private void addSpaceButton(String spaceName) {
       Button newSpaceButton = new Button(spaceName);
-      newSpaceButton.setStyle("-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black;");
+      newSpaceButton.setStyle("-fx-background-color:  #555555; -fx-background-radius: 50; -fx-border-radius: 50;  -fx-font-size: 28; -fx-text-fill: white;");
       newSpaceButton.setPrefHeight(60);
       newSpaceButton.setPrefWidth(346);
 
@@ -1690,7 +1737,7 @@ public class InventoryDashboardController {
   
               // Add ingredient to other categories based on tags or expiration date
               List<String> categories = new ArrayList<>();
-              if (ingredient.getExpirDate() != null && LocalDate.parse(ingredient.getExpirDate()).isBefore(LocalDate.now().plusDays(3))) {
+              if (isExpiringSoon(ingredient)) {
                   categories.add("Expiring Soon");
               }
   
@@ -1704,6 +1751,14 @@ public class InventoryDashboardController {
           }
       }
   }
+
+   private boolean isExpiringSoon(Item item) {
+
+      if (item.getExpirDate() != null && LocalDate.parse(item.getExpirDate()).isBefore(LocalDate.now().plusDays(3))) {
+         return true;
+      }
+      return false;
+   }
 
    // Helper method to show a confirmation dialog
    private Optional<ButtonType> showConfirmationDialog(String title, String message) {

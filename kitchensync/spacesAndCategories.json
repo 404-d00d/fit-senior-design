@@ -2,15 +2,16 @@
   "spaces": [
     "Fridge",
     "Freezer",
-    "Pantry"
+    "Pantry",
+    "Outside Freezer"
   ],
   "categories": {
     "Freezer": [
       "All Items",
       "Expiring Soon",
-      "Frozen Foods",
+      "Vegetables",
       "Meat \u0026 Seafood",
-      "Vegetables"
+      "Frozen Foods"
     ],
     "Pantry": [
       "All Items",
@@ -19,12 +20,16 @@
       "Dry Foods",
       "Condiments"
     ],
+    "Outside Freezer": [
+      "All Items",
+      "Expiring Soon"
+    ],
     "Fridge": [
       "All Items",
       "Expiring Soon",
       "Ready to Eat",
-      "Dairy",
-      "Meat \u0026 Seafood"
+      "Meat \u0026 Seafood",
+      "Dairy"
     ]
   }
 }

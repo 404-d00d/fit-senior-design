@@ -16,10 +16,14 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 //JavaFX Imports
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.stage.Stage;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -53,12 +57,15 @@ public class MyRecipesController {
    @FXML private Button closeP1Button, closeP2Button, backButton, nextButton, cookItButton, closeRecipeDetailsButton,
                      prevStep, nextStep, addCollectionButton;
 
+   // Filter Buttons
+   @FXML private Button ingredientFilter, tagsFilter, resetFilters;
+
    // UI Containers & Layouts
    @FXML private VBox menuPane, collectionsButtons;
    @FXML private Pane myRecipesPane, myRecipeMainPane, addRecipePaneP1, addRecipePaneP2, 
                   recipeDetailsPane, recipeCookingPane;
    @FXML private FlowPane recipeFlowPane, chipPreview, recipeTagFlowPane;
-   @FXML private ComboBox<String> ingredientFilter, categoryFilter, tagsFilter;
+   @FXML private ComboBox<String> categoryFilter;
 
    // Recipe Form Inputs
    @FXML private TextField recipeName, recipeTag, ingredientEntry, amountEntry, equipmentEntry;
@@ -72,6 +79,7 @@ public class MyRecipesController {
                    recipeCookingNameTXT;
    @FXML private ListView<String> ingredientsArea, specialEquipmentTXTArea, recipeIngredients;
    @FXML private ImageView recipeImages, imagePreview, recipeDetailsImages;
+   @FXML private TextField searchBar;
 
    // Table Views for Ingredients & Equipment
    @FXML private TableView<Ingredient> ingredientTable;
@@ -101,6 +109,13 @@ public class MyRecipesController {
    private int displayStep = 0;
    private String currentCollection = "All Recipes";
 
+   // Selected filters for recipes
+   private Set<String> selectedIngredients = new HashSet<>();
+   private Set<String> selectedTags = new HashSet<>();
+
+   private Set<String> availableIngredients = new HashSet<>();
+   private Set<String> availableTags = new HashSet<>();
+
    // ====================================================================
    // Initialization & UI Setup
    // Handles controller startup logic and UI initialization
@@ -108,6 +123,7 @@ public class MyRecipesController {
 
    @FXML
    private void initialize() {
+
       initializeCollections();   // Load collections and ensure default ones exist
       loadRecipes();            // Load recipes from JSON
       configureDropdowns();      // Set up dropdown values
@@ -117,6 +133,14 @@ public class MyRecipesController {
       setNavigationButtonHandlers();   // Assign button actions for navigation
       setHoverEffects();         // Apply hover effects to UI elements
       setupUIEventHandlers();    // Configure buttons and step navigation
+      populateFilterOptions(); // Ensure filters get populated
+      setupMultiSelectFilters(); // Set up Filter Buttons
+
+      searchBar.textProperty().addListener((observable, oldValue, newValue) -> filterRecipesBySearch(newValue));
+
+      // Attach event listeners for filtering
+      categoryFilter.setOnAction(event -> filterRecipes());
+      sortBy.setOnAction(event -> filterRecipes());
 
       // Initialize the first step
       preparationSteps.add("");
@@ -796,7 +820,6 @@ public class MyRecipesController {
       deleteRecipeImage(recipe.getName());
   }
 
-
    // ==================================================
    // Recipe Sorting & Filtering
    // Handles sorting and filtering of recipe cards
@@ -911,6 +934,178 @@ public class MyRecipesController {
           tooltip.setLayoutX(event.getScreenX() - myRecipesPane.getScene().getWindow().getX() - recipeCard.getLayoutX());
           tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
       });
+  }
+
+   private void populateFilterOptions() {
+      Set<String> ingredientSet = new HashSet<>();
+      Set<String> tagSet = new HashSet<>();
+      Set<String> categorySet = new HashSet<>();
+
+      // Collect unique ingredients and tags from existing recipes
+      for (Recipe recipe : recipeList) {
+         for (String ingredient : recipe.getIngredients()) {
+            ingredientSet.add(ingredient.split(":")[0].trim()); // Extract ingredient name
+         }
+         tagSet.addAll(Arrays.asList(recipe.getTags()));
+         categorySet.add(recipe.getCategory());
+      }
+
+      // Ensure default options exist if the user has no recipes
+      if (ingredientSet.isEmpty()) {
+         ingredientSet.addAll(Arrays.asList("Flour", "Sugar", "Salt", "Butter", "Eggs", "Milk"));
+      }
+      if (tagSet.isEmpty()) {
+         tagSet.addAll(Arrays.asList("Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Spicy", "Quick Meal"));
+      }
+      if (categorySet.isEmpty()) {
+         categorySet.addAll(Arrays.asList("Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Other"));
+      }
+ 
+
+      // Set up available options
+      availableIngredients = ingredientSet;
+      availableTags = tagSet;
+
+      // Populate the category filter with options
+      categoryFilter.getItems().clear();
+      categoryFilter.getItems().add("All Categories"); // Default option
+      categoryFilter.getItems().addAll(categorySet);
+      categoryFilter.setValue("All Categories"); // Set the default selection
+
+      selectedIngredients.clear();
+      selectedTags.clear();
+   }
+
+   @FXML
+   private void clearAllFilters() {
+      selectedIngredients.clear();
+      selectedTags.clear();
+      categoryFilter.setValue("All Categories"); // Reset to default
+      filterRecipes(); // Refresh recipe list
+   }
+
+   private Set<String> showMultiSelectDialog(String title, Set<String> availableOptions, Set<String> selectedOptions) {
+      Stage dialogStage = new Stage();
+      dialogStage.initModality(Modality.APPLICATION_MODAL);
+      dialogStage.setTitle(title);
+
+      VBox vbox = new VBox(10);
+      vbox.setPadding(new Insets(10));
+
+      // Search Bar
+      TextField searchField = new TextField();
+      searchField.setPromptText("Search...");
+
+      // ListView with checkboxes
+      ListView<CheckBox> listView = new ListView<>();
+      ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
+
+      // Populate checkboxes
+      for (String option : availableOptions) {
+         CheckBox checkBox = new CheckBox(option);
+         checkBox.setSelected(selectedOptions.contains(option));
+         checkBoxes.add(checkBox);
+      }
+
+      listView.setItems(checkBoxes);
+
+      // Search functionality
+      searchField.textProperty().addListener((obs, oldText, newText) -> {
+         listView.setItems(checkBoxes.filtered(cb -> cb.getText().toLowerCase().contains(newText.toLowerCase())));
+      });
+
+      // Buttons
+      Button applyButton = new Button("Apply");
+      Button cancelButton = new Button("Cancel");
+
+      applyButton.setOnAction(event -> {
+         selectedOptions.clear();
+         for (CheckBox checkBox : checkBoxes) {
+               if (checkBox.isSelected()) {
+                  selectedOptions.add(checkBox.getText());
+               }
+         }
+         dialogStage.close();
+      });
+
+      cancelButton.setOnAction(event -> dialogStage.close());
+
+      HBox buttonBox = new HBox(10, applyButton, cancelButton);
+      buttonBox.setAlignment(Pos.CENTER_RIGHT);
+
+      vbox.getChildren().addAll(searchField, listView, buttonBox);
+      Scene scene = new Scene(vbox, 300, 400);
+      dialogStage.setScene(scene);
+      dialogStage.showAndWait();
+
+      return selectedOptions;
+   }
+
+   private void setupMultiSelectFilters() {
+      ingredientFilter.setOnAction(event -> {
+          selectedIngredients = showMultiSelectDialog("Select Ingredients", availableIngredients, selectedIngredients);
+          filterRecipes();
+      });
+  
+      tagsFilter.setOnAction(event -> {
+          selectedTags = showMultiSelectDialog("Select Tags", availableTags, selectedTags);
+          filterRecipes();
+      });
+  
+      resetFilters.setOnAction(event -> clearAllFilters());
+      categoryFilter.setOnAction(event -> filterRecipes());
+   }
+  
+   private void filterRecipes() {
+      String selectedCategory = categoryFilter.getValue();
+
+      // Handle the case where the category is null (default to "All Categories")
+      if (selectedCategory == null) {
+         selectedCategory = "All Categories"; 
+      }
+
+      boolean filterByCategory = !selectedCategory.equals("All Categories");
+  
+      recipeFlowPane.getChildren().clear();
+  
+      for (Recipe recipe : recipeList) {
+          boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
+          boolean matchesIngredients = selectedIngredients.isEmpty() || 
+              Arrays.stream(recipe.getIngredients()) // Convert array to stream
+                  .anyMatch(ingredient -> selectedIngredients.contains(ingredient.split(":")[0].trim()));
+          boolean matchesTags = selectedTags.isEmpty() || 
+              Arrays.stream(recipe.getTags()) // Convert array to stream
+                  .anyMatch(selectedTags::contains);
+  
+          if (matchesCategory && matchesIngredients && matchesTags) {
+              recipeFlowPane.getChildren().add(recipeWidgets.get(recipe.getID()));
+          }
+      }
+   }
+  
+   private void filterRecipesBySearch(String query) {
+      recipeFlowPane.getChildren().clear(); // Clear current displayed recipes
+  
+      if (query == null || query.trim().isEmpty()) {
+          // If search is empty, show all recipes
+          updateRecipeCards();
+          return;
+      }
+  
+      // Convert query to lowercase for case-insensitive matching
+      String lowerCaseQuery = query.toLowerCase();
+  
+      for (Recipe recipe : recipeList) {
+          if (recipe.getName().toLowerCase().contains(lowerCaseQuery) || 
+              Arrays.stream(recipe.getIngredients()).anyMatch(ingredient -> ingredient.toLowerCase().contains(lowerCaseQuery)) ||
+              Arrays.stream(recipe.getTags()).anyMatch(tag -> tag.toLowerCase().contains(lowerCaseQuery))) {
+              
+              VBox recipeCard = recipeWidgets.get(recipe.getID());
+              if (recipeCard != null) {
+                  recipeFlowPane.getChildren().add(recipeCard);
+              }
+          }
+      }
   }
 
    // ===================================================

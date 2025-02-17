@@ -7,12 +7,15 @@ C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\IngredientCardController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\AddIngredientPopUpController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\IngredientCell.java
+C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserInboxController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Main\Main.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\PrimaryController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\SecondaryController.java
+C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserProfileController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\BarcodeUploadController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\CommunityRecipesController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\RemoveIngredientPopUpController.java
+C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\MacroCalculator.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\MyListsController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UploadOptionsController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\LocalDateAdapter.java
@@ -22,6 +25,7 @@ C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\InventoryDashboardController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\App.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\EditPopUpController.java
+C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserSettingsController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\LoginPageController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\ListCreationController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\RecipeCreationScreenController.java

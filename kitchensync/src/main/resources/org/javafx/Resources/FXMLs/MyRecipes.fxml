@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
    <children>
       <Rectangle fill="#727272" height="112.0" layoutX="-23.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1944.0" />
       <Text layoutX="122.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="My Recipes" wrappingWidth="321.30859375">
@@ -31,7 +31,7 @@
          </font>
       </Text>
       <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
-      <TextField layoutX="1170.0" layoutY="28.0" prefHeight="53.0" prefWidth="551.0" promptText="Can't Find Somthing?" style="-fx-background-color: Orange; -fx-background-radius: 50;" />
+      <TextField fx:id="searchBar" layoutX="701.0" layoutY="30.0" prefHeight="53.0" prefWidth="551.0" promptText="Search My Recipes?" style="-fx-background-color: Orange; -fx-background-radius: 50; -fx-prompt-text-fill: black; -fx-font-size: 18px;" />
       <Pane fx:id="myRecipesPane" layoutX="61.0" layoutY="127.0">
          <children>
             <ScrollPane hbarPolicy="NEVER" layoutX="1579.0" layoutY="44.0" prefHeight="789.0" prefWidth="202.0">
@@ -55,15 +55,13 @@
                   </VBox>
                </content>
             </ScrollPane>
-            <ComboBox fx:id="ingredientFilter" layoutY="123.0" prefHeight="36.0" prefWidth="346.0" promptText="Ingredient" style="-fx-background-radius: 50;" />
-            <ComboBox fx:id="categoryFilter" layoutY="172.0" prefHeight="36.0" prefWidth="346.0" promptText="Category" style="-fx-background-radius: 50;" />
-            <Button layoutY="65.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="346.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="All Filters">
+            <ComboBox fx:id="categoryFilter" layoutY="65.0" prefHeight="36.0" prefWidth="346.0" promptText="Category" style="-fx-background-radius: 50;" />
+            <Button layoutY="65.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="346.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="All Filters" visible="false">
                <font>
                   <Font size="25.0" />
                </font>
             </Button>
-            <ComboBox fx:id="tagsFilter" layoutY="225.0" prefHeight="36.0" prefWidth="346.0" promptText="Tags" style="-fx-background-radius: 50;" />
-            <ComboBox fx:id="sortBy" layoutY="8.0" prefHeight="36.0" prefWidth="346.0" promptText="Sort By" style="-fx-background-radius: 50;" />
+            <ComboBox fx:id="sortBy" layoutY="8.0" prefHeight="36.0" prefWidth="346.0" promptText="Sort By" style="-fx-background-radius: 50;" styleClass="combo-box" />
             <Button fx:id="addRecipeButton" layoutX="61.0" layoutY="841.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="Add Recipe">
                <font>
                   <Font size="25.0" />
@@ -90,6 +88,21 @@
                   <Font size="29.0" />
                </font>
             </Text>
+            <Button fx:id="ingredientFilter" layoutX="72.0" layoutY="185.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="Ingredient Filter">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Button fx:id="tagsFilter" layoutX="72.0" layoutY="123.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="Tag Filter">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
+            <Button fx:id="resetFilters" layoutX="72.0" layoutY="245.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="Reset Filters">
+               <font>
+                  <Font size="25.0" />
+               </font>
+            </Button>
          </children>
       </Pane>
       <Pane fx:id="recipeCookingPane" layoutX="44.0" layoutY="146.0" visible="false">

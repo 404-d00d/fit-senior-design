@@ -38,5 +38,15 @@
     "unit": "g",
     "imagePath": "IMG_20250122_203056_680.jpg",
     "tags": []
+  },
+  {
+    "name": "cheese",
+    "ID": 5,
+    "quantity": 12,
+    "location": "Pantry",
+    "expirDate": "2028-02-04",
+    "unit": "lbs",
+    "imagePath": "Screenshot 2025-02-13 124043.png",
+    "tags": []
   }
 ]

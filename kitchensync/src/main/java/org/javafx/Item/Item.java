@@ -1,10 +1,7 @@
 package org.javafx.Item;
 
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-
-import javafx.scene.image.Image;
 
 public class Item {
     private String name;
@@ -15,8 +12,11 @@ public class Item {
     private String unit;
     private String imagePath;
     private Set<String> tags;
+    private boolean autoTrack;
+    private int minThreshold;
 
-    public Item(String name, Integer ID, Integer quantity, String unit, String location, String expirDate, String imagePath){
+
+    public Item(String name, Integer ID, Integer quantity, String unit, String location, String expirDate, String imagePath, boolean autoTrack, int minThreshold){
         this.name = name;
         this.ID = ID;
         this.quantity = quantity;
@@ -25,6 +25,8 @@ public class Item {
         this.expirDate = expirDate;
         this.imagePath = imagePath;
         this.tags = new HashSet<>();
+        this.autoTrack = autoTrack;
+        this.minThreshold = minThreshold;
     }
 
     public String getName() { return name; }
@@ -55,6 +57,12 @@ public class Item {
     public void setTags(Set<String> tags) {
         this.tags = tags;
     }
+
+    public boolean getAutoTrack() { return autoTrack; }
+    public void setAutoTrack(boolean autoTrack) { this.autoTrack = autoTrack; }
+
+    public int getMinThreshold() { return minThreshold; }
+    public void setMinThreshold(int minThreshold) { this.minThreshold = minThreshold; }
 
     public void modifyQuantity(Integer newValue) {
         // if user sets quantity of item in list to 0 or lower, remove this item

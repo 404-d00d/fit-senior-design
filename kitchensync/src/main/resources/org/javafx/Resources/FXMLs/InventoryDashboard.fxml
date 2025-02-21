@@ -2,6 +2,7 @@
 
 <?import java.lang.String?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -19,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="inventoryPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.InventoryDashboardController">
+<AnchorPane fx:id="inventoryPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.InventoryDashboardController">
    <children>
       <!-- Header Bar -->  
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1920.0" />
@@ -33,7 +34,7 @@
       <Button fx:id="placesButton" layoutX="806.0" layoutY="28.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="204.0" style="-fx-background-color: #555555; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-size: 28px; -fx-text-fill: white; -fx-font-weight: bold;" text="Places" />
 
 
-      <Pane id="SpacesMenu" fx:id="spacesPane" layoutX="2.0" layoutY="117.0" prefHeight="959.0" prefWidth="1920.0" style="-fx-background-color: #2E2E2E; -fx-background-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0.5, 0, 5);" visible="false">
+      <Pane id="SpacesMenu" fx:id="spacesPane" layoutX="2.0" layoutY="117.0" prefHeight="959.0" prefWidth="1920.0" style="-fx-background-color: #2E2E2E; -fx-background-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0.5, 0, 5);">
          <children>
             <!-- Background Panel -->
             <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#3C3C3C" height="951.0" layoutX="439.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1477.0" />
@@ -88,7 +89,7 @@
          </children>
       </Pane>
 
-      <Pane id="Placemenu" fx:id="placesPane" layoutX="7.0" layoutY="117.0" prefHeight="966.0" prefWidth="1909.0">
+      <Pane id="Placemenu" fx:id="placesPane" layoutX="7.0" layoutY="117.0" prefHeight="966.0" prefWidth="1909.0" visible="false">
          <children>
             <!-- Background Panel -->
             <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#3C3C3C" height="951.0" layoutX="428.0" layoutY="4.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1477.0" />
@@ -173,7 +174,7 @@
             <Text layoutX="32.0" layoutY="60.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="Product ID" />
             <Text layoutX="28.0" layoutY="99.0" style="-fx-font-size: 16px; -fx-fill: white;" text="Item Identifier On Barcode" />
             <TextField fx:id="productID" layoutX="28.0" layoutY="106.0" prefHeight="38.0" prefWidth="439.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 5;" />
-            <Button fx:id="productIDSearchButton" layoutX="477.0" layoutY="106.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white;" text="Search" />
+            <Button fx:id="productIDSearchButton" layoutX="477.0" layoutY="106.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-background-radius: 50;" text="Search" />
 
             <!-- Product Name Section -->
             <Text layoutX="32.0" layoutY="191.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="What Is It?*" />
@@ -182,26 +183,26 @@
             <!-- Product Quantity Section -->
             <Text layoutX="28.0" layoutY="288.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="How Much Do You Have?*" />
             <Text layoutX="30.0" layoutY="327.0" style="-fx-font-size: 16px; -fx-fill: White;" text="Amount*" />
-            <TextField fx:id="productQuantity" layoutX="30.0" layoutY="339.0" prefHeight="38.0" prefWidth="238.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 5;" />
-            <ComboBox fx:id="productUnit" layoutX="302.0" layoutY="339.0" prefHeight="38.0" prefWidth="238.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11;" />
+            <TextField fx:id="productQuantity" layoutX="30.0" layoutY="339.0" prefHeight="38.0" prefWidth="238.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 5; -fx-background-radius: 5;" />
+            <ComboBox fx:id="productUnit" layoutX="302.0" layoutY="339.0" prefHeight="38.0" prefWidth="238.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-background-radius: 5; -fx-border-radius: 5;" />
             <Text layoutX="302.0" layoutY="327.0" style="-fx-font-size: 16px; -fx-fill: white;" text="Unit*" />
 
             <!-- Product Location Section -->
             <Text layoutX="26.0" layoutY="425.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="Where Is It?*" />
-            <ComboBox fx:id="productLoc" layoutX="23.0" layoutY="433.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11;" />
+            <ComboBox fx:id="productLoc" layoutX="23.0" layoutY="433.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-background-radius: 5; -fx-border-radius: 5;" />
 
             <!-- Expiration Date Section -->
             <Text layoutX="23.0" layoutY="518.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="When To Toss?*" />
-            <DatePicker fx:id="productEXPDate" layoutX="23.0" layoutY="531.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: #555555; -fx-text-fill: white;" />
+            <DatePicker fx:id="productEXPDate" layoutX="23.0" layoutY="531.0" prefHeight="38.0" prefWidth="511.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: orange;" />
 
             <!-- Tags Section -->
             <Text layoutX="563.0" layoutY="512.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="Tag It" />
             <TextField fx:id="productTag" layoutX="563.0" layoutY="530.0" prefHeight="38.0" prefWidth="439.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 5;" />
-            <Button fx:id="addTagButton" layoutX="1010.0" layoutY="531.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white;" text="Add Tag" />
+            <Button fx:id="addTagButton" layoutX="1010.0" layoutY="531.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="67.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-background-radius: 50;" text="Add Tag" />
 
             <!-- Image Selection Section -->
             <Text layoutX="600.0" layoutY="57.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="Select Image*" />
-            <Button fx:id="imageSelect" layoutX="911.0" layoutY="23.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="98.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white;" text="Image Select" />
+            <Button fx:id="imageSelect" layoutX="911.0" layoutY="23.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="98.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-background-radius: 50;" text="Image Select" />
 
             <!-- Save Button -->
             <Button fx:id="saveButton" layoutX="1048.0" layoutY="809.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="138.0" style="-fx-background-color: #FF7F11; -fx-font-size: 16px; -fx-background-radius: 25; -fx-text-fill: white;" text="Save" />
@@ -210,7 +211,10 @@
             <ImageView fx:id="imagePreview" fitHeight="400.0" fitWidth="400.0" layoutX="600.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true" />
 
             <!-- Tags Preview -->
-            <FlowPane fx:id="chipPreview" layoutX="286.0" layoutY="621.0" prefHeight="212.0" prefWidth="579.0" style="-fx-background-color: transparent;" />
+            <FlowPane fx:id="chipPreview" layoutX="563.0" layoutY="591.0" prefHeight="199.0" prefWidth="479.0" style="-fx-background-color: transparent;" />
+            <CheckBox fx:id="autoTrack" layoutX="28.0" layoutY="620.0" mnemonicParsing="false" style="-fx-font-size: 24; -fx-text-fill: white; -fx-font-weight: bold;" text="Track Item Quantity?" />
+            <TextField fx:id="minItemCount" disable="true" layoutX="23.0" layoutY="702.0" prefHeight="38.0" prefWidth="238.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 5; -fx-background-radius: 5;" />
+            <Text layoutX="24.0" layoutY="685.0" style="-fx-font-size: 16px; -fx-fill: White;" text="Minimum Item Count (Default is 0)" wrappingWidth="250.0" />
          </children>
       </Pane>
 

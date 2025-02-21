@@ -2,19 +2,15 @@ package org.javafx.Main;
 
 import java.io.IOException;
 
-import org.javafx.Controllers.MyRecipesController;
 import org.javafx.Controllers.MealPlannerController;
 import org.javafx.Controllers.MyListsController;
 
 import javafx.application.Application;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.transform.Scale;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {

@@ -66,9 +66,13 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
+
 import java.util.Optional;
 import java.util.Set;
+
+import javafx.scene.control.CheckBox;
 
 public class InventoryDashboardController {
 
@@ -82,7 +86,7 @@ public class InventoryDashboardController {
    private VBox menuPane, categoryContainer, spacesButtons;
 
    @FXML
-   private TextField productID, productName, productQuantity, productTag;
+   private TextField productID, productName, productQuantity, productTag, minItemCount;
 
    @FXML
    private ComboBox<String> productUnit, productLoc, locationFilter, categoryFilter, tagsFilter, sortByFilter;
@@ -138,6 +142,8 @@ public class InventoryDashboardController {
    @FXML
    private Text loadingTXT;
 
+   @FXML private CheckBox autoTrack;
+
    private final List<String> tips = List.of(
     "Did you know? Scanned items can be categorized automatically!",
     "Tip: You can manually add items by clicking the 'Add Ingredient' button.",
@@ -160,6 +166,18 @@ public class InventoryDashboardController {
 
       // Update Spaces View
       updateSpacesItemCards();
+
+      minItemCount.setDisable(true);
+      minItemCount.setText("0");
+
+       autoTrack.setOnAction(event -> {
+        if (autoTrack.isSelected()) {
+            minItemCount.setDisable(false);  // Enable text field when checked
+        } else {
+            minItemCount.setDisable(true);   // Disable text field when unchecked
+            minItemCount.setText("0");       // Reset value to 0
+        }
+      });
 
       // Set current space to default (e.g., "Fridge")
       currentSpace = "Fridge";
@@ -1053,25 +1071,36 @@ public class InventoryDashboardController {
       String location = productLoc.getValue();
       LocalDate expirationDate = productEXPDate.getValue();
       String convertedDate = expirationDate != null ? expirationDate.toString() : null;
-  
+      
+      boolean tracked = autoTrack.isSelected();
+      int minThreshold = autoTrack.isSelected() ? Integer.parseInt(minItemCount.getText()) : 0;
+
       Set<String> itemTags = new HashSet<>(tags);
       String imageFileName = selectedImageFile != null ? selectedImageFile.getName() : null;
-  
+
       if (existingIngredient != null) {
-          // Remove the old ingredient card from UI before updating
-          removeIngredientCard(existingIngredient.getID());
+         // Remove the old ingredient card from UI before updating
+         removeIngredientCard(existingIngredient.getID());
+
+         // Update the existing ingredient
+         existingIngredient.setName(ingredientName);
+         existingIngredient.setQuantity(quantity);
+         existingIngredient.setUnit(unit);
+         existingIngredient.setLocation(location);
+         existingIngredient.setExpirDate(convertedDate);
+         existingIngredient.setTags(itemTags);
+         existingIngredient.setImagePath(imageFileName);
+
+         if (autoTrack.isSelected()) {
+            existingIngredient.setAutoTrack(true);
+            minItemCount.setDisable(false);
+            existingIngredient.setMinThreshold(Integer.parseInt(minItemCount.getText()));
+         } else {
+            existingIngredient.setAutoTrack(false);
+         }
   
-          // Update the existing ingredient
-          existingIngredient.setName(ingredientName);
-          existingIngredient.setQuantity(quantity);
-          existingIngredient.setUnit(unit);
-          existingIngredient.setLocation(location);
-          existingIngredient.setExpirDate(convertedDate);
-          existingIngredient.setTags(itemTags);
-          existingIngredient.setImagePath(imageFileName);
-  
-          // Add back the updated ingredient card
-          addIngredientCard(existingIngredient);
+         // Add back the updated ingredient card
+         addIngredientCard(existingIngredient);
       } else {
           // Find the next available ID (Ensure no duplicate IDs)
           int newId = ingredientInventory.stream()
@@ -1080,7 +1109,7 @@ public class InventoryDashboardController {
                             .orElse(0) + 1;  // Get the highest existing ID and add 1
   
           // Create a new ingredient
-          Item newIngredient = new Item(ingredientName, newId, quantity, unit, location, convertedDate, imageFileName);
+          Item newIngredient = new Item(ingredientName, newId, quantity, unit, location, convertedDate, imageFileName, tracked, minThreshold);
           newIngredient.setTags(itemTags);
           ingredientInventory.add(newIngredient);
   
@@ -1308,6 +1337,14 @@ public class InventoryDashboardController {
      } else {
          imagePreview.setImage(null);
      }
+
+     autoTrack.setSelected(ingredientToEdit.getAutoTrack());
+     minItemCount.setDisable(true);
+
+     if(autoTrack.isSelected()) {
+         minItemCount.setDisable(false);
+         minItemCount.setText(String.valueOf(ingredientToEdit.getMinThreshold()));
+     }
   
       // Show the edit ingredient pane
       addIngredientMenuPane.setVisible(true);
@@ -1448,6 +1485,44 @@ public class InventoryDashboardController {
       
       // Persist changes by saving the updated JSON
       savePersistedSpacesAndCategories();
+   }
+
+   public void openTrackingSettings(Item ingredient) {
+      Stage trackingStage = new Stage();
+      trackingStage.setTitle("Edit Tracking Settings");
+
+      VBox layout = new VBox(10);
+      layout.setStyle("-fx-padding: 20; -fx-background-color: white;");
+
+      CheckBox autoTrackCheckBox = new CheckBox("Enable Auto-Tracking");
+      autoTrackCheckBox.setSelected(ingredient.getAutoTrack());
+
+      Label minThresholdLabel = new Label("Minimum Quantity Threshold:");
+      TextField minThresholdField = new TextField(String.valueOf(ingredient.getMinThreshold()));
+      minThresholdField.setDisable(!ingredient.getAutoTrack()); // Disable if not tracking
+
+      // Enable/Disable minThresholdField based on autoTrackCheckBox
+      autoTrackCheckBox.setOnAction(event -> minThresholdField.setDisable(!autoTrackCheckBox.isSelected()));
+
+      Button saveButton = new Button("Save");
+      saveButton.setOnAction(event -> {
+         try {
+               ingredient.setAutoTrack(autoTrackCheckBox.isSelected());
+               ingredient.setMinThreshold(Integer.parseInt(minThresholdField.getText()));
+
+               saveIngredientInventoryToJson(); // Persist changes
+               updateSpacesItemCards(); // Refresh UI
+
+               trackingStage.close(); // Close the popup
+         } catch (NumberFormatException e) {
+               showAlert("Input Error", "Please enter a valid number for the threshold.");
+         }
+      });
+
+      layout.getChildren().addAll(autoTrackCheckBox, minThresholdLabel, minThresholdField, saveButton);
+      Scene scene = new Scene(layout, 300, 200);
+      trackingStage.setScene(scene);
+      trackingStage.show();
    }
 
    private void loadPersistedSpacesAndCategories() {
@@ -1787,5 +1862,19 @@ public class InventoryDashboardController {
       Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
       System.out.println("Image successfully copied to: " + destinationFile.getAbsolutePath());
+   }
+
+   public Item getIngredientById(int ingredientId) {
+      for (Item item : ingredientInventory) {
+          if (item.getID() == ingredientId) {
+            return item;
+          }
+      }
+      return null; // Return null if no ingredient with the given ID is found
+   }
+
+   public void updateInventoryData() {
+      saveIngredientInventoryToJson();
+      updateSpacesItemCards();
    }
 }

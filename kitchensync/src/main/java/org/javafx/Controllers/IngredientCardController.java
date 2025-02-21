@@ -3,6 +3,7 @@ package org.javafx.Controllers;
 import java.io.File;
 
 import javafx.fxml.FXML;
+import org.javafx.Item.Item;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -22,12 +23,19 @@ public class IngredientCardController {
    
    private int ingredientId;
    private String imagePath;
-
+   private Item ingredient;
    private InventoryDashboardController InventoryDashboardController;
+
+   MenuItem deleteItem = new MenuItem("Delete");
+   MenuItem trackItem = new MenuItem("Track Item");
+   MenuItem untrackItem = new MenuItem("Untrack Item");
+   MenuItem editTracking = new MenuItem("Edit Tracking Settings");
+
 
    public void setIngredientData(int id, String name, String imagePath, InventoryDashboardController controller) {
          this.ingredientId = id;
          this.InventoryDashboardController = controller;
+         this.ingredient = controller.getIngredientById(id);
          ingredientName.setText(name);
    
          if (imagePath != null) {
@@ -63,27 +71,74 @@ public class IngredientCardController {
    @FXML
    private void initialize() {
 
-      // Create the context menu with Edit and Delete options
+      // Create context menu
       ContextMenu contextMenu = new ContextMenu();
-      MenuItem deleteItem = new MenuItem("Delete");
-
-      contextMenu.getItems().addAll(deleteItem);
 
       // Add event handlers for Edit and Delete, linking to MyRecipesController
       deleteItem.setOnAction(e -> InventoryDashboardController.deleteIngredient(ingredientId));
 
+      // Track Item Action
+      trackItem.setOnAction(event -> {
+         ingredient.setAutoTrack(true);
+         ingredient.setMinThreshold(0); // Default min quantity
+         InventoryDashboardController.updateInventoryData();
+
+         contextMenu.getItems().remove(trackItem);
+         contextMenu.getItems().add(1, untrackItem);
+         contextMenu.getItems().add(editTracking);
+      });
+
+
+      // Untrack Item Action
+      untrackItem.setOnAction(event -> {
+         ingredient.setAutoTrack(false);
+         InventoryDashboardController.updateInventoryData();
+
+         // Update menu dynamically
+         contextMenu.getItems().remove(untrackItem);
+         contextMenu.getItems().remove(editTracking);
+         contextMenu.getItems().add(1, trackItem);
+         System.out.print(contextMenu.getItems());
+      });
+
+      // Edit Tracking Settings
+      editTracking.setOnAction(event -> InventoryDashboardController.openTrackingSettings(ingredient));
+
+      // Add default items
+      contextMenu.getItems().add(deleteItem);
+
+      // Initialize tracking menu state
+      if (ingredient != null && ingredient.getAutoTrack()) {
+         contextMenu.getItems().add(untrackItem);
+         contextMenu.getItems().add(editTracking);
+      } else {
+         contextMenu.getItems().add(trackItem);
+      }
 
       // Handle right-click for context menu and left-click for details
       ingredientCardPane.setOnMouseClicked(event -> {
 
          if (event.getButton() == MouseButton.SECONDARY) {
+            updateContextMenu(contextMenu);
             contextMenu.show(ingredientCardPane, event.getScreenX(), event.getScreenY());
          } else if (event.getButton() == MouseButton.PRIMARY) {
             InventoryDashboardController.openEditIngredient(ingredientId);
          }
-      });
+      });  
    }
 
+   private void updateContextMenu(ContextMenu contextMenu) {
+
+      contextMenu.getItems().clear(); // Clear existing items
+      contextMenu.getItems().add(deleteItem);
+  
+      if (ingredient != null && ingredient.getAutoTrack()) {
+          contextMenu.getItems().add(untrackItem);
+          contextMenu.getItems().add(editTracking);
+      } else {
+          contextMenu.getItems().add(trackItem);
+      }
+  }
 }
 
 

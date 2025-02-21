@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.CommunityRecipesController">
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.CommunityRecipesController">
    <children>
       <Rectangle fill="#727272" height="112.0" layoutX="-23.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1944.0" />
       <Text layoutX="105.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Community Recipes" wrappingWidth="672.30859375">
@@ -48,6 +48,34 @@
             </Text>
          </children>
       </Pane>
+      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
+      <Pane fx:id="recipeReviews" layoutX="9.0" layoutY="114.0" prefHeight="960.0" prefWidth="1905.0" visible="false">
+         <children>
+            <Text fx:id="recipeName" layoutX="20.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" wrappingWidth="361.30859375">
+               <font>
+                  <Font size="48.0" />
+               </font>
+            </Text>
+            <Button fx:id="postCommentButton" layoutX="481.0" layoutY="33.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-text-fill: black;" text="Post Comment">
+               <font>
+                  <Font name="System Bold" size="25.0" />
+               </font>
+            </Button>
+            <ScrollPane fx:id="gridPane" layoutX="399.0" layoutY="120.0" prefHeight="831.0" prefWidth="1494.0" visible="false">
+               <content>
+                  <VBox fx:id="reviewBoard" prefHeight="861.0" prefWidth="1558.0" />
+               </content>
+            </ScrollPane>
+            <Button fx:id="postCommentCloseButton" layoutX="1634.0" layoutY="35.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-text-fill: black;" text="Close">
+               <font>
+                  <Font name="System Bold" size="25.0" />
+               </font>
+            </Button>
+            <ComboBox fx:id="typeFilter" layoutX="39.0" layoutY="168.0" prefHeight="36.0" prefWidth="236.0" promptText="Type" />
+            <ProgressBar layoutX="57.0" layoutY="128.0" prefWidth="200.0" progress="0.0" />
+            <Text layoutX="113.0" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Average Reviews" />
+         </children>
+      </Pane>
       <VBox fx:id="menuPane" alignment="CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false">
          <children>
             <Button fx:id="userDashboardButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="User Dashboard" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
@@ -77,33 +105,5 @@
             </Button>
          </children>
       </VBox>
-      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
-      <Pane fx:id="recipeReviews" layoutX="9.0" layoutY="114.0" prefHeight="960.0" prefWidth="1905.0" visible="false">
-         <children>
-            <Text fx:id="recipeName" layoutX="20.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" wrappingWidth="361.30859375">
-               <font>
-                  <Font size="48.0" />
-               </font>
-            </Text>
-            <Button fx:id="postCommentButton" layoutX="481.0" layoutY="33.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-text-fill: black;" text="Post Comment">
-               <font>
-                  <Font name="System Bold" size="25.0" />
-               </font>
-            </Button>
-            <ScrollPane fx:id="gridPane" layoutX="399.0" layoutY="120.0" prefHeight="831.0" prefWidth="1494.0" visible="false">
-               <content>
-                  <VBox fx:id="reviewBoard" prefHeight="861.0" prefWidth="1558.0" />
-               </content>
-            </ScrollPane>
-            <Button fx:id="postCommentCloseButton" layoutX="1634.0" layoutY="35.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-text-fill: black;" text="Close">
-               <font>
-                  <Font name="System Bold" size="25.0" />
-               </font>
-            </Button>
-            <ComboBox fx:id="typeFilter" layoutX="39.0" layoutY="168.0" prefHeight="36.0" prefWidth="236.0" promptText="Type" />
-            <ProgressBar layoutX="57.0" layoutY="128.0" prefWidth="200.0" progress="0.0" />
-            <Text layoutX="113.0" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Average Reviews" />
-         </children>
-      </Pane>
    </children>
 </AnchorPane>

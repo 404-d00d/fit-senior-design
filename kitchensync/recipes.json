@@ -1,1 +1,234 @@
-[]
+[
+  {
+    "id": 0,
+    "name": "Easy Chicken Tacos",
+    "category": "dinner",
+    "collection": "All Recipes",
+    "servings": 6,
+    "description": "Easy Chicken Tacos with a simple spice rub, the chicken is cooked quickly on the stovetop! Serve with pico de gallo, avocado + lime wedges!",
+    "prepTime": 15,
+    "passiveTime": 0,
+    "cookTime": 15,
+    "complexity": 3,
+    "tags": [
+      "Chicken",
+      "Healthy",
+      "\u003c30 mins"
+    ],
+    "specialEquipment": [
+      "Cast Iron Skillet"
+    ],
+    "ingredients": [
+      "Chili Powder: 2 tsp",
+      "Ground Cumin: 1 tsp",
+      "Dired Oregano: 1/2 tsp",
+      "Salt: To Taste tsp",
+      "boneless, skinless chicken thighs: 1 1/2 lb",
+      "canola oil: 1 tbsp",
+      "mini flour tortillas, warmed: 12 g",
+      "pico de gallo, homemade or store-bought: 1 cup",
+      "avocado, halved, peeled, seeded and diced: 1 kg",
+      "chopped fresh cilantro leaves: 1 cup",
+      "lime, cut into wedges: 1 kg"
+    ],
+    "steps": [
+      "In a small bowl, combine chili powder, cumin, paprika, oregano, garlic powder, 1 teaspoon salt and 1/2 teaspoon pepper.",
+      "Season chicken with chili powder mixture.",
+      "Heat canola oil in a large cast iron skillet over medium high heat. Working in batches, add chicken to the skillet in a single layer and cook until golden brown and cooked through, reaching an internal temperature of 165 degrees F, about 4-5 minutes per side. Let cool before dicing into bite-size pieces.",
+      "Serve chicken in tortillas, topped with pico de gallo, avocado, cilantro and lime.",
+      ""
+    ],
+    "feedback": 0
+  },
+  {
+    "id": 1,
+    "name": "Guinness beef stew",
+    "category": "dinner",
+    "collection": "Favorites",
+    "servings": 6,
+    "description": "A deep, rich beef stew so flavorful with veggies + the most tender fall-apart beef. Serve over mashed potatoes. So good!",
+    "prepTime": 20,
+    "passiveTime": 0,
+    "cookTime": 140,
+    "complexity": 6,
+    "tags": [
+      "Beef",
+      "Dutch Oven",
+      "Comfort Food"
+    ],
+    "specialEquipment": [
+      "Cast Iron Skillet",
+      "Dutch Oven"
+    ],
+    "ingredients": [
+      "beef chuck, cut into 2-inch chunks: 2 lb",
+      "Salt: 1 dash",
+      "Olive Oil: 2 tbsp",
+      "medium sweet onion, diced: 1 kg",
+      "large carrots, peeled and diced: 3 kg",
+      "celery, diced: 3 kg",
+      "garlic, minced: 3 tsp",
+      "all-purpose flour: 2 tbsp",
+      "tomato paste: 3 tbsp",
+      "Guinness Draught beer: 14.9 oz",
+      "beef stock: 2 cup",
+      "Worcestershire sauce: 1 tbsp",
+      "fresh thyme: 4 g",
+      "bay leaves: 2 g",
+      "chopped fresh parsley leaves: 2 tbsp"
+    ],
+    "steps": [
+      "Heat olive oil in a large stockpot or Dutch oven over medium high heat. Working in batches, add beef to the stockpot and cook, stirring occasionally, until evenly browned, about 6-8 minutes; set aside.",
+      "Reduce heat to medium. Add onion, carrots and celery. Cook, stirring occasionally, until tender, about 3-4 minutes.",
+      "Stir in garlic until fragrant, about 1 minute.",
+      "Whisk in flour and tomato paste until lightly browned, about 1 minute.",
+      "Stir in Guinness, scraping any browned bits from the bottom of the stockpot.",
+      "Stir in beef stock, Worcestershire, thyme, bay leaves and beef. Bring to a boil; reduce heat and simmer, partially covered, until beef is very tender, about 2 hours, stirring occasionally.",
+      "Remove and discard thyme sprigs and bay leaves. Stir in parsley; season with salt and pepper, to taste.*",
+      ""
+    ],
+    "feedback": 0
+  },
+  {
+    "id": 2,
+    "name": "Chicken and Gnocchi Soup",
+    "category": "dinner",
+    "collection": "Favorites",
+    "servings": 6,
+    "description": "With a creamy, velvety chicken broth, shredded chicken, veggies, and pillowy gnocchi. SO good with crusty bread!",
+    "prepTime": 15,
+    "passiveTime": 15,
+    "cookTime": 35,
+    "complexity": 5,
+    "tags": [
+      "Chicken",
+      "Soup"
+    ],
+    "specialEquipment": [
+      "Cast Iron Skillet",
+      "Dutch Oven"
+    ],
+    "ingredients": [
+      "bacon, diced: 4 kg",
+      "unsalted butter: 3 tbsp",
+      "sweet onion, diced: 1 kg",
+      "carrots, peeled and sliced: 3 kg",
+      "celery, diced: 2 kg",
+      "garlic, minced: 3 tsp",
+      "Italian seasoning: 2 tsp",
+      "all-purpose flour: 1/4 cup",
+      "dry white wine: 1/3 cup",
+      "chicken stock: 4 cup",
+      "bay leaf: 1 g",
+      "Kosher salt and freshly ground black pepper, to taste: 1 dash",
+      "leftover shredded rotisserie chicken: 3 cup",
+      "gnocchi: 9 oz",
+      "chopped baby spinach: 3 cup",
+      "heavy cream: 1/4 cup",
+      "red wine vinegar: 2 tbsp",
+      "chopped fresh parsley leaves: 2 tbsp"
+    ],
+    "steps": [
+      "Heat a large stockpot or Dutch oven over medium hight heat. Add bacon and cook until brown and crispy, about 6-8 minutes. Transfer to a paper towel-lined plate; drain excess fat, reserving 1 tablespoon in the stockpot, and set aside.",
+      "Reduce heat to medium; add butter to the stockpot, stirring until butter has melted, about 1-2 minutes. Add onion, carrots and celery. Cook, stirring occasionally, until tender, about 3-4 minutes.",
+      "Stir in garlic and Italian seasoning until fragrant, about 1 minute.",
+      "Whisk in flour until lightly browned, about 1 minute.",
+      "Stir in wine, scraping any browned bits from the bottom of the pot.",
+      "Stir in chicken stock and bay leaf; season with salt and pepper, to taste. Bring to boil; reduce heat and simmer, covered, until flavors have blended, about 10 minutes.",
+      "Stir in chicken and gnocchi, and cook until gnocchi is tender, about 5 minutes.",
+      "Stir in spinach, heavy cream, vinegar and parsley until the spinach has wilted, about 2-3 minutes; season with salt and pepper, to taste.",
+      ""
+    ],
+    "feedback": 0
+  },
+  {
+    "id": 3,
+    "name": "Easy Homemade Mini Corn Dogs",
+    "category": "snack",
+    "collection": "All Recipes",
+    "servings": 12,
+    "description": "The best corn dogs you can make right at home – tastes just like the state fair. Sure to be a family favorite!",
+    "prepTime": 20,
+    "passiveTime": 0,
+    "cookTime": 10,
+    "complexity": 3,
+    "tags": [
+      "Easy",
+      "Beef"
+    ],
+    "specialEquipment": [
+      "Cast Iron Skillet",
+      "Dutch Oven"
+    ],
+    "ingredients": [
+      "vegetable oil: 1 cup",
+      "hot dogs, halved: 12 kg",
+      "cornstarch: 1/4 cup",
+      "all-purpose flour: 1/2 cup",
+      "yellow cornmeal: 1/2 cup",
+      "sugar: 2 tbsp",
+      "baking powder: 2 tsp",
+      "Kosher salt and freshly ground black pepper, to taste: 1 pinch",
+      "milk: 1/2 cup",
+      "Egg: 1 kg"
+    ],
+    "steps": [
+      "Heat vegetable oil in a large Dutch oven or skillet over medium high heat.",
+      "In a large bowl, combine hot dogs and cornstarch, tossing to coat.",
+      "Thread hot dogs onto lollipop sticks; set aside.",
+      "In a large bowl, combine flour, cornmeal, sugar and baking powder; season with salt and pepper, to taste.",
+      "In a large glass measuring cup or another bowl, whisk together milk and egg. Pour mixture over dry ingredients and stir using a rubber spatula just until moist.",
+      "Working in batches, dredge hot dogs in the batter until completely covered. Add to the skillet, about 4 or 5 at a time, and cook until evenly golden and crispy, about 2-3 minutes. Transfer to a paper towel-lined plate.",
+      ""
+    ],
+    "feedback": 0
+  },
+  {
+    "id": 4,
+    "name": "Hot Spinach and Artichoke Dip",
+    "category": "snack",
+    "collection": "All Recipes",
+    "servings": 8,
+    "description": "The BEST spinach and artichoke dip! So cheesy, so rich, so creamy, so stinking easy. Sure to please everyone!",
+    "prepTime": 20,
+    "passiveTime": 5,
+    "cookTime": 20,
+    "complexity": 5,
+    "tags": [
+      "Easy",
+      "Quick",
+      "appetizer"
+    ],
+    "specialEquipment": [
+      "Cast Iron Skillet",
+      "Dutch Oven"
+    ],
+    "ingredients": [
+      "olive oil: 1 tbsp",
+      "medium sweet onion, diced: 1/2 kg",
+      "garlic, minced: 3 tsp",
+      "dry white wine: 1/4 cup",
+      "frozen chopped spinach, thawed and squeezed dry: 16 oz",
+      "artichoke hearts, drained and coarsely chopped: 14 oz",
+      "crushed red pepper flakes: 1/2 tsp",
+      "cream cheese, cubed: 8 oz",
+      "sour cream: 1 cup",
+      "freshly grated Parmesan: 1/2 cup",
+      "Kosher salt and freshly ground black pepper, to taste: 1 pinch",
+      "shredded mozzarella cheese: 1 1/2 cup"
+    ],
+    "steps": [
+      "Heat olive oil in a large cast iron skillet over medium heat. Add onion and cook, stirring frequently, until translucent, about 2-3 minutes.",
+      "Stir in garlic until fragrant, about 1 minute.",
+      "Stir in wine, scraping any browned bits from the bottom of the skillet.",
+      "Stir in spinach, artichokes and red pepper flakes until warm and excess liquid has reduced, about 4 minutes.",
+      "Stir in cream cheese and sour cream until melted and heated through, about 5 minutes. Remove from heat.",
+      "Stir in Parmesan; season with salt and pepper, to taste. Sprinkle with mozzarella.",
+      "Preheat oven to broil on high. Arrange an oven rack 6-inches from the broiler.",
+      "Place skillet into oven and broil until golden brown and bubbly, about 3-5 minutes.",
+      "Serve",
+      ""
+    ],
+    "feedback": 0
+  }
+]

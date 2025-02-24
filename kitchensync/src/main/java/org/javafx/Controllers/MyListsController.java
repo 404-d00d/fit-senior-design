@@ -1,10 +1,5 @@
 package org.javafx.Controllers;
 
-import org.javafx.Main.Main;
-import org.javafx.Item.Item;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,7 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.ArrayList;
+
+import org.javafx.Item.Item;
+import org.javafx.Main.Main;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -221,7 +222,7 @@ public class MyListsController {
                          int newId = ingredientList.size() + 1;
      
                          // Create a new Item with the generated ID
-                         Item newIngredient = new Item(name, newId, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13", null);
+                         Item newIngredient = new Item(name, newId, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13", null, false, 0);
      
                          // Add the new ingredient to the list
                          ingredientList.add(newIngredient);
@@ -347,7 +348,7 @@ public class MyListsController {
           String location = (String) ingredient.getOrDefault("meal", "Unknown Meal");
   
           // Create an Item instance and add it to the list
-          Item item = new Item(name, neededIngredientsList.size() + 1, quantity, unit, location, "N/A", null);
+          Item item = new Item(name, neededIngredientsList.size() + 1, quantity, unit, location, "N/A", null, false, 0);
           neededIngredientsList.add(item);
       }
   

@@ -6,17 +6,7 @@
     "location": "Pantry",
     "expirDate": "2025-11-22",
     "unit": "lbs",
-    "tags": [],
-    "autoTrack": false,
-    "minThreshold": 0
-  },
-  {
-    "name": "Bleach",
-    "ID": 4,
-    "quantity": 5,
-    "location": "Pantry",
-    "expirDate": "2028-12-01",
-    "unit": "ml",
+    "imagePath": "banana Bread.PNG",
     "tags": [],
     "autoTrack": false,
     "minThreshold": 0
@@ -28,19 +18,70 @@
     "location": "Freezer",
     "expirDate": "2024-12-19",
     "unit": "kg",
-    "tags": [],
+    "imagePath": "Carrots.PNG",
+    "tags": [
+      "vegtables"
+    ],
     "autoTrack": true,
     "minThreshold": 0
   },
   {
-    "name": "Tacos",
-    "ID": 7,
-    "quantity": 56,
+    "name": "Chicken Breast",
+    "ID": 8,
+    "quantity": 10,
     "location": "Fridge",
-    "expirDate": "2025-02-28",
-    "unit": "g",
-    "tags": [],
+    "expirDate": "2025-03-08",
+    "unit": "lbs",
+    "imagePath": "chickenBreast.PNG",
+    "tags": [
+      "Chicken",
+      "Meat"
+    ],
     "autoTrack": false,
+    "minThreshold": 0
+  },
+  {
+    "name": "Stew Meat",
+    "ID": 9,
+    "quantity": 5,
+    "location": "Freezer",
+    "expirDate": "2025-03-07",
+    "unit": "lbs",
+    "imagePath": "stewMeat.PNG",
+    "tags": [
+      "Beef",
+      "Stew Meat"
+    ],
+    "autoTrack": false,
+    "minThreshold": 0
+  },
+  {
+    "name": "Whole Milk",
+    "ID": 10,
+    "quantity": 64,
+    "location": "Fridge",
+    "expirDate": "2025-03-05",
+    "unit": "oz",
+    "imagePath": "milk.PNG",
+    "tags": [
+      "Dairy",
+      "Milk"
+    ],
+    "autoTrack": false,
+    "minThreshold": 0
+  },
+  {
+    "name": "Flour",
+    "ID": 11,
+    "quantity": 2,
+    "location": "Pantry",
+    "expirDate": "2024-12-19",
+    "unit": "lbs",
+    "imagePath": "flour.PNG",
+    "tags": [
+      "Flour"
+    ],
+    "autoTrack": true,
     "minThreshold": 0
   }
 ]

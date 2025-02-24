@@ -1,39 +1,66 @@
 package org.javafx.Controllers;
 
 // Java Imports
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
-// External Libraries
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import javafx.beans.property.ReadOnlyStringWrapper;
 
-//JavaFX Imports
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.stage.Stage;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 // =================================================================================
 //  MyRecipesController handles user made recipes, navigation, and UI interactions
@@ -713,14 +740,31 @@ public class MyRecipesController {
       recipeNameTXT.setText(name);
       recipeDetailsImages.setImage(image);
 
+      // Increase text size for labels
+      //recipeNameTXT.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+      //recipeServingsTXT.setStyle("-fx-font-size: 18px;");
+      //recipePrepTimeTXT.setStyle("-fx-font-size: 18px;");
+      //recipePassiveTimeTXT.setStyle("-fx-font-size: 18px;");
+      //recipeCookTimeTXT.setStyle("-fx-font-size: 18px;");
+      //recipeTotalTimeTXT.setStyle("-fx-font-size: 18px;");
+      //recipeComplexityTXT.setStyle("-fx-font-size: 18px;");
+      recipeDetailDescription.setStyle("-fx-font-size: 16px;");
+
+      // Increase text size in list items
+      recipeIngredients.setStyle("-fx-font-size: 16px;");
+      specialEquipmentTXTArea.setStyle("-fx-font-size: 16px;");
+      ingredientsArea.setStyle("-fx-font-size: 16px;");
+      stepArea.setStyle("-fx-font-size: 16px;");
+
+
       recipeServingsTXT.setText("Servings: " + recipe.getServings());
-      recipePrepTimeTXT.setText("Prep Time: " + recipe.getPrepTime() + "Minutes");
-      recipePassiveTimeTXT.setText("Passive Time: " + recipe.getPassiveTime() + "Minutes");
-      recipeCookTimeTXT.setText("Cook Time: " + recipe.getCookTime() + "Minutes");
+      recipePrepTimeTXT.setText("Prep Time: " + recipe.getPrepTime() + " Minutes");
+      recipePassiveTimeTXT.setText("Passive Time: " + recipe.getPassiveTime() + " Minutes");
+      recipeCookTimeTXT.setText("Cook Time: " + recipe.getCookTime() + " Minutes");
 
       int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime(); // add the prep and cook times
 
-      recipeTotalTimeTXT.setText("Total: " + totalTime + "Minutes");
+      recipeTotalTimeTXT.setText("Total: " + totalTime + " Minutes");
       recipeComplexityTXT.setText("Complexity: " + getComplexityLabel(recipe.getComplexity()));
 
       recipeDetailDescription.setText(recipe.getDescription());
@@ -733,9 +777,9 @@ public class MyRecipesController {
          // Create a label for each tag
          Label tagLabel = new Label(tag);
          
-         // Optionally style the label (for example, add padding, border, background, etc.)
-         tagLabel.setStyle("-fx-background-color: #e0e0e0; -fx-padding: 5 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-margin: 5;");
-         
+         tagLabel.setStyle("-fx-font-size: 14px; -fx-background-color: #e0e0e0; -fx-padding: 5 10; " +
+         "-fx-border-radius: 10; -fx-background-radius: 10; -fx-margin: 5;");
+
          // Add the label to the FlowPane
          recipeTagFlowPane.getChildren().add(tagLabel);
       }

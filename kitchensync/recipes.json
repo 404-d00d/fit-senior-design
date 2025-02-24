@@ -1,7 +1,6 @@
 [
   {
     "id": 0,
-<<<<<<< HEAD
     "name": "Easy Chicken Tacos",
     "category": "dinner",
     "collection": "All Recipes",
@@ -36,8 +35,7 @@
       "In a small bowl, combine chili powder, cumin, paprika, oregano, garlic powder, 1 teaspoon salt and 1/2 teaspoon pepper.",
       "Season chicken with chili powder mixture.",
       "Heat canola oil in a large cast iron skillet over medium high heat. Working in batches, add chicken to the skillet in a single layer and cook until golden brown and cooked through, reaching an internal temperature of 165 degrees F, about 4-5 minutes per side. Let cool before dicing into bite-size pieces.",
-      "Serve chicken in tortillas, topped with pico de gallo, avocado, cilantro and lime.",
-      ""
+      "Serve chicken in tortillas, topped with pico de gallo, avocado, cilantro and lime."
     ],
     "feedback": 0
   },
@@ -85,8 +83,7 @@
       "Whisk in flour and tomato paste until lightly browned, about 1 minute.",
       "Stir in Guinness, scraping any browned bits from the bottom of the stockpot.",
       "Stir in beef stock, Worcestershire, thyme, bay leaves and beef. Bring to a boil; reduce heat and simmer, partially covered, until beef is very tender, about 2 hours, stirring occasionally.",
-      "Remove and discard thyme sprigs and bay leaves. Stir in parsley; season with salt and pepper, to taste.*",
-      ""
+      "Remove and discard thyme sprigs and bay leaves. Stir in parsley; season with salt and pepper, to taste.*"
     ],
     "feedback": 0
   },
@@ -137,8 +134,7 @@
       "Stir in wine, scraping any browned bits from the bottom of the pot.",
       "Stir in chicken stock and bay leaf; season with salt and pepper, to taste. Bring to boil; reduce heat and simmer, covered, until flavors have blended, about 10 minutes.",
       "Stir in chicken and gnocchi, and cook until gnocchi is tender, about 5 minutes.",
-      "Stir in spinach, heavy cream, vinegar and parsley until the spinach has wilted, about 2-3 minutes; season with salt and pepper, to taste.",
-      ""
+      "Stir in spinach, heavy cream, vinegar and parsley until the spinach has wilted, about 2-3 minutes; season with salt and pepper, to taste."
     ],
     "feedback": 0
   },
@@ -179,8 +175,7 @@
       "Thread hot dogs onto lollipop sticks; set aside.",
       "In a large bowl, combine flour, cornmeal, sugar and baking powder; season with salt and pepper, to taste.",
       "In a large glass measuring cup or another bowl, whisk together milk and egg. Pour mixture over dry ingredients and stir using a rubber spatula just until moist.",
-      "Working in batches, dredge hot dogs in the batter until completely covered. Add to the skillet, about 4 or 5 at a time, and cook until evenly golden and crispy, about 2-3 minutes. Transfer to a paper towel-lined plate.",
-      ""
+      "Working in batches, dredge hot dogs in the batter until completely covered. Add to the skillet, about 4 or 5 at a time, and cook until evenly golden and crispy, about 2-3 minutes. Transfer to a paper towel-lined plate."
     ],
     "feedback": 0
   },
@@ -227,27 +222,8 @@
       "Stir in Parmesan; season with salt and pepper, to taste. Sprinkle with mozzarella.",
       "Preheat oven to broil on high. Arrange an oven rack 6-inches from the broiler.",
       "Place skillet into oven and broil until golden brown and bubbly, about 3-5 minutes.",
-      "Serve",
-      ""
+      "Serve"
     ],
-=======
-    "name": "Tacos",
-    "category": "dinner",
-    "collection": "All Recipes",
-    "servings": 4,
-    "description": "Ground Beef Tacos",
-    "prepTime": 20,
-    "passiveTime": 0,
-    "cookTime": 20,
-    "complexity": 2,
-    "tags": [],
-    "specialEquipment": [],
-    "ingredients": [
-      "salt: 1 cup",
-      "ground beef: 2 lb"
-    ],
-    "steps": [],
->>>>>>> da392710cd4bbe893fade98c39bccb54f15f6e3b
     "feedback": 0
   }
 ]

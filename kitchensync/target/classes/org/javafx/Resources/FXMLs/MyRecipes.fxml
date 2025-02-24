@@ -435,7 +435,7 @@
                </font>
             </Text>
             <PieChart fx:id="recipeCalories" layoutX="6.0" layoutY="459.0" prefHeight="437.0" prefWidth="578.0" />
-            <TextArea fx:id="recipeDetailDescription" editable="false" layoutX="1148.0" layoutY="478.0" prefHeight="421.0" prefWidth="589.0" />
+            <TextArea fx:id="recipeDetailDescription" editable="false" layoutX="1148.0" layoutY="478.0" prefHeight="421.0" prefWidth="589.0" wrapText="true" />
             <Button fx:id="cookItButton" layoutX="1750.0" layoutY="845.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Cook It">
                <font>
                   <Font size="24.0" />

@@ -1,6 +1,7 @@
 [
   {
     "id": 0,
+<<<<<<< HEAD
     "name": "Easy Chicken Tacos",
     "category": "dinner",
     "collection": "All Recipes",
@@ -229,6 +230,24 @@
       "Serve",
       ""
     ],
+=======
+    "name": "Tacos",
+    "category": "dinner",
+    "collection": "All Recipes",
+    "servings": 4,
+    "description": "Ground Beef Tacos",
+    "prepTime": 20,
+    "passiveTime": 0,
+    "cookTime": 20,
+    "complexity": 2,
+    "tags": [],
+    "specialEquipment": [],
+    "ingredients": [
+      "salt: 1 cup",
+      "ground beef: 2 lb"
+    ],
+    "steps": [],
+>>>>>>> da392710cd4bbe893fade98c39bccb54f15f6e3b
     "feedback": 0
   }
 ]

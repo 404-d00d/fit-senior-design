@@ -25,49 +25,86 @@ public class RecipeCardController {
    private int recipeId;
 
    private MyRecipesController myRecipesController;
+   private CommunityRecipesController communityRecipesController;
 
-   public void setRecipeData(Recipe newRecipe, Image image, MyRecipesController controller) {
+   // View type flag ("myrecipes" or "community")
+   private String viewType;
+
+   public void setRecipeData(Recipe newRecipe, Image image, Object controller, String viewType) {
       this.recipe = newRecipe;
       this.recipeId = newRecipe.getID();
-      this.myRecipesController = controller; 
       recipeName.setText(newRecipe.getName());
       recipeImage.setImage(image);
+      this.viewType = viewType;
+
+      if ("myrecipes".equals(viewType)) {
+         this.myRecipesController = (MyRecipesController) controller;
+      }
+
+      if ("community".equals(viewType)) {
+         this.communityRecipesController = (CommunityRecipesController) controller;
+      }
+
+      configureContextMenu();
    }
 
-   @FXML
-   private void initialize() {
-
-      // Create the context menu with Edit and Delete options
+   /**
+    * Configure the context menu based on the view type.
+    */
+   private void configureContextMenu() {
       ContextMenu contextMenu = new ContextMenu();
-      MenuItem editItem = new MenuItem("Edit");
-      MenuItem deleteItem = new MenuItem("Delete");
-      MenuItem addToCollectionItem = new MenuItem("Add to Collection");
-      MenuItem addToFavoritesItem = new MenuItem("Add to Favorites");
-      MenuItem removeFromCollectionItem = new MenuItem("Remove from Current Collection");
+      
+      if ("community".equals(viewType)) {
 
-      contextMenu.getItems().addAll(editItem, deleteItem, addToCollectionItem, addToFavoritesItem, removeFromCollectionItem);
-
-      // Add event handlers for Edit and Delete, linking to MyRecipesController
-      editItem.setOnAction(e -> myRecipesController.openEditRecipe(recipe));
-      deleteItem.setOnAction(e -> myRecipesController.deleteRecipe(recipe));
-
-      // Add event handler for Add to Collection
-      addToCollectionItem.setOnAction(e -> myRecipesController.openAddToCollectionForm(recipe));
-
-      // Add event handler for Add to Favorites
-      addToFavoritesItem.setOnAction(e -> myRecipesController.addRecipeToFavorites(recipe));
-
-      // Add event handler for Remove From Current Collection
-      removeFromCollectionItem.setOnAction(e -> myRecipesController.removeFromCurrentCollection(recipe));
-
-      // Handle right-click for context menu and left-click for details
+         MenuItem reviewsAndFeedback = new MenuItem("Reviews And Feedback");
+         reviewsAndFeedback.setOnAction(e -> RecipeReviewsAndFeedBack());
+         
+         // if/when we figure this out its here
+         MenuItem shareItem = new MenuItem("Share Recipe");
+         shareItem.setOnAction(e -> handleShareRecipe());
+         
+         contextMenu.getItems().addAll(reviewsAndFeedback);
+      } else {
+         // Default: MyRecipes context menu items
+         MenuItem editItem = new MenuItem("Edit");
+         MenuItem deleteItem = new MenuItem("Delete");
+         MenuItem addToCollectionItem = new MenuItem("Add to Collection");
+         MenuItem addToFavoritesItem = new MenuItem("Add to Favorites");
+         MenuItem removeFromCollectionItem = new MenuItem("Remove from Current Collection");
+         
+         contextMenu.getItems().addAll(editItem, deleteItem, addToCollectionItem, addToFavoritesItem, removeFromCollectionItem);
+         
+         // Event handlers for MyRecipes actions.
+         editItem.setOnAction(e -> myRecipesController.openEditRecipe(recipe));
+         deleteItem.setOnAction(e -> myRecipesController.deleteRecipe(recipe));
+         addToCollectionItem.setOnAction(e -> myRecipesController.openAddToCollectionForm(recipe));
+         addToFavoritesItem.setOnAction(e -> myRecipesController.addRecipeToFavorites(recipe));
+         removeFromCollectionItem.setOnAction(e -> myRecipesController.removeFromCurrentCollection(recipe));
+      }
+      
+      // Set up mouse-click behavior.
       recipeCardPane.setOnMouseClicked(event -> {
-
          if (event.getButton() == MouseButton.SECONDARY) {
             contextMenu.show(recipeCardPane, event.getScreenX(), event.getScreenY());
          } else if (event.getButton() == MouseButton.PRIMARY) {
-            myRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
+            // In the myRecipes view, call the controller's method.
+            if ("myrecipes".equals(viewType)) {
+               myRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
+            } else if ("community".equals(viewType)) {
+               communityRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
+            }
          }
       });
    }
+
+   private void RecipeReviewsAndFeedBack() {
+
+      communityRecipesController.showRecipeReviewsAndFeedback(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
+   }
+
+   private void handleShareRecipe() {
+      // Implement share functionality.
+      System.out.println("Community view: Sharing recipe " + recipe.getName());
+   }
+
 }

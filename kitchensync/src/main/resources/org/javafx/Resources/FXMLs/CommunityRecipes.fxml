@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
@@ -14,7 +19,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.CommunityRecipesController">
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.CommunityRecipesController">
    <children>
       <Rectangle fill="#727272" height="112.0" layoutX="-23.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1944.0" />
       <Text layoutX="105.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Community Recipes" wrappingWidth="672.30859375">
@@ -23,29 +28,28 @@
          </font>
       </Text>
       <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
-      <TextField layoutX="1170.0" layoutY="28.0" prefHeight="53.0" prefWidth="551.0" promptText="Can't Find Somthing?" style="-fx-background-color: Orange; -fx-background-radius: 50;" />
       <Pane fx:id="myRecipesPane" layoutX="61.0" layoutY="127.0">
          <children>
-            <ComboBox fx:id="ingredientDropDown" layoutY="123.0" prefHeight="36.0" prefWidth="346.0" promptText="Ingredient" style="-fx-background-radius: 50;" />
-            <ComboBox fx:id="categoryDropDown" layoutY="172.0" prefHeight="36.0" prefWidth="346.0" promptText="Category" style="-fx-background-radius: 50;" />
-            <Button layoutY="65.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="346.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="All Filters">
-               <font>
-                  <Font size="25.0" />
-               </font>
-            </Button>
-            <ComboBox fx:id="tagsDropDown" layoutY="225.0" prefHeight="36.0" prefWidth="346.0" promptText="Tags" style="-fx-background-radius: 50;" />
+            <ComboBox fx:id="ingredientDropDown" layoutY="65.0" prefHeight="36.0" prefWidth="346.0" promptText="Ingredient" style="-fx-background-radius: 50;" />
+            <ComboBox fx:id="categoryDropDown" layoutY="114.0" prefHeight="36.0" prefWidth="346.0" promptText="Category" style="-fx-background-radius: 50;" />
+            <ComboBox fx:id="tagsDropDown" layoutY="167.0" prefHeight="36.0" prefWidth="346.0" promptText="Tags" style="-fx-background-radius: 50;" />
             <ComboBox fx:id="sortBy" layoutY="8.0" prefHeight="36.0" prefWidth="346.0" promptText="Sort By" style="-fx-background-radius: 50;" />
             <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#bfbfbf" height="940.0" layoutX="397.0" stroke="BLACK" strokeType="INSIDE" width="1446.0" />
-            <ScrollPane hbarPolicy="NEVER" layoutX="423.0" layoutY="14.0" prefHeight="917.0" prefWidth="1402.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50;">
+            <ScrollPane hbarPolicy="NEVER" layoutX="423.0" layoutY="238.0" prefHeight="693.0" prefWidth="1402.0" style="-fx-background-color: grey; -fx-background-radius: 50; -fx-border-radius: 50;">
                <content>
                   <FlowPane fx:id="recipeFlowPane" prefHeight="927.0" prefWidth="1388.0" style="-fx-vgap: 10; -fx-hgap: 10; -fx-background-radius: 50; -fx-border-radius: 50;" />
                </content>
             </ScrollPane>
-            <Text fx:id="noRecipesTXT" layoutX="898.0" layoutY="482.7060546875" strokeType="OUTSIDE" strokeWidth="0.0" text="No Recipes">
+            <Text fx:id="noRecipesTXT" layoutX="1052.0" layoutY="596.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Recipes">
                <font>
                   <Font size="29.0" />
                </font>
             </Text>
+            <ScrollPane layoutX="426.0" layoutY="14.0" prefHeight="200.0" prefWidth="1402.0" vbarPolicy="NEVER">
+               <content>
+                  <HBox fx:id="suggestedRecipesBox" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="1395.0" />
+               </content>
+            </ScrollPane>
          </children>
       </Pane>
       <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
@@ -74,6 +78,116 @@
             <ComboBox fx:id="typeFilter" layoutX="39.0" layoutY="168.0" prefHeight="36.0" prefWidth="236.0" promptText="Type" />
             <ProgressBar layoutX="57.0" layoutY="128.0" prefWidth="200.0" progress="0.0" />
             <Text layoutX="113.0" layoutY="116.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Average Reviews" />
+         </children>
+      </Pane>
+      <Pane fx:id="recipeDetailsPane" layoutX="45.0" layoutY="134.0" prefHeight="910.0" prefWidth="1858.0" visible="false">
+         <children>
+            <HBox alignment="CENTER" prefHeight="900.0" prefWidth="1859.0">
+               <children>
+                  <VBox prefHeight="900.0" prefWidth="582.0">
+                     <children>
+                        <ImageView fx:id="recipeDetailsImages" fitHeight="421.0" fitWidth="596.0" pickOnBounds="true" preserveRatio="true" />
+                        <TextArea fx:id="recipeDetailDescription" editable="false" focusTraversable="false" prefHeight="299.0" prefWidth="596.0" wrapText="true">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </TextArea>
+                        <PieChart fx:id="recipeCalories" prefHeight="295.0" prefWidth="497.0" />
+                     </children>
+                  </VBox>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" disable="true" fill="WHITE" height="200.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="20.0" />
+                  <VBox prefHeight="900.0" prefWidth="466.0">
+                     <children>
+                        <Text fx:id="recipeNameTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="690.30859375">
+                           <font>
+                              <Font size="48.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="recipePrepTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Prep Time:" wrappingWidth="434.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="recipeServingsTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Servings:" wrappingWidth="434.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="recipePassiveTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Passive Time:" wrappingWidth="434.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="recipeCookTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Cook Time:" wrappingWidth="434.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="recipeTotalTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Total Time:" wrappingWidth="434.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <Text fx:id="recipeComplexityTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Complexity:" wrappingWidth="434.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Button fx:id="prevStep" focusTraversable="false" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" disable="true" fill="WHITE" height="39.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="20.0" />
+                              <Text fx:id="stepOfTXT" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Step * of *" wrappingWidth="321.30859375">
+                                 <font>
+                                    <Font size="48.0" />
+                                 </font>
+                              </Text>
+                              <Rectangle arcHeight="5.0" arcWidth="5.0" disable="true" fill="WHITE" height="39.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="20.0" />
+                              <Button fx:id="nextStep" focusTraversable="false" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
+                           </children>
+                        </HBox>
+                        <TextArea fx:id="stepArea" editable="false" focusTraversable="false" prefHeight="367.0" prefWidth="468.0" wrapText="true">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </TextArea>
+                     </children>
+                  </VBox>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" disable="true" fill="DODGERBLUE" height="200.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="20.0" />
+                  <VBox alignment="TOP_RIGHT" prefHeight="900.0" prefWidth="0.0">
+                     <children>
+                        <Button fx:id="closeRecipeDetailsButton" focusTraversable="false" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Close">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Button>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Ingredients" wrappingWidth="504.30859375">
+                           <font>
+                              <Font size="48.0" />
+                           </font>
+                        </Text>
+                        <ListView fx:id="recipeIngredients" focusTraversable="false" prefHeight="326.0" prefWidth="493.0" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Tags" wrappingWidth="507.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <FlowPane fx:id="recipeTagFlowPane" prefHeight="183.0" prefWidth="533.0" style="-fx-hgap: 10; -fx-vgap: 10;" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Special Equipment" wrappingWidth="509.30859375">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Text>
+                        <ListView fx:id="specialEquipmentTXTArea" focusTraversable="false" prefHeight="160.0" prefWidth="491.0" />
+                        <Button fx:id="cookItButton" focusTraversable="false" mnemonicParsing="false" prefHeight="51.0" prefWidth="196.0" style="-fx-background-radius: 50;" text="Save and Cook">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
          </children>
       </Pane>
       <VBox fx:id="menuPane" alignment="CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false">
@@ -105,5 +219,6 @@
             </Button>
          </children>
       </VBox>
+      <TextField fx:id="searchBar" layoutX="711.0" layoutY="40.0" prefHeight="53.0" prefWidth="551.0" promptText="Search Recipes" style="-fx-background-color: Orange; -fx-background-radius: 50; -fx-prompt-text-fill: black; -fx-font-size: 18px;" />
    </children>
 </AnchorPane>

@@ -576,7 +576,7 @@ public class MyRecipesController {
           File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + imageName);
           Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
   
-          controller.setRecipeData(updatedRecipe, image, this);
+          controller.setRecipeData(updatedRecipe, image, this, "myrecipes");
           recipeFlowPane.getChildren().add(recipeCard);
           recipeWidgets.put(updatedRecipe.getID(), recipeCard);
           recipeCard.setUserData(controller);
@@ -878,7 +878,7 @@ public class MyRecipesController {
               File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
               Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
   
-              controller.setRecipeData(recipe, image, this); // Pass recipe data and image
+              controller.setRecipeData(recipe, image, this, "myrecipes"); // Pass recipe data and image
               
               recipeFlowPane.getChildren().add(recipeCard);
               recipeWidgets.put(recipe.getID(), recipeCard);

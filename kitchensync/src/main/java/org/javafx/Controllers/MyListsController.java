@@ -221,7 +221,7 @@ public class MyListsController {
                          int newId = ingredientList.size() + 1;
      
                          // Create a new Item with the generated ID
-                         Item newIngredient = new Item(name, newId, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13", null);
+                         Item newIngredient = new Item(name, newId, Integer.parseInt(quantity), unit, "Sample Location", "2050-12-13", null, false, 0);
      
                          // Add the new ingredient to the list
                          ingredientList.add(newIngredient);
@@ -347,7 +347,7 @@ public class MyListsController {
           String location = (String) ingredient.getOrDefault("meal", "Unknown Meal");
   
           // Create an Item instance and add it to the list
-          Item item = new Item(name, neededIngredientsList.size() + 1, quantity, unit, location, "N/A", null);
+          Item item = new Item(name, neededIngredientsList.size() + 1, quantity, unit, location, "N/A", null, false, 0);
           neededIngredientsList.add(item);
       }
   

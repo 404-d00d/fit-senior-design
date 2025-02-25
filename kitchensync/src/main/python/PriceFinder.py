@@ -14,7 +14,8 @@ headers = {
 product = "pepperoni"
 
 # scrapes the url provided to get product prices and price per unit.
-def getHTML(url, product, page):
+# returns price per oz, can multiply the unit to get price per pound.
+def getWalmartHTML(url, product, page):
 
     # creates formatting for the url that will be scraped
     product = product.replace(" ", "+")    
@@ -74,6 +75,8 @@ def getHTML(url, product, page):
             print(pricePerUnit[y].get_text())
             print()
 
+        return avgPriceOz, "oz"
+
 
         # Print the extracted titles
         # for title in titles:
@@ -81,4 +84,7 @@ def getHTML(url, product, page):
     else:
         print("Failed to retrieve the webpage")
 
-getHTML(url, product, 1)
+avgPrice, units = getWalmartHTML(url, product, 1)
+
+print("Price for", product, "is $", avgPrice, "per", units)
+print("Or $", avgPrice*16, "per lb")

@@ -11,6 +11,7 @@ module org.javafx {
     requires software.amazon.awssdk.services.dynamodb;
     requires software.amazon.awssdk.regions;
     requires software.amazon.awssdk.core;
+    requires software.amazon.awssdk.services.iam;
 
     opens org.javafx.Item to com.google.gson;
     opens org.javafx.Recipe to com.google.gson;

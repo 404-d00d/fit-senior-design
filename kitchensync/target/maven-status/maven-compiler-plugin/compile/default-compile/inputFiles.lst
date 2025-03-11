@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\module-info.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Recipe\Recipe.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\MealPlannerController.java
@@ -24,37 +23,3 @@ C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserSettingsController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\LoginPageController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Item\Item.java
-=======
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/PrimaryController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/RemoveIngredientPopUpController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/LocalDateAdapter.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/IngredientCell.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/RecipeCreationScreenController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/MealPlannerController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/LoginPageController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/RecipeDetailScreenController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/CommunityRecipesController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/IngredientCardController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/App.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/UserDashboardController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/ListCreationController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/MyListsController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/UserInboxController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Item/Item.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/UserSettingsController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/EditPopUpController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/BarcodeUploadController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Recipe/Recipe.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/AddIngredientPopUpController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/MacroCalculator.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/SignUpPageController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/InventoryDashboardController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/MyRecipesController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/UploadOptionsController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Main/Main.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/RecipeReviewController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/module-info.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/SecondaryController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/UserProfileController.java
-/Users/tylerson/Desktop/FIT/CSE4101/fit-senior-design/kitchensync/src/main/java/org/javafx/Controllers/RecipeCardController.java
->>>>>>> 846542c92dce7d63d9802289d8e1532cc175f625

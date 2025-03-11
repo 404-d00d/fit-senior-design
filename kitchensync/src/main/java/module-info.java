@@ -2,6 +2,7 @@ module org.javafx {
     requires transitive javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.desktop;
 
     // requires software.amazon.awssdk.dynamodb;
     requires software.amazon.awssdk.auth;
@@ -11,6 +12,8 @@ module org.javafx {
     requires software.amazon.awssdk.services.dynamodb;
     requires software.amazon.awssdk.regions;
     requires software.amazon.awssdk.core;
+    requires software.amazon.awssdk.services.s3;
+    
 
     opens org.javafx.Item to com.google.gson;
     opens org.javafx.Recipe to com.google.gson;

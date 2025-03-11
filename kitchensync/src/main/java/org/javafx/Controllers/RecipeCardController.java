@@ -1,5 +1,7 @@
 package org.javafx.Controllers;
 
+import java.io.IOException;
+
 import org.javafx.Recipe.Recipe;
 
 import javafx.fxml.FXML;
@@ -62,8 +64,17 @@ public class RecipeCardController {
          // if/when we figure this out its here
          MenuItem shareItem = new MenuItem("Share Recipe");
          shareItem.setOnAction(e -> handleShareRecipe());
+
+         MenuItem saveRecipeItem = new MenuItem("Save Recipe");
+         saveRecipeItem.setOnAction(e -> {
+            try {
+               communityRecipesController.saveRecipe(recipe, recipeImage.getImage());
+            } catch (IOException e1) {
+               e1.printStackTrace();
+            }
+         });
          
-         contextMenu.getItems().addAll(reviewsAndFeedback);
+         contextMenu.getItems().addAll(reviewsAndFeedback, saveRecipeItem);
       } else {
          // Default: MyRecipes context menu items
          MenuItem editItem = new MenuItem("Edit");

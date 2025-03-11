@@ -1,14 +1,11 @@
 org\javafx\Main\Main.class
-org\javafx\Controllers\EditPopUpController.class
 org\javafx\Controllers\LocalDateAdapter.class
 org\javafx\Controllers\SignUpPageController$1.class
 org\javafx\Controllers\MealPlannerController$3.class
 org\javafx\App.class
 org\javafx\PrimaryController.class
-org\javafx\Controllers\AddIngredientPopUpController.class
 org\javafx\Controllers\MacroCalculator$1.class
 org\javafx\Controllers\MacroCalculator.class
-org\javafx\Controllers\RemoveIngredientPopUpController.class
 org\javafx\Controllers\Ingredient.class
 org\javafx\Controllers\InventoryDashboardController$3.class
 org\javafx\Controllers\SignUpPageController.class
@@ -25,7 +22,6 @@ org\javafx\Item\Item.class
 org\javafx\Controllers\UserDashboardController.class
 org\javafx\Controllers\RecipeReviewController.class
 org\javafx\Controllers\UserInboxController.class
-org\javafx\Controllers\RecipeDetailScreenController.class
 org\javafx\Controllers\SignUpPageController$2.class
 org\javafx\Controllers\IngredientCardController.class
 org\javafx\Controllers\MealPlannerController$5.class
@@ -37,10 +33,7 @@ org\javafx\Controllers\IngredientCell.class
 org\javafx\Controllers\MealPlannerController$2.class
 org\javafx\SecondaryController.class
 module-info.class
-org\javafx\Controllers\ListCreationController.class
-org\javafx\Controllers\RecipeCreationScreenController.class
 org\javafx\Controllers\UserProfileController.class
-org\javafx\Controllers\UploadOptionsController.class
 org\javafx\Controllers\CommunityRecipesController.class
 org\javafx\Controllers\InventoryDashboardController$2.class
 org\javafx\Controllers\MealPlannerController$1.class

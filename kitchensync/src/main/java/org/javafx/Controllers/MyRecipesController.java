@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -17,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
@@ -61,6 +66,10 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import software.amazon.awssdk.services.s3.internal.resource.S3ArnUtils;
+
+import java.awt.image.BufferedImage;
+
 
 // =================================================================================
 //  MyRecipesController handles user made recipes, navigation, and UI interactions
@@ -391,13 +400,13 @@ public class MyRecipesController {
    private void handleMouseEntered(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Change style when mouse enters
-      button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+      button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
    }
 
    private void handleMouseExited(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Reset style when mouse exits
-      button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+      button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
    }
 
    // =======================================================
@@ -739,6 +748,8 @@ public class MyRecipesController {
       recipeDetailsPane.setVisible(true);
       recipeNameTXT.setText(name);
       recipeDetailsImages.setImage(image);
+      recipeImages.setImage(image);
+
 
       // Increase text size for labels
       //recipeNameTXT.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
@@ -786,7 +797,6 @@ public class MyRecipesController {
 
       recipeCookingNameTXT.setText(name);
       ingredientsArea.setItems(FXCollections.observableArrayList(recipe.getIngredients()));
-      recipeImages.setImage(image);
 
       preparationSteps = FXCollections.observableArrayList(recipe.getSteps());
 
@@ -1437,6 +1447,51 @@ public class MyRecipesController {
          }
       }
    }
+
+   public void saveCommunityRecipe(Recipe recipe, Image image) throws IOException {
+      int id = recipeList.size();
+      recipe.setID(id);
+
+      // Ensure destination directory exists
+      File destinationFolder = new File("src/main/resources/org/javafx/Resources/Recipe Images");
+      if (!destinationFolder.exists() && !destinationFolder.mkdirs()) {
+         throw new IOException("Failed to create directory: " + destinationFolder.getAbsolutePath());
+      }
+
+      // Define image file
+      String imageName = recipe.getName() + ".png";
+      File destinationFile = new File(destinationFolder, imageName);
+
+      if (image.getUrl() != null) {
+         try (InputStream in = URI.create(image.getUrl()).toURL().openStream()) {
+            Files.copy(in, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Image successfully saved to: " + destinationFile.getAbsolutePath());
+         } catch (Exception e) {
+            System.err.println("Failed to download image from URL: " + image.getUrl());
+            e.printStackTrace();
+         }
+      } else {
+            System.out.println("No valid URL for the image. Image not saved.");
+      }
+
+      try {
+          FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
+          VBox recipeCard = loader.load();
+          RecipeCardController controller = loader.getController();
+
+          Image savedImage = new Image(destinationFile.toURI().toString());
+          controller.setRecipeData(recipe, savedImage, this, "myrecipes");
+
+          recipeList.add(recipe);
+          recipeWidgets.put(id, recipeCard);
+
+          saveRecipesToJson(recipeList);
+          System.out.println("Recipe saved successfully!");
+
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+  }
 
    // ====================================================
    // Utility & Helper Methods

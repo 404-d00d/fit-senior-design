@@ -1,25 +1,32 @@
 package org.javafx.Controllers;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -31,55 +38,95 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
+import software.amazon.awssdk.services.dynamodb.model.PutItemRequest;
 
 public class CommunityRecipesController {
 
-   @FXML private ComboBox<String> sortBy, ingredientDropDown, categoryDropDown, tagsDropDown;
+   @FXML private ComboBox<String> sortBy, categoryDropDown, recipeCategory, recipeCollection, ingredientUnitEntry;
    @FXML private TextField searchBar;
-   @FXML private FlowPane recipeFlowPane, recipeTagFlowPane;
+   @FXML private FlowPane recipeFlowPane, recipeTagFlowPane, chipPreview;
 
    @FXML
    private Button addMealButton, userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
                   inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton, menuButton,
-                  cookItButton, closeRecipeDetailsButton, prevStep, nextStep;
+                  cookItButton, closeRecipeDetailsButton, prevStep, nextStep, postRecipe, manualButton, recipeUploadMyrecipes,
+                  cancelButton, imageSelectButton, closeP1Button, addEquipmentButton, nextButton, addIngredientButton,
+                  prevStepButton, nextStepButton, addStepButton, closeP2Button, addTagButton, backButton, uploadButton;
+
+   // Filter Buttons
+   @FXML private Button ingredientFilter, tagsFilter, resetFilters;
 
    @FXML
-   private Pane menuPane, myRecipesPane, recipeReviews, recipeDetailsPane;
+   private Pane menuPane, myRecipesPane, recipeReviews, recipeDetailsPane, uploadPane, addRecipePaneP2, addRecipePaneP1;
 
    private DynamoDbClient database;
+   private S3Client s3Client;
    private AwsBasicCredentials awsCreds ;
 
    private List<Map<String, AttributeValue>> recipes;
    private List<VBox> recipeCards = new ArrayList<>();
-   private List<String> preparationSteps = new ArrayList<>();
 
    @FXML private Text noRecipesTXT;
    @FXML private HBox suggestedRecipesBox;
 
-   @FXML private ImageView recipeDetailsImages;
-   @FXML private TextArea recipeDetailDescription, stepArea;
+   @FXML private ImageView recipeDetailsImages, imagePreview;
+   @FXML private TextArea recipeDetailDescription, stepArea, recipeDescription, prepStepField;
    @FXML private PieChart recipeCalories;
    @FXML private Text recipeNameTXT, recipePrepTimeTXT, recipeServingsTXT, recipePassiveTimeTXT, recipeCookTimeTXT, recipeTotalTimeTXT, recipeComplexityTXT,
-                      stepOfTXT;
+                      stepOfTXT, stepIndex;
+
+   // Table Views for Ingredients & Equipment
+   @FXML private TableView<Ingredient> ingredientTable;
+   @FXML private TableView<String> equipmentTable;
+   @FXML private TableColumn<String, String> equipmentList;
+   @FXML private TableColumn<Ingredient, String> ingredientList, amountList;
 
    @FXML private ListView<String> ingredientsArea, specialEquipmentTXTArea, recipeIngredients;
+
+   @FXML private TextField UploadRecipeName, recipeYield, recipeETAPrep, recipeETAPassive, recipeETA, equipmentEntry, ingredientEntry,
+                           amountEntry, recipeTag;
    
    private int currentStep = 0;
    private int displayStep = 0;
 
+   private File selectedImageFile;
+   private Image selectedImage;
 
-   private void initializeDatabase() {
+   // ==============================
+   // DATA STORAGE & CONSTANTS
+   // ==============================
+   private ObservableList<String> tags = FXCollections.observableArrayList();
+   private ObservableList<Ingredient> ingredients = FXCollections.observableArrayList();
+   private List<String> ingredientEntries = new ArrayList<>();
+   private ObservableList<String> equipment = FXCollections.observableArrayList();
+   private List<String> preparationSteps = new ArrayList<>();
+   private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
+
+   private static final String S3_BUCKET_NAME = "kitchensyncimages";
+   private static final String S3_BASE_URL = "https://" + S3_BUCKET_NAME + ".s3.amazonaws.com/";
+
+   private void initializeDatabaseAndS3() {
       try {
-          Region region = Region.US_EAST_1;
-          database = DynamoDbClient.builder()
+         Region region = Region.US_EAST_1;
+         database = DynamoDbClient.builder()
+              .region(region)
+              .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+              .build();
+         s3Client = S3Client.builder()
               .region(region)
               .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
               .build();
@@ -92,17 +139,19 @@ public class CommunityRecipesController {
    @FXML
    private void initialize() {
 
-      // awsCreds = AwsBasicCredentials.create();
-   
+      awsCreds = AwsBasicCredentials.create(
+         "AKIAS6J7QGOOS2VSJQNP",
+         "RpYmWXTZAk4k33zL/tQYUDP/x+L7403SYAjwSx9Y"
+      );
 
-      initializeDatabase();
+      initializeDatabaseAndS3();
       loadCommunityRecipes();
       configureSortBy();
       configureFilters();
 
       searchBar.textProperty().addListener((obs, oldText, newText) -> filterRecipesBySearch(newText));
-      prevStep.setOnAction(event -> detailsSteps(-1));
-      nextStep.setOnAction(event -> detailsSteps(1));
+
+      setupUIEventHandlers();
 
       updateSuggestedRecipes();
       
@@ -224,6 +273,275 @@ public class CommunityRecipesController {
       });
    }
 
+   private void setupUIEventHandlers() {
+      addTagButton.setOnAction(event -> addTag());
+      addIngredientButton.setOnAction(event -> addIngredient());
+      imageSelectButton.setOnAction(event -> selectImage());
+      uploadButton.setOnAction(event -> uploadRecipe());
+      addStepButton.setOnAction(event -> addStep());
+      prevStepButton.setOnAction(event -> navigateStep(-1));
+      nextStepButton.setOnAction(event -> navigateStep(1));
+      addEquipmentButton.setOnAction(event -> addEquipment());
+      prevStep.setOnAction(event -> detailsSteps(-1));
+      nextStep.setOnAction(event -> detailsSteps(1));
+      postRecipe.setOnAction(event -> openPostRecipeForm());
+      manualButton.setOnAction(event -> openManualPostRecipeForm());
+      recipeUploadMyrecipes.setOnAction(event -> openRecipeSelectFromMyRecipes());
+      cancelButton.setOnAction(event -> closeRecipeUploadOptions());
+      closeP2Button.setOnAction(event -> closeRecipeUpload());
+      nextButton.setOnAction(event -> nextToP2());
+      backButton.setOnAction(event -> backToP1());
+      manualButton.setOnAction(event -> openManualEntryForm());
+      recipeUploadMyrecipes.setOnAction(event -> openRecipeSelection());
+
+   }
+
+   private void openManualEntryForm() {
+      uploadPane.setVisible(false);
+      addRecipePaneP1.setVisible(true);
+   }
+
+   private void openRecipeSelection() {
+      //recipeList.addAll(MyRecipesController.loadRecipesFromJson()); // Fetch saved recipes
+      ChoiceDialog<Recipe> dialog = new ChoiceDialog<>(recipeList.get(0), recipeList);
+      dialog.setTitle("Select a Recipe");
+      dialog.setHeaderText("Choose a recipe to upload");
+
+      Optional<Recipe> result = dialog.showAndWait();
+      result.ifPresent(this::fillRecipeDetails);
+   }
+
+   private void fillRecipeDetails(Recipe recipe) {
+      UploadRecipeName.setText(recipe.getName());
+      recipeCategory.setValue(recipe.getCategory());
+      recipeCollection.setValue(recipe.getCollection());
+      recipeYield.setText(String.valueOf(recipe.getServings()));
+      recipeETAPrep.setText(String.valueOf(recipe.getPrepTime()));
+      recipeETAPassive.setText(String.valueOf(recipe.getPassiveTime()));
+      recipeETA.setText(String.valueOf(recipe.getCookTime()));
+      recipeDescription.setText(recipe.getDescription());
+      preparationSteps.addAll(Arrays.asList(recipe.getSteps()));
+  
+      // Load Image
+      File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
+      if (imageFile.exists()) {
+         imagePreview.setImage(new Image(imageFile.toURI().toString()));
+         selectedImageFile = imageFile;
+      }
+  }
+
+   private void nextToP2() {
+      addRecipePaneP1.setVisible(false);
+      addRecipePaneP2.setVisible(true);
+   }
+
+   private void backToP1() {
+      addRecipePaneP2.setVisible(false);
+      addRecipePaneP1.setVisible(true);
+   }
+
+   // Add equipment to table
+   private void addEquipment() {
+      String equipmentName = equipmentEntry.getText().trim();
+      if (!equipmentName.isEmpty()) {
+            equipment.add(equipmentName);
+            equipmentEntry.clear();
+      }
+   }
+
+   // Navigate between steps
+   private void navigateStep(int direction) {
+      
+      // Save the current step text before navigating
+      if (currentStep >= 0 && currentStep < preparationSteps.size()) {
+         preparationSteps.set(currentStep, prepStepField.getText().trim());
+      }
+
+      // Calculate new step index
+      int newStep = currentStep + direction;
+      if (newStep >= 0 && newStep < preparationSteps.size()) {
+         currentStep = newStep;
+         updateStepView();
+      }
+   }
+
+   // Update TextArea and stepIndex label to display the current step
+   private void updateStepView() {
+      if (preparationSteps.isEmpty()) {
+         prepStepField.setText("");
+         stepIndex.setText("Step 1 of 1");
+      } else {
+         prepStepField.setText(preparationSteps.get(currentStep));
+         stepIndex.setText("Step " + (currentStep + 1) + " of " + preparationSteps.size());
+      }
+   }
+
+   // Add tag as a chip in FlowPane
+   private void addTag() {
+      String tag = recipeTag.getText().trim();
+      if (!tag.isEmpty() && !tags.contains(tag)) {
+         tags.add(tag);
+         recipeTag.clear();
+         updateTagView();
+      }
+   }
+
+   // Update FlowPane to display chips
+   private void updateTagView() {
+      chipPreview.getChildren().clear();
+      for (String tag : tags) {
+         HBox chip = createTagChip(tag);
+         chipPreview.getChildren().add(chip);
+      }
+   }
+
+   // Create a chip with a delete option for each tag
+   private HBox createTagChip(String tagText) {
+      Label tagLabel = new Label(tagText);
+      Button removeButton = new Button("X");
+      
+      removeButton.setOnAction(event -> {
+            tags.remove(tagText);
+            updateTagView();
+      });
+
+      HBox tagChip = new HBox(tagLabel, removeButton);
+      tagChip.setSpacing(5);
+      tagChip.setStyle(
+                        "-fx-background-color: #555555; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-padding: 5 10; " +
+                        "-fx-border-radius: 10; " +
+                        "-fx-background-radius: 10; " +
+                        "-fx-font-size: 16px; " +
+                        "-fx-border-color: #FF7F11;"
+                     );
+      return tagChip;
+   }
+   
+   // Add ingredient to table
+   private void addIngredient() {
+      String name = ingredientEntry.getText().trim();
+      String amount = amountEntry.getText().trim();
+      String unit = ingredientUnitEntry.getValue();
+
+      if (!name.isEmpty() && !amount.isEmpty() && unit != null) {
+            ingredients.add(new Ingredient(name, amount, unit));
+            ingredientEntry.clear();
+            amountEntry.clear();
+            ingredientUnitEntry.setValue(null);
+      }
+   }
+
+   private void selectImage() {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+      selectedImageFile = fileChooser.showOpenDialog(new Stage());
+  
+      if (selectedImageFile != null) {
+         imagePreview.setImage(new Image(selectedImageFile.toURI().toString()));
+      }
+  }
+
+   private void uploadRecipe() {
+      if (!validateInputs()) {
+         System.out.println("Please fill in all required fields.");
+         return;
+      }
+
+      String recipeName = UploadRecipeName.getText();
+      int prepTime = Integer.parseInt(recipeETAPrep.getText());
+      int cookTime = Integer.parseInt(recipeETA.getText());
+      int passiveTime = Integer.parseInt(recipeETAPassive.getText());
+      int servings = Integer.parseInt(recipeYield.getText());
+      String description = recipeDescription.getText();
+
+      Map<String, AttributeValue> recipeItem = new HashMap<>();
+      recipeItem.put("name", AttributeValue.builder().s(recipeName).build());
+      recipeItem.put("prepTime", AttributeValue.builder().n(String.valueOf(prepTime)).build());
+      recipeItem.put("cookTime", AttributeValue.builder().n(String.valueOf(cookTime)).build());
+      recipeItem.put("passiveTime", AttributeValue.builder().n(String.valueOf(passiveTime)).build());
+      recipeItem.put("servings", AttributeValue.builder().n(String.valueOf(servings)).build());
+      recipeItem.put("description", AttributeValue.builder().s(description).build());
+      recipeItem.put("ingredients", AttributeValue.builder().s(String.join("\n", ingredientEntries)).build());
+      recipeItem.put("steps", AttributeValue.builder().s(String.join("\n", preparationSteps)).build());
+      recipeItem.put("tags", AttributeValue.builder().s(String.join(", ", tags)).build());
+
+      try {
+         // Upload Recipe to DynamoDB
+         database.putItem(PutItemRequest.builder()
+               .tableName("Recipes")
+               .item(recipeItem)
+               .build());
+
+         // Upload Image to S3
+         if (selectedImageFile != null) {
+               String s3Key = recipeName.replace(" ", "_") + ".jpg";
+               s3Client.putObject(PutObjectRequest.builder()
+                  .bucket("kitchensyncimages")
+                  .key(s3Key)
+                  .build(),
+                  RequestBody.fromFile(selectedImageFile));
+
+               System.out.println("Image uploaded to S3: " + s3Key);
+         }
+
+         System.out.println("Recipe uploaded successfully!");
+         ((Stage) uploadButton.getScene().getWindow()).close();
+         loadCommunityRecipes(); // Refresh community recipes
+
+      } catch (Exception e) {
+         e.printStackTrace();
+         System.out.println("Error uploading recipe.");
+      }
+   }
+
+   private boolean validateInputs() {
+      return !UploadRecipeName.getText().isEmpty() &&
+            !recipeETAPrep.getText().isEmpty() &&
+            !recipeETA.getText().isEmpty() &&
+            !recipeETAPassive.getText().isEmpty() &&
+            !recipeYield.getText().isEmpty() &&
+            !recipeDescription.getText().isEmpty();
+   }
+
+   private void addStep() {
+      String stepText = prepStepField.getText();
+      if (!stepText.isEmpty()) {
+          preparationSteps.add(stepText);
+          prepStepField.clear();
+      }
+   }
+
+   private void closeRecipeUploadOptions() {
+      myRecipesPane.setVisible(true);
+      uploadPane.setVisible(false);
+   }
+
+   private void closeRecipeUpload() {
+      myRecipesPane.setVisible(true);
+      addRecipePaneP2.setVisible(false);
+   }
+
+   private void openPostRecipeForm() {
+      myRecipesPane.setVisible(false);
+      uploadPane.setVisible(true);
+   }
+
+   private void openRecipeSelectFromMyRecipes() {
+
+   }
+
+   private void openManualPostRecipeForm() {
+
+   }
+
+   public void saveRecipe(Recipe recipe, Image image) throws IOException {
+      MyRecipesController myRecipesController = new MyRecipesController();
+      myRecipesController.saveCommunityRecipe(recipe, image);
+      System.out.println("Recipe passed to MyRecipesController for saving.");
+  }
+
    private void setHoverEffect(Button button) {
       button.setOnMouseEntered(this::handleMouseEntered);
       button.setOnMouseExited(this::handleMouseExited);
@@ -232,13 +550,13 @@ public class CommunityRecipesController {
    private void handleMouseEntered(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Change style when mouse enters
-      button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+      button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
    }
 
    private void handleMouseExited(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Reset style when mouse exits
-      button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+      button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
    }
 
    private List<Map<String, AttributeValue>> fetchCommunityRecipes() {
@@ -275,9 +593,7 @@ public class CommunityRecipesController {
    }
 
    private void configureFilters() {
-      ingredientDropDown.setOnAction(e -> filterRecipes());
       categoryDropDown.setOnAction(e -> filterRecipes());
-      tagsDropDown.setOnAction(e -> filterRecipes());
    }
 
    private void buildRecipeCards(List<Map<String, AttributeValue>> items) {
@@ -318,19 +634,29 @@ public class CommunityRecipesController {
                   item.containsKey("equipment") ? item.get("equipment").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
                   item.containsKey("steps") ? item.get("steps").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{}
                );
+               
+               // **Construct S3 Image URL**
+               String imageUrl = S3_BASE_URL + recipeName.replace(" ", "%20") + ".jpg"; // URL encode spaces
+               Image image = new Image(imageUrl, true);
 
-               // Load image if exists (you can adjust path as needed)
-               File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipeName + ".png");
-               Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
+               System.out.println(image);
 
                // Set data on the card
-               controller.setRecipeData(recipe, image, this, "community"); // null since no editing/deleting in community view
+               controller.setRecipeData(recipe, image, this, "community");
 
                // Add to UI
                recipeFlowPane.getChildren().add(recipeCard);
                recipeCards.add(recipeCard);
 
                applyHoverEffect(recipeCard, recipe);
+
+               recipeCard.setStyle(
+                                    "-fx-background-color: #444444; " +
+                                    "-fx-border-color: #FF7F11; " +
+                                    "-fx-border-radius: 10; " +
+                                    "-fx-padding: 10; " +
+                                    "-fx-background-radius: 10;"
+                                 );
 
          } catch (Exception e) {
                e.printStackTrace();
@@ -343,7 +669,15 @@ public class CommunityRecipesController {
 
    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
       Tooltip tooltip = new Tooltip();
-      tooltip.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-text-fill: white; -fx-padding: 10; -fx-font-size: 14px; -fx-border-radius: 10; -fx-background-radius: 10;");
+      tooltip.setStyle(
+                        "-fx-background-color: #3C3C3C; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-padding: 10; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-border-radius: 10; " +
+                        "-fx-background-radius: 10; " +
+                        "-fx-border-color: #FF7F11;"
+                     );
       
       // Set tooltip max width and enable wrapping
       tooltip.setMaxWidth(300);  // Set maximum width to prevent excessive horizontal stretching
@@ -407,19 +741,11 @@ public class CommunityRecipesController {
    }
 
    private void filterRecipes() {
-      String ingredientFilter = ingredientDropDown.getValue();
       String categoryFilter = categoryDropDown.getValue();
-      String tagsFilter = tagsDropDown.getValue();
   
       List<Map<String, AttributeValue>> filtered = recipes.stream()
-          .filter(item -> ingredientFilter == null || 
-              item.containsKey("ingredients") && item.get("ingredients").l().stream().anyMatch(ing -> ing.s().contains(ingredientFilter))
-          )
           .filter(item -> categoryFilter == null || 
               item.containsKey("category") && item.get("category").s().equals(categoryFilter)
-          )
-          .filter(item -> tagsFilter == null || 
-              item.containsKey("tags") && item.get("tags").l().stream().anyMatch(tag -> tag.s().equals(tagsFilter))
           )
           .collect(Collectors.toList());
   
@@ -493,9 +819,13 @@ public class CommunityRecipesController {
           FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
           VBox recipeCard = loader.load();
           RecipeCardController controller = loader.getController();
+
+         // **Load Image from S3**
+         String imageUrl = S3_BASE_URL + recipe.getName().replace(" ", "%20") + ".jpg"; // URL encode spaces
+         Image image = new Image(imageUrl, true);
           
           // Pass "community" as the viewType to set up the community-specific context menu.
-          controller.setRecipeData(recipe, null, this,"community");
+          controller.setRecipeData(recipe, image, this,"community");
           return recipeCard;
       } catch (Exception e) {
           e.printStackTrace();
@@ -523,7 +853,10 @@ public class CommunityRecipesController {
       myRecipesPane.setVisible(false);
       recipeDetailsPane.setVisible(true);
       recipeNameTXT.setText(name);
-      recipeDetailsImages.setImage(image);
+
+      // **Load Image from S3**
+      String imageUrl = S3_BASE_URL + name.replace(" ", "%20") + ".jpg";
+      recipeDetailsImages.setImage(new Image(imageUrl, true));
 
       recipeServingsTXT.setText("Servings: " + recipe.getServings());
       recipePrepTimeTXT.setText("Prep Time: " + recipe.getPrepTime() + " Minutes");
@@ -546,7 +879,15 @@ public class CommunityRecipesController {
          Label tagLabel = new Label(tag);
          
          // Optionally style the label (for example, add padding, border, background, etc.)
-         tagLabel.setStyle("-fx-background-color: #e0e0e0; -fx-padding: 5 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-margin: 5;");
+         tagLabel.setStyle(
+                           "-fx-background-color: #555555; " +
+                           "-fx-text-fill: white; " +
+                           "-fx-padding: 5 10; " +
+                           "-fx-border-radius: 10; " +
+                           "-fx-background-radius: 10; " +
+                           "-fx-font-size: 16px; " +
+                           "-fx-border-color: #FF7F11;"
+                        );
          
          // Add the label to the FlowPane
          recipeTagFlowPane.getChildren().add(tagLabel);
@@ -558,14 +899,14 @@ public class CommunityRecipesController {
       stepArea.setText(preparationSteps.get(0));
 
       // Styling
-      specialEquipmentTXTArea.setStyle("-fx-font-size: 16px; -fx-padding: 5px;");
-      recipeDetailDescription.setStyle("-fx-font-size: 16px; -fx-padding: 5px;");
-      stepArea.setStyle("-fx-font-size: 16px; -fx-padding: 5px;");
+      specialEquipmentTXTArea.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;");
+      recipeDetailDescription.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;");
+      stepArea.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;");
 
-      recipePrepTimeTXT.setStyle("-fx-font-size: 18px; -fx-padding: 5px;");
-      recipePassiveTimeTXT.setStyle("-fx-font-size: 18px; -fx-padding: 5px;");
-      recipeCookTimeTXT.setStyle("-fx-font-size: 18px; -fx-padding: 5px;");
-      recipeTotalTimeTXT.setStyle("-fx-font-size: 18px; -fx-padding: 5px;");
+      recipePrepTimeTXT.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;");
+      recipePassiveTimeTXT.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;");
+      recipeCookTimeTXT.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;");
+      recipeTotalTimeTXT.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;");
 
    }
 

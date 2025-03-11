@@ -40,7 +40,7 @@ public class MyListsController {
                   addIngredientButton, menuButton, closeButton, saveButton, addListButton, neededIngredients;
 
    @FXML
-   private Pane menuPane, myListsPane, addIngredientPane;
+   private Pane menuPane, myListsPane, addIngredientPane, editPreferences;
 
    @FXML
    private TextField productQuantity, ingredientName;   
@@ -399,7 +399,7 @@ public class MyListsController {
       }
 
       Button listButton = new Button(listName);
-      listButton.setStyle("-fx-background-color: Grey; -fx-pref-width: 346px; -fx-pref-height: 60px; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black; -fx-text-alignment: center;");
+      listButton.setStyle("-fx-background-color: Grey; -fx-pref-width: 346px; -fx-pref-height: 60px; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: white; -fx-text-alignment: center;");
       
       listButton.setOnAction(event -> {
           highlightSelectedButton(listButton);
@@ -443,7 +443,7 @@ public class MyListsController {
       }
 
       // Set the new selected button and change its style
-      selectedButton.setStyle("-fx-background-color: Orange; -fx-pref-width: 346px; -fx-pref-height: 60px; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: black; -fx-text-alignment: center;");
+      selectedButton.setStyle("-fx-background-color:  #FF7F11; -fx-pref-width: 346px; -fx-pref-height: 60px; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 30; -fx-text-fill: White; -fx-font-weight: bold; -fx-text-alignment: center;");
       currentSelectedButton = selectedButton;
    }
 

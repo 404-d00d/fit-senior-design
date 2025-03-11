@@ -494,7 +494,7 @@ public class InventoryDashboardController {
       });
       
    }
-
+   
    /*
     * Filters
    */
@@ -606,7 +606,24 @@ public class InventoryDashboardController {
    private void handleMouseEntered(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Change style when mouse enters
-      button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+      switch (button.getId()) {
+         case "placesButton":
+            if(!places) {
+               button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+            }
+            break;
+         case "spacesButton":
+            if(!spaces) {
+               button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+            }
+            break;
+      
+         default: 
+         button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+            break;
+      }
+      
+      
    }
 
    private void handleMouseExited(MouseEvent event) {
@@ -626,7 +643,7 @@ public class InventoryDashboardController {
             break;
       
          default: 
-            button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 50; ");
+            button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
             break;
       }
       

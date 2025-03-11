@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+import software.amazon.awssdk.services.iam.IamClient;
+import software.amazon.awssdk.services.iam.model.*;
+import software.amazon.awssdk.regions.Region;
+
 
 public class SignUpPageController {
 
@@ -54,6 +58,43 @@ public class SignUpPageController {
         File file = new File("userLoginData.json");
         List<Map<String, String>> users = new ArrayList<>();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        Region region = Region.US_EAST_1;
+        IamClient iamClient = IamClient.builder().region(region).build();
+
+        try {
+
+            CreateUserRequest userRequest = CreateUserRequest.builder()
+            .userName(username)
+            .build();
+            CreateUserResponse userResponse = iamClient.createUser(userRequest);
+            System.out.println("User Created: " + userResponse.user().userName());
+            CreateAccessKeyRequest accessKeyRequest = CreateAccessKeyRequest.builder()
+                    .userName(username)
+                    .build();
+            CreateAccessKeyResponse accessKeyResponse = iamClient.createAccessKey(accessKeyRequest);
+            String accessKeyId = accessKeyResponse.accessKey().accessKeyId();
+            String secretAccessKey = accessKeyResponse.accessKey().secretAccessKey();
+            GetPolicyRequest getPolicyRequest = GetPolicyRequest.builder()
+            .policyArn("arn:aws:iam::202533516189:policy/AddRecipesPolicy")
+            .build();
+
+            GetPolicyResponse getPolicyResponse = iamClient.getPolicy(getPolicyRequest);
+            String policyArn = getPolicyResponse.policy().arn();
+
+            AttachUserPolicyRequest attachPolicyRequest = AttachUserPolicyRequest.builder()
+                .userName(username)
+                .policyArn(policyArn)
+                .build();
+            iamClient.attachUserPolicy(attachPolicyRequest);
+
+            iamClient.attachUserPolicy(attachPolicyRequest);
+
+            System.out.println("User created and policy attached successfully.");
+        }
+        catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
 
         // Load existing users if the file exists
         if (file.exists() && file.length() > 0) {

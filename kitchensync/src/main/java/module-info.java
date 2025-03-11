@@ -14,6 +14,7 @@ module org.javafx {
     requires software.amazon.awssdk.core;
     requires software.amazon.awssdk.services.s3;
     
+    requires software.amazon.awssdk.services.iam;
 
     opens org.javafx.Item to com.google.gson;
     opens org.javafx.Recipe to com.google.gson;

@@ -8,28 +8,69 @@ import org.javafx.Main.Main;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 
 public class UserDashboardController {
 
-   @FXML
-   private Button userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
+   @FXML private Button userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
                   inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton;
 
-   @FXML
-   private AnchorPane basePane;
+   @FXML private AnchorPane basePane;
 
-   @FXML
-   private TextField searchBar;
+   @FXML private TextField searchBar;
+
+   @FXML private AnchorPane tutorialOverlay;
+
+   @FXML private Text tutorialText;
+
+   @FXML private Button nextTutorialButton, skipTutorialButton;
+
+   @FXML private Rectangle highlightBox;
+
+   private int tutorialStep = 0;
+   private final String[] tutorialMessages = {
+      // Sidebar Navigation
+      "Welcome to your Dashboard! Click 'Next' to continue.",
+      "On the Dashboard you can see the next few meals you have planned aswell as recent notifications, and then items in your shopping list",
+      "This is your Meal Planner. Plan meals efficiently with available ingredients.",
+      "View your saved recipes in 'My Recipes'.",
+      "Check 'Inventory' to keep track of ingredients in real-time.",
+      "Access your Inbox for messages and notifications.",
+      "Find new meal ideas in 'Find Recipes'.",
+      "Update your profile information here.",
+      "Customize your preferences in 'Settings'.",
+      "Manage your shopping lists in 'My Lists'.",
+      
+      // Dashboard Overview
+      //"Here’s your Notifications section. Stay updated on important alerts.",
+      //"This is your Shopping List. Track what you need to buy.",
+      //"Finally, your Meal Planner overview. See upcoming meals at a glance.",
+      "You're all set! Enjoy using KitchenSync!"
+  };
+
 
    @FXML
    private void initialize() {
+
+      // Check if tutorial was completed (this should be saved in user preferences later)
+      boolean tutorialCompleted = false; // Change this to read from a settings file later
+
+      if (!tutorialCompleted) {
+         startTutorial();
+      }
+
+      // Set tutorial button actions
+      nextTutorialButton.setOnAction(event -> showNextTutorialStep());
+      skipTutorialButton.setOnAction(event -> endTutorial());
 
       // Initialize AutoCompleteTextField
       setupCustomAutoComplete(searchBar, basePane);
@@ -145,6 +186,56 @@ public class UserDashboardController {
 
       setHoverEffect(myListsButton);
 
+   }
+
+   private void showNextTutorialStep() {
+      if (tutorialStep < tutorialMessages.length) {
+          tutorialText.setText(tutorialMessages[tutorialStep]);
+  
+          switch (tutorialStep) {
+              // Sidebar Menu Buttons
+              case 1: moveHighlight(userDashboardButton); break;
+              case 2: moveHighlight(mealPlannerButton); break;
+              case 3: moveHighlight(myRecipesButton); break;
+              case 4: moveHighlight(inventoryButton); break;
+              case 5: moveHighlight(inboxButton); break;
+              case 6: moveHighlight(browseRecipesButton); break;
+              case 7: moveHighlight(profileButton); break;
+              case 8: moveHighlight(settingsButton); break;
+              case 9: moveHighlight(myListsButton); break;
+  
+              // Dashboard Main Areas
+              //case 9: moveHighlight(notificationsPanel); break;
+              //case 10: moveHighlight(shoppingListPanel); break;
+              //case 11: moveHighlight(mealPlannerOverview); break;
+  
+              default:
+                  highlightBox.setVisible(false); // Hide highlight after last step
+          }
+  
+          tutorialStep++;
+      } else {
+          endTutorial();
+      }
+  }
+  
+   private void moveHighlight(Button target) {
+      highlightBox.setLayoutX(target.getLayoutX());
+      highlightBox.setLayoutY(target.getLayoutY()+24);
+      highlightBox.setWidth(264);
+      highlightBox.setHeight(48);
+      highlightBox.setVisible(true);
+   }
+
+   private void startTutorial() {
+      tutorialOverlay.setVisible(true);
+      tutorialStep = 0;
+      showNextTutorialStep();
+   }
+  
+   private void endTutorial() {
+      tutorialOverlay.setVisible(false);
+      // Here, save a preference to mark the tutorial as completed
    }
 
    private void setupCustomAutoComplete(TextField searchBar, AnchorPane basePane) {

@@ -40,7 +40,6 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-
     // Load the dashboard screen (user dashboard after login)
     public static void showDashboardScreen() throws IOException {
         Parent dashboardScreen = FXMLLoader.load(Main.class.getResource("/org/javafx/Resources/FXMLs/User Dashboard.fxml"));
@@ -192,7 +191,6 @@ public class Main extends Application {
         // Ensure resizable
         primaryStage.setResizable(true);
     }
-
     public static void main(String[] args) {
         launch(args);
     }

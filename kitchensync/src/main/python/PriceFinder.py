@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 # get avg price of ingredients, price may change because of stores, deals, coupons, other factors, etc.
 
 
-url="https://www.walmart.com/search?q="
+
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
@@ -15,7 +15,9 @@ product = "cheese"
 
 # scrapes the url provided to get product prices and price per unit.
 # returns price per oz, can multiply the unit to get price per pound.
-def getWalmartHTML(url, product, page):
+def getWalmartHTML(product, page):
+
+    url="https://www.walmart.com/search?q="
 
     # creates formatting for the url that will be scraped
     product = product.replace(" ", "+")    
@@ -84,7 +86,7 @@ def getWalmartHTML(url, product, page):
     else:
         print("Failed to retrieve the webpage")
 
-avgPrice, units = getWalmartHTML(url, product, 1)
+avgPrice, units = getWalmartHTML(product, 1)
 
 print("Price for", product, "is ", avgPrice, "cents per", units)
 print("Or ", avgPrice*16, "cents per lb")

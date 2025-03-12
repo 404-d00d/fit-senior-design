@@ -11,7 +11,7 @@ headers = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-product = "pepperoni"
+product = "cheese"
 
 # scrapes the url provided to get product prices and price per unit.
 # returns price per oz, can multiply the unit to get price per pound.
@@ -64,7 +64,7 @@ def getWalmartHTML(url, product, page):
             avgPriceOz += unitPrice
         # price is dollars per oz
         avgPriceOz /= len(pricePerUnit)
-        print(avgPriceOz, "dollars per oz")
+        print(avgPriceOz, "cents per oz")
     
 
         print()
@@ -86,5 +86,5 @@ def getWalmartHTML(url, product, page):
 
 avgPrice, units = getWalmartHTML(url, product, 1)
 
-print("Price for", product, "is $", avgPrice, "per", units)
-print("Or $", avgPrice*16, "per lb")
+print("Price for", product, "is ", avgPrice, "cents per", units)
+print("Or ", avgPrice*16, "cents per lb")

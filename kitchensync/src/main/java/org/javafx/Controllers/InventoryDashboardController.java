@@ -806,6 +806,7 @@ public class InventoryDashboardController {
                   int totalTasks = files.size();
                   int completedTasks = 0;
 
+                  
                   for (File file : files) {
                      try {
                            String absolutePathToScript = new File("src/main/python/ReceiptModule.py").getAbsolutePath();

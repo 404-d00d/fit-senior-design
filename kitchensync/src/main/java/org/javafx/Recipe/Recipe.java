@@ -15,7 +15,9 @@ public class Recipe {
     private String[] specialEquipment;
     private String[] ingredients;
     private String[] steps;
-    private int feedback;
+    private int localRating;
+    private int communityRating;
+    private String recipeNotes;
 
     public Recipe(int id, String name, String category, String collection, String description, int prepTime, int passiveTime, int cookTime, int complexity, int servings, 
                   String[] tags, String[] ingredients, String[] specialEquipment, String[] steps) {
@@ -33,7 +35,11 @@ public class Recipe {
         this.ingredients = ingredients;
         this.specialEquipment = specialEquipment;
         this.steps = steps;
-        this.feedback = 0;
+
+        this.localRating = 0;
+        this.communityRating = 0;
+        this.recipeNotes = null;
+
     }
 
     // Getters and setters for all fields
@@ -79,8 +85,14 @@ public class Recipe {
     public String[] getSteps() { return steps; }
     public void setSteps(String[] steps) { this.steps = steps; }
 
-    public int getFeedback() { return feedback; }
-    public void setFeedback(int feedback) { this.feedback = feedback; }
+    public int getLocalRating() { return localRating; }
+    public void setLocalRating(int localRating) { this.localRating = localRating; }
+
+    public int getCommunityRating() { return communityRating; }
+    public void setCommunityRating(int communityRating) { this.communityRating = communityRating; }
+
+    public String getRecipeNotes() { return recipeNotes; }
+    public void setRecipeNotes(String recipeNotes) { this.recipeNotes = recipeNotes; }
 }
 
 // Custom classes to manage ingredients

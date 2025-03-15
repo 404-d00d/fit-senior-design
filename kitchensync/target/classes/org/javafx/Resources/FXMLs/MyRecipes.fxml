@@ -19,9 +19,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
    <children>
 
       <!-- Header Bar -->
@@ -64,17 +65,26 @@
          </children>
       </Pane>
 
-       <Pane fx:id="recipeCookingPane" layoutX="44.0" layoutY="146.0" style="-fx-background-color: #3C3C3C; -fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
+      <Pane fx:id="recipeCookingPane" layoutX="44.0" layoutY="146.0" prefHeight="917.0" prefWidth="1827.0" style="-fx-background-color: #3C3C3C; -fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
          <children>
-            <Text layoutX="134.0" layoutY="200.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Ingredients" />
-            <Text fx:id="stepOfTXT" layoutX="1062.0" layoutY="486.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Step * of *" />
-            <Text fx:id="recipeCookingNameTXT" layoutX="77.0" layoutY="85.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" />
-            <Button fx:id="closeRecipeButton" layoutX="1750.0" prefHeight="48.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50;" text="Close" />
-            <Button fx:id="nextStep" layoutX="1327.0" layoutY="448.0" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #555555;" />
-            <Button fx:id="prevStep" layoutX="929.0" layoutY="448.0" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #555555;" />
-            <TextArea fx:id="stepArea" layoutX="748.0" layoutY="529.0" prefHeight="367.0" prefWidth="835.0" style="-fx-background-color: #555555; -fx-text-fill: white;" wrapText="true" />
-            <ListView fx:id="ingredientsArea" layoutX="21.0" layoutY="214.0" prefHeight="691.0" prefWidth="544.0" style="-fx-background-color: #3C3C3C; -fx-text-fill: white;" />
-            <ImageView fx:id="recipeImages" fitHeight="400.0" fitWidth="595.0" layoutX="842.0" layoutY="30.0" pickOnBounds="true" preserveRatio="true" />
+            <Text layoutX="190.0" layoutY="93.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Ingredients" />
+            <Text fx:id="stepOfTXT" layoutX="1239.0" layoutY="486.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Step * of *" />
+            <Text fx:id="recipeCookingNameTXT" layoutX="590.0" layoutY="90.0" style="-fx-font-size: 48; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="425.30859375" />
+            <Button fx:id="closeRecipeButton" layoutX="1671.0" layoutY="14.0" prefHeight="48.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50;" text="Close" />
+            
+            <!-- Main step text area with larger font -->
+            <TextArea fx:id="stepArea" layoutX="1076.0" layoutY="511.0" prefHeight="367.0" prefWidth="500.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 24px;" wrapText="true" />
+            
+            <!-- Ingredients list with larger font -->
+            <ListView fx:id="ingredientsArea" layoutX="36.0" layoutY="116.0" prefHeight="762.0" prefWidth="500.0" style="-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-size: 16px;" />
+            
+            <ImageView fx:id="recipeImages" fitHeight="400.0" fitWidth="400.0" layoutX="1126.0" layoutY="29.0" pickOnBounds="true" />
+            
+            <!-- Notes text area with larger font -->
+            <TextArea fx:id="recipeNotesArea" layoutX="553.0" layoutY="328.0" prefHeight="550.0" prefWidth="500.0" promptText="Add Any Notes or Ideas That You Have Here" style="-fx-background-color: #555555; -fx-text-fill: black; -fx-font-size: 24px;" wrapText="true" />
+            <Text layoutX="692.0" layoutY="305.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Notes" />
+            <Button fx:id="prevStep" focusTraversable="false" layoutX="1126.0" layoutY="448.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 20px; -fx-background-radius: 25;" text="◀" />
+            <Button fx:id="nextStep" focusTraversable="false" layoutX="1472.0" layoutY="448.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 20px; -fx-background-radius: 25;" text="▶" />
          </children>
       </Pane>
 
@@ -171,25 +181,60 @@
 
       <Pane fx:id="recipeDetailsPane" layoutX="35.0" layoutY="124.0" style="-fx-background-color: #3C3C3C; -fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
          <children>
-            <Text layoutX="134.0" layoutY="56.0" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-fill: white;" text="Ingredients" textAlignment="CENTER" wrappingWidth="321.30859375" />
+            <Text layoutX="134.0" layoutY="56.0" style="-fx-font-size: 36; -fx-font-weight: bold; -fx-fill: white;" text="Ingredients" textAlignment="CENTER" wrappingWidth="321.30859375" />
             <Rectangle fill="#3C3C3C" height="421.0" layoutX="1148.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="589.0" />
             <Button fx:id="closeRecipeDetailsButton" layoutX="1750.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Close" />
             <ImageView fx:id="recipeDetailsImages" fitHeight="421.0" fitWidth="596.0" layoutX="1144.0" pickOnBounds="true" preserveRatio="true" />
-            <Text fx:id="recipeNameTXT" layoutX="657.0" layoutY="71.0" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="434.30859375" />
+            <Text fx:id="recipeNameTXT" layoutX="638.0" layoutY="55.0" style="-fx-font-size: 36; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="434.30859375" />
             <ListView fx:id="recipeIngredients" layoutX="23.0" layoutY="69.0" prefHeight="352.0" prefWidth="544.0" />
-            <Text fx:id="recipePrepTimeTXT" layoutX="602.0" layoutY="199.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Prep Time:" wrappingWidth="434.30859375" />
-            <Text fx:id="recipeServingsTXT" layoutX="602.0" layoutY="151.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Servings:" wrappingWidth="434.30859375" />
-            <Text fx:id="recipePassiveTimeTXT" layoutX="602.0" layoutY="252.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Passive Time:" wrappingWidth="434.30859375" />
-            <Text fx:id="recipeCookTimeTXT" layoutX="602.0" layoutY="305.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Cook Time:" wrappingWidth="434.30859375" />
-            <Text fx:id="recipeTotalTimeTXT" layoutX="602.0" layoutY="358.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Total Time:" wrappingWidth="434.30859375" />
-            <Text fx:id="recipeComplexityTXT" layoutX="602.0" layoutY="411.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Complexity:" wrappingWidth="434.30859375" />
+            <Text fx:id="recipePrepTimeTXT" layoutX="602.0" layoutY="320.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" text="Prep Time:" wrappingWidth="434.30859375" />
+            <Text fx:id="recipeServingsTXT" layoutX="602.0" layoutY="287.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" text="Servings:" wrappingWidth="434.30859375" />
+            <Text fx:id="recipePassiveTimeTXT" layoutX="602.0" layoutY="353.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" text="Passive Time:" wrappingWidth="434.30859375" />
+            <Text fx:id="recipeCookTimeTXT" layoutX="602.0" layoutY="386.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" text="Cook Time:" wrappingWidth="434.30859375" />
+            <Text fx:id="recipeTotalTimeTXT" layoutX="602.0" layoutY="419.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" text="Total Time:" wrappingWidth="434.30859375" />
+            <Text fx:id="recipeComplexityTXT" layoutX="602.0" layoutY="452.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" text="Complexity:" wrappingWidth="434.30859375" />
             <PieChart fx:id="recipeCalories" layoutX="23.0" layoutY="459.0" prefHeight="421.0" prefWidth="544.0" />
             <TextArea fx:id="recipeDetailDescription" editable="false" layoutX="1148.0" layoutY="478.0" prefHeight="400.0" prefWidth="589.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-radius: 5;" wrapText="true" />
             <Button fx:id="cookItButton" layoutX="1750.0" layoutY="830.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Cook It" />
-            <FlowPane fx:id="recipeTagFlowPane" layoutX="589.0" layoutY="712.0" prefHeight="166.0" prefWidth="533.0" style="-fx-hgap: 10; -fx-vgap: 10;" />
-            <ListView fx:id="specialEquipmentTXTArea" layoutX="589.0" layoutY="478.0" prefHeight="183.0" prefWidth="533.0" />
-            <Text layoutX="695.0" layoutY="464.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Special Equipment" wrappingWidth="321.30859375" />
-            <Text layoutX="702.0" layoutY="701.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Tags" textAlignment="CENTER" wrappingWidth="321.30859375" />
+            <FlowPane fx:id="recipeTagFlowPane" layoutX="589.0" layoutY="757.0" prefHeight="121.0" prefWidth="533.0" style="-fx-hgap: 10; -fx-vgap: 10;" />
+            <ListView fx:id="specialEquipmentTXTArea" layoutX="589.0" layoutY="519.0" prefHeight="183.0" prefWidth="533.0" />
+            <Text layoutX="695.0" layoutY="505.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Special Equipment" wrappingWidth="321.30859375" />
+            <Text layoutX="702.0" layoutY="742.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Tags" textAlignment="CENTER" wrappingWidth="321.30859375" />
+            <Button fx:id="recipeReviewsButton" layoutX="711.0" layoutY="204.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Reviews" />
+            <Button fx:id="recipeNotesButton" layoutX="883.0" layoutY="204.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Recipe Notes" />
+            <Text fx:id="localRatingStars" layoutX="638.0" layoutY="147.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Local Rating: ☆☆☆☆☆" textAlignment="CENTER" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="communityRatingStars" layoutX="638.0" layoutY="187.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Community Rating: ☆☆☆☆☆" textAlignment="CENTER" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
+      <Pane fx:id="recipeReviews" layoutX="19.0" layoutY="124.0" prefHeight="960.0" prefWidth="1905.0" visible="false">
+         <children>
+            <Text fx:id="recipeName1" layoutX="20.0" layoutY="75.0" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" wrappingWidth="361.30859375" />
+            <Button fx:id="postReviewButton" layoutX="481.0" layoutY="33.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-text-fill: white; -fx-font-size: 25px;" text="Post Review" />
+            <ScrollPane fx:id="gridPane" layoutX="399.0" layoutY="120.0" prefHeight="831.0" prefWidth="1494.0" style="-fx-background-color: #444444;" visible="false">
+               <content>
+                  <VBox fx:id="reviewBoard" prefHeight="861.0" prefWidth="1558.0" />
+               </content>
+            </ScrollPane>
+            <Button fx:id="reviewsAndFeedbackBackButton" layoutX="1634.0" layoutY="35.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white; -fx-font-size: 25px;" text="Back" />
+            <ComboBox fx:id="typeFilter" layoutX="20.0" layoutY="251.0" prefHeight="36.0" prefWidth="236.0" promptText="Type of Review" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-background-radius: 50; -fx-border-color: #FF7F11; -fx-border-width: 5;" />
+            <Text fx:id="localRatingStars1" layoutX="8.0" layoutY="173.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Local Rating: ☆☆☆☆☆" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="communityRatingStars1" layoutX="8.0" layoutY="213.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Community Rating: ☆☆☆☆☆" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
          </children>
       </Pane>
 

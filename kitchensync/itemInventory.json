@@ -67,7 +67,7 @@
       "Dairy",
       "Milk"
     ],
-    "autoTrack": false,
+    "autoTrack": true,
     "minThreshold": 0
   },
   {

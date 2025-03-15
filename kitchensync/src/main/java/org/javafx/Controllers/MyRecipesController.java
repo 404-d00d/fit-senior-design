@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -20,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import javax.imageio.ImageIO;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
@@ -66,9 +63,6 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import software.amazon.awssdk.services.s3.internal.resource.S3ArnUtils;
-
-import java.awt.image.BufferedImage;
 
 
 // =================================================================================
@@ -91,7 +85,7 @@ public class MyRecipesController {
    
    // Popup & Step Navigation 
    @FXML private Button closeP1Button, closeP2Button, backButton, nextButton, cookItButton, closeRecipeDetailsButton,
-                     prevStep, nextStep, addCollectionButton;
+                     prevStep, nextStep, addCollectionButton, recipeReviewsButton, recipeNotesButton;
 
    // Filter Buttons
    @FXML private Button ingredientFilter, tagsFilter, resetFilters;
@@ -106,7 +100,7 @@ public class MyRecipesController {
    // Recipe Form Inputs
    @FXML private TextField recipeName, recipeTag, ingredientEntry, amountEntry, equipmentEntry;
    @FXML private TextField recipeETAPassive, recipeETA, recipeETAPrep, recipeYield;
-   @FXML private TextArea prepStepField, stepArea, recipeDetailDescription, recipeDescription;
+   @FXML private TextArea prepStepField, stepArea, recipeDetailDescription, recipeDescription, recipeNotesArea;
    @FXML private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry, sortBy;
 
    // Recipe Detail & Cooking Display
@@ -116,6 +110,8 @@ public class MyRecipesController {
    @FXML private ListView<String> ingredientsArea, specialEquipmentTXTArea, recipeIngredients;
    @FXML private ImageView recipeImages, imagePreview, recipeDetailsImages;
    @FXML private TextField searchBar;
+   @FXML private Text localRatingStars;
+   @FXML private Text communityRatingStars;  
 
    // Table Views for Ingredients & Equipment
    @FXML private TableView<Ingredient> ingredientTable;
@@ -189,6 +185,7 @@ public class MyRecipesController {
             if(menuPane.isVisible()) {
                menuPane.setVisible(false); // hide menu pane
             }
+            
             else {
                menuPane.setVisible(true); // show menu pane
             }
@@ -413,6 +410,20 @@ public class MyRecipesController {
    // Recipe Management
    // Handles adding, editing, deleting, and saving recipes
    // =======================================================
+
+   private String getStarsString(int rating) {
+      // rating from 0 to 5, for instance
+      // Return something like "★★★★☆" or "★★☆☆☆"
+      StringBuilder stars = new StringBuilder();
+      for (int i = 1; i <= 5; i++) {
+          if (i <= rating) {
+              stars.append("★");
+          } else {
+              stars.append("☆");
+          }
+      }
+      return stars.toString();
+   }
 
    // Add ingredient to table
    private void addIngredient() {
@@ -750,6 +761,9 @@ public class MyRecipesController {
       recipeDetailsImages.setImage(image);
       recipeImages.setImage(image);
 
+      localRatingStars.setText(getStarsString(recipe.getLocalRating()));
+      communityRatingStars.setText(getStarsString(recipe.getCommunityRating()));
+      recipeNotesArea.setText(recipe.getRecipeNotes());
 
       // Increase text size for labels
       //recipeNameTXT.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");

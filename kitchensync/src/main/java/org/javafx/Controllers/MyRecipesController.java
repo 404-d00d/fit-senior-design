@@ -25,6 +25,7 @@ import org.javafx.Recipe.Recipe;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -45,12 +46,14 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -102,6 +105,7 @@ public class MyRecipesController {
    @FXML private TextField recipeETAPassive, recipeETA, recipeETAPrep, recipeYield;
    @FXML private TextArea prepStepField, stepArea, recipeDetailDescription, recipeDescription, recipeNotesArea;
    @FXML private ComboBox<String> recipeCategory, recipeCollection, ingredientUnitEntry, sortBy;
+   @FXML private HBox recipeImagesHbox;
 
    // Recipe Detail & Cooking Display
    @FXML private Text recipePrepTimeTXT, recipePassiveTimeTXT, recipeCookTimeTXT, recipeTotalTimeTXT, 
@@ -119,6 +123,14 @@ public class MyRecipesController {
    @FXML private TableColumn<String, String> equipmentList;
    @FXML private TableColumn<Ingredient, String> ingredientList, amountList;
 
+   // Review Pane
+   @FXML private Pane recipeReviews;
+   @FXML private ScrollPane reviewPane;
+   @FXML private Text recipeReviewName, localRatingStarsReviews, communityRatingStarsReview;
+   @FXML private ComboBox<String> reviewType;
+   @FXML private Button postCommentButton, postCommentCloseButton;
+
+
    // ==============================
    // DATA STORAGE & CONSTANTS
    // ==============================
@@ -131,8 +143,11 @@ public class MyRecipesController {
    private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
    private Map<String, List<Integer>> recipeCollections = new HashMap<>();
    private Map<Integer, VBox> recipeWidgets = new HashMap<>();
+   private ObservableList<Image> recipeThumbnails = FXCollections.observableArrayList();
+   private Map<ImageView, String> imageFileMap = new HashMap<>();
 
    private static final String RECIPES_FILE_PATH = "recipes.json";
+   private static final String LOCAL_REVIEWS_FILE_PATH = "reviews.json";
    private static final String COLLECTIONS_FILE_PATH = "collections.json";
 
    private File selectedImageFile;
@@ -140,6 +155,8 @@ public class MyRecipesController {
    private int currentStep = 0;
    private int displayStep = 0;
    private String currentCollection = "All Recipes";
+
+   private Recipe currentRecipe;
 
    // Selected filters for recipes
    private Set<String> selectedIngredients = new HashSet<>();
@@ -168,17 +185,37 @@ public class MyRecipesController {
       populateFilterOptions(); // Ensure filters get populated
       setupMultiSelectFilters(); // Set up Filter Buttons
 
+      recipeNotesButton.setOnAction(event -> openRecipeNotesPopup());
+      recipeReviewsButton.setOnAction(event -> openReviewPage());
+
+      reviewType.getItems().addAll( "All", "Community", "Local");
+      postCommentButton.setOnAction(event -> openReviewPopup()); 
+
       searchBar.textProperty().addListener((observable, oldValue, newValue) -> filterRecipesBySearch(newValue));
 
       // Attach event listeners for filtering
       categoryFilter.setOnAction(event -> filterRecipes());
       sortBy.setOnAction(event -> filterRecipes());
+      postCommentCloseButton.setOnAction(event -> closeReviewWindow());
 
       // Initialize the first step
       preparationSteps.add("");
       currentStep = 0;
       displayStep = 0;
       updateStepView();
+
+      cookItButton.setOnAction(event -> {
+
+         if (!recipeThumbnails.isEmpty() && recipeThumbnails.size() > 1) {
+            recipeImages.setImage(recipeThumbnails.get(1));
+
+         } else {
+            recipeImages.setImage(recipeThumbnails.get(0));
+         }
+
+         recipeCookingPane.setVisible(true);
+         recipeDetailsPane.setVisible(false);
+      });
    
       menuButton.setOnAction(event -> {
          try {
@@ -205,17 +242,9 @@ public class MyRecipesController {
 
       closeRecipeButton.setOnAction(event -> {
          try {
+            saveRecipeNotes();
             myRecipesPane.setVisible(true);
             recipeCookingPane.setVisible(false);
-         } catch (Exception e) {
-            e.printStackTrace();
-         }
-      });
-
-      cookItButton.setOnAction(event -> {
-         try {
-            recipeCookingPane.setVisible(true);
-            recipeDetailsPane.setVisible(false);
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -505,9 +534,19 @@ public class MyRecipesController {
       if (preparationSteps.isEmpty()) {
          stepArea.setText("");
          stepOfTXT.setText("Step 1 of 1");
+         recipeImages.setImage(recipeThumbnails.get(0));
       } else {
          stepArea.setText(preparationSteps.get(displayStep));
          stepOfTXT.setText("Step " + (displayStep + 1) + " of " + preparationSteps.size());
+
+         // Ensure the index is within bounds before accessing
+         if (!recipeThumbnails.isEmpty()) {
+            if (displayStep < recipeThumbnails.size() - 1) {
+               recipeImages.setImage(recipeThumbnails.get(displayStep + 1)); // Step image
+            } else {
+               recipeImages.setImage(recipeThumbnails.get(0)); // Fallback to main image
+            }
+         }
       }
    }
 
@@ -753,17 +792,45 @@ public class MyRecipesController {
 
    public void showRecipeDetails(int recipeId, String name, Image image, Recipe recipe) {
 
+      currentRecipe = recipe;
       displayStep = 0;
 
       myRecipesPane.setVisible(false);
       recipeDetailsPane.setVisible(true);
       recipeNameTXT.setText(name);
-      recipeDetailsImages.setImage(image);
-      recipeImages.setImage(image);
 
-      localRatingStars.setText(getStarsString(recipe.getLocalRating()));
-      communityRatingStars.setText(getStarsString(recipe.getCommunityRating()));
+      // Clear previous images
+      recipeImagesHbox.getChildren().clear();
+      recipeThumbnails.clear();
+
+      for (int i = 0; ; i++) {
+         File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" +
+                                    (i == 0 ? recipe.getName() + ".png" : recipe.getName() + "_step" + i + ".png"));
+
+         if (!imageFile.exists()) break; // Stop loading when no more images exist
+
+         Image newImage = new Image(imageFile.toURI().toString());
+         recipeThumbnails.add(newImage);
+         ImageView thumbnail = createThumbnail(newImage, imageFile);
+         recipeImagesHbox.getChildren().add(thumbnail);
+      }
+
+      if (!recipeThumbnails.isEmpty()) {
+         recipeDetailsImages.setImage(recipeThumbnails.get(0));
+      } else {
+         recipeDetailsImages.setImage(null);
+      }
+
+      localRatingStars.setText("Local Reivew: " + getStarsString(recipe.getLocalRating()));
+      communityRatingStars.setText("Community Reivew: " + getStarsString(recipe.getCommunityRating()));
       recipeNotesArea.setText(recipe.getRecipeNotes());
+
+      // Review Page Info
+
+      localRatingStarsReviews.setText("Local Reivew: " + getStarsString(recipe.getLocalRating()));
+      communityRatingStarsReview.setText("Community Reivew: " + getStarsString(recipe.getCommunityRating()));
+
+      recipeReviewName.setText(name);
 
       // Increase text size for labels
       //recipeNameTXT.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
@@ -773,13 +840,14 @@ public class MyRecipesController {
       //recipeCookTimeTXT.setStyle("-fx-font-size: 18px;");
       //recipeTotalTimeTXT.setStyle("-fx-font-size: 18px;");
       //recipeComplexityTXT.setStyle("-fx-font-size: 18px;");
-      recipeDetailDescription.setStyle("-fx-font-size: 16px;");
+      recipeDetailDescription.setStyle("-fx-font-size: 20px;");
 
       // Increase text size in list items
-      recipeIngredients.setStyle("-fx-font-size: 16px;");
-      specialEquipmentTXTArea.setStyle("-fx-font-size: 16px;");
-      ingredientsArea.setStyle("-fx-font-size: 16px;");
-      stepArea.setStyle("-fx-font-size: 16px;");
+      recipeIngredients.setStyle("-fx-control-inner-background: #2E2E2E; -fx-font-size: 20px; -fx-text-fill: white; -fx-border-color: #FF7F11;");
+      specialEquipmentTXTArea.setStyle("-fx-font-size: 20px;");
+      ingredientsArea.setStyle("-fx-control-inner-background: #2E2E2E; -fx-font-size: 20px; -fx-text-fill: white; -fx-border-color: #FF7F11;");
+
+      stepArea.setStyle("-fx-font-size: 20px;");
 
 
       recipeServingsTXT.setText("Servings: " + recipe.getServings());
@@ -802,9 +870,17 @@ public class MyRecipesController {
          // Create a label for each tag
          Label tagLabel = new Label(tag);
          
-         tagLabel.setStyle("-fx-font-size: 14px; -fx-background-color: #e0e0e0; -fx-padding: 5 10; " +
-         "-fx-border-radius: 10; -fx-background-radius: 10; -fx-margin: 5;");
-
+         // Optionally style the label (for example, add padding, border, background, etc.)
+         tagLabel.setStyle(
+                           "-fx-background-color: #555555; " +
+                           "-fx-text-fill: white; " +
+                           "-fx-padding: 5 10; " +
+                           "-fx-border-radius: 10; " +
+                           "-fx-background-radius: 10; " +
+                           "-fx-font-size: 16px; " +
+                           "-fx-border-color: #FF7F11;"
+                        );
+         
          // Add the label to the FlowPane
          recipeTagFlowPane.getChildren().add(tagLabel);
       }
@@ -965,13 +1041,21 @@ public class MyRecipesController {
 
    // Method to apply hover effect for displaying short recipe details
    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
-      // Create a tooltip pane
-      Label tooltip = new Label();
-      tooltip.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8); -fx-text-fill: white; -fx-padding: 10; -fx-font-size: 16px; -fx-border-radius: 10; -fx-background-radius: 10;");
-      tooltip.setVisible(false);
-      tooltip.setWrapText(true);
+      Tooltip tooltip = new Tooltip();
+      tooltip.setStyle(
+                        "-fx-background-color: #3C3C3C; " +
+                        "-fx-text-fill: white; " +
+                        "-fx-padding: 10; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-border-radius: 10; " +
+                        "-fx-background-radius: 10; " +
+                        "-fx-border-color: #FF7F11;"
+                     );
+      
+      // Set tooltip max width and enable wrapping
+      tooltip.setMaxWidth(300);  // Set maximum width to prevent excessive horizontal stretching
+      tooltip.setWrapText(true); // Ensure text wraps to the next line
   
-      // Set the content of the tooltip
       String tooltipContent = String.format(
           "Name: %s%nServings: %d%nPrep Time: %d min%nCook Time: %d min%nDescription: %s%nTags: %s",
           recipe.getName(),
@@ -981,26 +1065,21 @@ public class MyRecipesController {
           recipe.getDescription(),
           String.join(", ", recipe.getTags())
       );
+  
       tooltip.setText(tooltipContent);
   
-      // Add tooltip to the main pane
-      myRecipesPane.getChildren().add(tooltip);
-  
-      // Set up hover events for the recipe card
+      // Attach tooltip explicitly to the VBox (recipe card)
       recipeCard.setOnMouseEntered(event -> {
-          tooltip.setVisible(true);
-          tooltip.setLayoutX(event.getScreenX() - myRecipesPane.getScene().getWindow().getX() - recipeCard.getLayoutX());
-          tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
+          if (!tooltip.isShowing()) {
+              tooltip.show(recipeCard, event.getScreenX(), event.getScreenY() + 10);
+          }
       });
   
-      recipeCard.setOnMouseExited(event -> {
-          tooltip.setVisible(false);
-      });
+      recipeCard.setOnMouseExited(event -> tooltip.hide());
   
       recipeCard.setOnMouseMoved(event -> {
-          // Update the tooltip position when the mouse moves over the recipe card
-          tooltip.setLayoutX(event.getScreenX() - myRecipesPane.getScene().getWindow().getX() - recipeCard.getLayoutX());
-          tooltip.setLayoutY(event.getScreenY() - myRecipesPane.getScene().getWindow().getY() - recipeCard.getLayoutY() + 20);
+          tooltip.setX(event.getScreenX());
+          tooltip.setY(event.getScreenY() + 10);
       });
   }
 
@@ -1265,8 +1344,7 @@ public class MyRecipesController {
 
    private Button createCollectionButton(String collectionName) {
       Button button = new Button(collectionName);
-      button.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; " +
-                     "-fx-border-radius: 50; -fx-border-width: 3; -fx-font-size: 20; -fx-padding: 5;");
+      button.setStyle("-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-size: 20px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
       button.setPrefWidth(120); // Set button width
       button.setPrefHeight(40); // Set button height
 
@@ -1274,6 +1352,10 @@ public class MyRecipesController {
          filterRecipesByCollection(collectionName);
          updateButtonStyles(button);
       });
+
+      button.setOnMouseEntered(event -> button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-weight: bold;"));
+      button.setOnMouseExited(event -> button.setStyle("-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-weight: bold;"));
+  
 
       // Add delete option for non-default collections
       if (!collectionName.equals("All Recipes") && !collectionName.equals("Favorites")) {
@@ -1336,31 +1418,80 @@ public class MyRecipesController {
    // Handles selecting, copying, and deleting recipe images
    // ========================================================
 
+   @FXML
    private void SelectImage() {
       FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Select Recipe Image");
-
-      // Restrict to image file types
+      fileChooser.setTitle("Select Recipe Images");
       fileChooser.getExtensionFilters().add(
          new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
       );
 
-      Stage stage = (Stage) imageSelectButton.getScene().getWindow();  // Get the current stage
-      selectedImageFile = fileChooser.showOpenDialog(stage);
+      List<File> selectedFiles = fileChooser.showOpenMultipleDialog((Stage) imagePreview.getScene().getWindow());
 
-      if (selectedImageFile != null) {
-         // Convert file to Image
-         selectedImage = new Image(selectedImageFile.toURI().toString());
-         imagePreview.setImage(selectedImage);
+      if (selectedFiles != null && !selectedFiles.isEmpty()) {
+         for (File file : selectedFiles) {
+               Image image = new Image(file.toURI().toString());
+               ImageView thumbnail = createThumbnail(image, file);
+               recipeImagesHbox.getChildren().add(thumbnail);
+               recipeThumbnails.add(image);
+               imageFileMap.put(thumbnail, file.getAbsolutePath());
 
-         // Copy the image to the resources folder
-         String destinationFileName = selectedImageFile.getName();
-         try {
-               copyImageToResources(selectedImageFile, destinationFileName);
-               System.out.println("Image copied to resources folder: " + destinationFileName);
+               if (recipeThumbnails.size() == 1) {
+                  imagePreview.setImage(image);
+               }
+         }
+      }
+   }
+
+
+   private ImageView createThumbnail(Image image, File file) {
+      ImageView thumbnail = new ImageView(image);
+      thumbnail.setFitWidth(50);
+      thumbnail.setFitHeight(50);
+      thumbnail.setPreserveRatio(true);
+      thumbnail.setOnMouseClicked(event -> imagePreview.setImage(image));
+  
+      ContextMenu contextMenu = new ContextMenu();
+      MenuItem removeItem = new MenuItem("Remove");
+      removeItem.setOnAction(e -> removeImage(thumbnail));
+      contextMenu.getItems().add(removeItem);
+      thumbnail.setOnContextMenuRequested(e -> contextMenu.show(thumbnail, e.getScreenX(), e.getScreenY()));
+  
+      return thumbnail;
+  }
+
+   private void removeImage(ImageView thumbnail) {
+      recipeThumbnails.remove(imageFileMap.get(thumbnail));
+      recipeImagesHbox.getChildren().remove(thumbnail);
+      imageFileMap.remove(thumbnail);
+
+      if (!recipeThumbnails.isEmpty()) {
+         imagePreview.setImage(recipeThumbnails.get(0));
+      } else {
+         imagePreview.setImage(null);
+      }
+   }
+
+   @FXML
+   private void SaveRecipeImages(String recipeName) {
+      File destinationFolder = new File("src/main/resources/org/javafx/Resources/Recipe Images");
+
+      if (!destinationFolder.exists() && !destinationFolder.mkdirs()) {
+         System.err.println("Failed to create recipe images directory.");
+         return;
+      }
+
+      for (int i = 0; i < recipeThumbnails.size(); i++) {
+         String imageName = (i == 0) ? recipeName + ".jpg" : recipeName + "_step" + i + ".jpg";
+         File destinationFile = new File(destinationFolder, imageName);
+
+         File sourceFile = new File(imageFileMap.get(recipeThumbnails.get(i)));
+
+         try (InputStream input = sourceFile.toURI().toURL().openStream()) {
+               Files.copy(input, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+               System.out.println("Saved image: " + destinationFile.getAbsolutePath());
          } catch (IOException e) {
                e.printStackTrace();
-               showAlert("Error", "Failed to copy image to resources folder.");
          }
       }
    }
@@ -1368,17 +1499,18 @@ public class MyRecipesController {
    private void copyImageToResources(File sourceFile, String destinationFileName) throws IOException {
       File destinationFolder = new File("src/main/resources/org/javafx/Resources/Recipe Images");
   
-      if (!destinationFolder.exists()) {
-          boolean created = destinationFolder.mkdirs();
-          if (!created) {
-              throw new IOException("Failed to create directory: " + destinationFolder.getAbsolutePath());
-          }
+      if (!destinationFolder.exists() && !destinationFolder.mkdirs()) {
+          throw new IOException("Failed to create directory: " + destinationFolder.getAbsolutePath());
       }
   
       File destinationFile = new File(destinationFolder, destinationFileName);
-      Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-  
-      System.out.println("Image successfully copied to: " + destinationFile.getAbsolutePath());
+      try {
+          Files.copy(sourceFile.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+          System.out.println("Image successfully copied to: " + destinationFile.getAbsolutePath());
+      } catch (IOException e) {
+          System.err.println("Error copying image: " + e.getMessage());
+          throw e;
+      }
   }
 
    private void deleteRecipeImage(String recipeName) {
@@ -1401,6 +1533,9 @@ public class MyRecipesController {
    // =====================================================================
 
    private void saveRecipesToJson(List<Recipe> recipes) {
+
+      System.out.println(recipes);
+
       File file = new File(RECIPES_FILE_PATH);
    
       try (Writer writer = new FileWriter(file)) {
@@ -1462,51 +1597,6 @@ public class MyRecipesController {
       }
    }
 
-   public void saveCommunityRecipe(Recipe recipe, Image image) throws IOException {
-      int id = recipeList.size();
-      recipe.setID(id);
-
-      // Ensure destination directory exists
-      File destinationFolder = new File("src/main/resources/org/javafx/Resources/Recipe Images");
-      if (!destinationFolder.exists() && !destinationFolder.mkdirs()) {
-         throw new IOException("Failed to create directory: " + destinationFolder.getAbsolutePath());
-      }
-
-      // Define image file
-      String imageName = recipe.getName() + ".png";
-      File destinationFile = new File(destinationFolder, imageName);
-
-      if (image.getUrl() != null) {
-         try (InputStream in = URI.create(image.getUrl()).toURL().openStream()) {
-            Files.copy(in, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Image successfully saved to: " + destinationFile.getAbsolutePath());
-         } catch (Exception e) {
-            System.err.println("Failed to download image from URL: " + image.getUrl());
-            e.printStackTrace();
-         }
-      } else {
-            System.out.println("No valid URL for the image. Image not saved.");
-      }
-
-      try {
-          FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
-          VBox recipeCard = loader.load();
-          RecipeCardController controller = loader.getController();
-
-          Image savedImage = new Image(destinationFile.toURI().toString());
-          controller.setRecipeData(recipe, savedImage, this, "myrecipes");
-
-          recipeList.add(recipe);
-          recipeWidgets.put(id, recipeCard);
-
-          saveRecipesToJson(recipeList);
-          System.out.println("Recipe saved successfully!");
-
-      } catch (Exception e) {
-          e.printStackTrace();
-      }
-  }
-
    // ====================================================
    // Utility & Helper Methods
    // General helper functions for alerts and validation
@@ -1527,6 +1617,140 @@ public class MyRecipesController {
       alert.setContentText(content);
       alert.showAndWait();
    }
+
+   private void saveRecipeNotes() {
+      if (currentRecipe != null) {
+          currentRecipe.setRecipeNotes(recipeNotesArea.getText());
+          saveRecipesToJson(recipeList);
+      }
+  }
+
+   private void openRecipeNotesPopup() {
+      if (currentRecipe == null) return;
+
+      Stage popupStage = new Stage();
+      popupStage.initModality(Modality.APPLICATION_MODAL);
+      popupStage.setTitle("Edit Recipe Notes");
+
+      VBox vbox = new VBox(15);
+      vbox.setPadding(new Insets(20));
+      vbox.setAlignment(Pos.CENTER);
+      vbox.setStyle("-fx-background-color: #2E2E2E;");
+
+      Label notesLabel = new Label("Recipe Notes:");
+      notesLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;");
+
+      TextArea notesArea = new TextArea(currentRecipe.getRecipeNotes());
+      notesArea.setWrapText(true);
+      notesArea.setPrefHeight(200);
+      notesArea.setStyle(
+         "-fx-background-color: #444444; " +
+         "-fx-text-fill: black; " +
+         "-fx-border-radius: 8; -fx-background-radius: 8;"
+      );
+
+      Button saveButton = new Button("Save");
+      saveButton.setStyle(
+         "-fx-background-color: #FF7F11; -fx-text-fill: white; " +
+         "-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;"
+      );
+
+      Button cancelButton = new Button("Cancel");
+      cancelButton.setStyle(
+         "-fx-background-color: #555555; -fx-text-fill: white; " +
+         "-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;"
+      );
+
+      saveButton.setOnAction(event -> {
+         currentRecipe.setRecipeNotes(notesArea.getText());
+         recipeNotesArea.setText(notesArea.getText());
+         saveRecipeNotes();
+         popupStage.close();
+      });
+
+      cancelButton.setOnAction(event -> popupStage.close());
+
+      HBox buttonBox = new HBox(10, saveButton, cancelButton);
+      buttonBox.setAlignment(Pos.CENTER);
+
+      vbox.getChildren().addAll(notesLabel, notesArea, buttonBox);
+      Scene scene = new Scene(vbox, 450, 350);
+      popupStage.setScene(scene);
+      popupStage.showAndWait();
+   }
+
+
+   private void openReviewPage() {
+      recipeDetailsPane.setVisible(false);
+      recipeReviews.setVisible(true);
+   }
+
+   private void closeReviewWindow() {
+   
+      recipeDetailsPane.setVisible(true);
+      recipeReviews.setVisible(false);
+   
+   }
+
+   private void openReviewPopup() {
+      if (currentRecipe == null) return;
+  
+      Stage reviewStage = new Stage();
+      reviewStage.initModality(Modality.APPLICATION_MODAL);
+      reviewStage.setTitle("Add Review");
+  
+      VBox vbox = new VBox(10);
+      vbox.setPadding(new Insets(20));
+      vbox.setAlignment(Pos.CENTER);
+      vbox.setStyle("-fx-background-color: #2E2E2E;");
+  
+      Label titleLabel = new Label("Review Title:");
+      titleLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+  
+      TextField titleField = new TextField();
+      titleField.setStyle(" -fx-text-fill: black; -fx-border-radius: 8; -fx-background-radius: 8;");
+  
+      Label bodyLabel = new Label("Your Review:");
+      bodyLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+  
+      TextArea bodyArea = new TextArea();
+      bodyArea.setWrapText(true);
+      bodyArea.setPrefHeight(100);
+      bodyArea.setStyle(" -fx-text-fill: black; -fx-border-radius: 8; -fx-background-radius: 8;");
+  
+      Label ratingLabel = new Label("Rating:");
+      ratingLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+  
+      ComboBox<Integer> ratingBox = new ComboBox<>();
+      ratingBox.getItems().addAll(1, 2, 3, 4, 5);
+      ratingBox.setValue(5);
+      ratingBox.getStyleClass().add("combo-box");
+  
+      Button saveButton = new Button("Save Review");
+      saveButton.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;");
+  
+      Button cancelButton = new Button("Cancel");
+      cancelButton.setStyle("-fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;");
+  
+      saveButton.setOnAction(event -> {
+          if (!titleField.getText().trim().isEmpty() && !bodyArea.getText().trim().isEmpty()) {
+              //saveReview(currentRecipe.getID(), titleField.getText(), bodyArea.getText(), ratingBox.getValue());
+              reviewStage.close();
+          } else {
+              showAlert("Error", "Missing Fields", "Please fill in all fields before submitting.");
+          }
+      });
+  
+      cancelButton.setOnAction(event -> reviewStage.close());
+  
+      HBox buttonBox = new HBox(10, saveButton, cancelButton);
+      buttonBox.setAlignment(Pos.CENTER);
+  
+      vbox.getChildren().addAll(titleLabel, titleField, bodyLabel, bodyArea, ratingLabel, ratingBox, buttonBox);
+      Scene scene = new Scene(vbox, 400, 300);
+      reviewStage.setScene(scene);
+      reviewStage.showAndWait();
+  }
    
 }
 

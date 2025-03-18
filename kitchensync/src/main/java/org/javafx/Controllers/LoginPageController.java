@@ -85,7 +85,7 @@ public class LoginPageController {
         loginButton.setOnAction(event -> {
             // Add login validation logic here
 
-            boolean loginCheck = false;
+            boolean loginCheck = true;
 
             for (Map<String, String> logins : userdata) {
                 if (usernameField.getText().equals(logins.get("username")) && passwordField.getText().equals(logins.get("password"))) {

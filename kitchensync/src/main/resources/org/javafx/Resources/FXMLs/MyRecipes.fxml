@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
    <children>
 
       <!-- Header Bar -->
@@ -35,7 +35,7 @@
          <children>
             <ScrollPane hbarPolicy="NEVER" layoutX="1579.0" layoutY="44.0" prefHeight="789.0" prefWidth="202.0" style="-fx-background-color: transparent;">
                <content>
-                  <VBox fx:id="collectionsButtons" alignment="TOP_CENTER" prefHeight="787.0" prefWidth="189.0" spacing="20.0">
+                  <VBox fx:id="collectionsButtons" alignment="TOP_CENTER" prefHeight="787.0" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #3c3c3c;">
                      <padding>
                         <Insets top="20.0" />
                      </padding>
@@ -99,7 +99,7 @@
             <ComboBox fx:id="recipeCollection" layoutX="262.0" layoutY="183.0" prefHeight="38.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-radius: 50; -fx-border-color: #FF7F11; -fx-border-width: 3;" />
             <Text layoutX="539.0" layoutY="79.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Add Image*" />
             <Button fx:id="imageSelectButton" layoutX="819.0" layoutY="41.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="136.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Image Select" />
-            <ImageView fx:id="imagePreview" fitHeight="400.0" fitWidth="400.0" layoutX="556.0" layoutY="108.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imagePreview" fitHeight="250.0" fitWidth="250.0" layoutX="631.0" layoutY="115.0" pickOnBounds="true" preserveRatio="true" />
             <Text layoutX="34.0" layoutY="260.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Servings*" />
             <TextField fx:id="recipeYield" layoutX="34.0" layoutY="269.0" prefHeight="38.0" prefWidth="475.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-radius: 5;" />
             <Text layoutX="36.0" layoutY="347.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Prep Time* (In Minutes)" />
@@ -133,6 +133,7 @@
                </top>
             </BorderPane>
             <Button fx:id="nextButton" layoutX="1007.0" layoutY="873.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="126.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Next" />
+            <HBox fx:id="recipeImagesHbox" layoutX="538.0" layoutY="365.0" prefHeight="100.0" prefWidth="434.0" />
          </children>
       </Pane>
       
@@ -214,29 +215,6 @@
             </Text>
          </children>
       </Pane>
-      <Pane fx:id="recipeReviews" layoutX="19.0" layoutY="124.0" prefHeight="960.0" prefWidth="1905.0" visible="false">
-         <children>
-            <Text fx:id="recipeName1" layoutX="20.0" layoutY="75.0" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" wrappingWidth="361.30859375" />
-            <Button fx:id="postReviewButton" layoutX="481.0" layoutY="33.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-text-fill: white; -fx-font-size: 25px;" text="Post Review" />
-            <ScrollPane fx:id="gridPane" layoutX="399.0" layoutY="120.0" prefHeight="831.0" prefWidth="1494.0" style="-fx-background-color: #444444;" visible="false">
-               <content>
-                  <VBox fx:id="reviewBoard" prefHeight="861.0" prefWidth="1558.0" />
-               </content>
-            </ScrollPane>
-            <Button fx:id="reviewsAndFeedbackBackButton" layoutX="1634.0" layoutY="35.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white; -fx-font-size: 25px;" text="Back" />
-            <ComboBox fx:id="typeFilter" layoutX="20.0" layoutY="251.0" prefHeight="36.0" prefWidth="236.0" promptText="Type of Review" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-background-radius: 50; -fx-border-color: #FF7F11; -fx-border-width: 5;" />
-            <Text fx:id="localRatingStars1" layoutX="8.0" layoutY="173.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Local Rating: ☆☆☆☆☆" wrappingWidth="434.30859375">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Text>
-            <Text fx:id="communityRatingStars1" layoutX="8.0" layoutY="213.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Community Rating: ☆☆☆☆☆" wrappingWidth="434.30859375">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </Text>
-         </children>
-      </Pane>
 
       <VBox fx:id="menuPane" alignment="TOP_CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: #3C3C3C; -fx-background-radius: 50; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
          <children>
@@ -271,6 +249,29 @@
       </VBox>
 
       <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #444444; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: #FF7F11; -fx-border-width: 2;" text="Menu" />
+      <Pane fx:id="recipeReviews" layoutX="19.0" layoutY="124.0" prefHeight="960.0" prefWidth="1905.0" visible="false">
+         <children>
+            <Text fx:id="recipeReviewName" layoutX="20.0" layoutY="75.0" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="361.30859375" />
+            <Button fx:id="postCommentButton" layoutX="481.0" layoutY="33.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-text-fill: white; -fx-font-size: 25px;" text="Post Comment" />
+            <ScrollPane fx:id="reviewPane" layoutX="399.0" layoutY="120.0" prefHeight="831.0" prefWidth="1494.0" style="-fx-background-color: #444444;" visible="false">
+               <content>
+                  <VBox fx:id="reviewBoard1" prefHeight="861.0" prefWidth="1558.0" />
+               </content>
+            </ScrollPane>
+            <Button fx:id="postCommentCloseButton" layoutX="1634.0" layoutY="35.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="235.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white; -fx-font-size: 25px;" text="Close" />
+            <ComboBox fx:id="reviewType" layoutX="58.0" layoutY="264.0" prefHeight="36.0" prefWidth="236.0" promptText="Review Type" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-background-radius: 50;" />
+            <Text fx:id="localRatingStarsReviews" layoutX="20.0" layoutY="195.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Local Rating: ☆☆☆☆☆" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+            <Text fx:id="communityRatingStarsReview" layoutX="20.0" layoutY="235.0" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-fill: white;" text="Community Rating: ☆☆☆☆☆" wrappingWidth="434.30859375">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Text>
+         </children>
+      </Pane>
 
    </children>
 </AnchorPane>

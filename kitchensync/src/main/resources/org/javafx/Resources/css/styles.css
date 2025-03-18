@@ -1,10 +1,11 @@
 .combo-box {
    -fx-background-color: #555555;
-   -fx-border-color: white;
+   -fx-border-color: #FF7F11;
    -fx-border-radius: 50;
    -fx-background-radius: 50;
    -fx-font-size: 28px;
    -fx-text-fill: white;
+   -fx-border-width: 3;
 }
 
 /* The selected item in the combo box */

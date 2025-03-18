@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.CommunityRecipesController">
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.CommunityRecipesController">
    <children>
    
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="-23.0" layoutY="-2.0" stroke="#444444" strokeType="INSIDE" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1944.0" />
@@ -35,19 +35,19 @@
             <ComboBox fx:id="categoryDropDown" layoutX="1.0" layoutY="58.0" prefHeight="36.0" prefWidth="346.0" promptText="Category" style="-fx-background-radius: 50; -fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 20px; -fx-border-color: #FF7F11;" />
             <ComboBox fx:id="sortBy" layoutY="8.0" prefHeight="36.0" prefWidth="346.0" promptText="Sort By" style="-fx-background-radius: 50; -fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 20px; -fx-border-color: #FF7F11;" />
             <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#444444" height="940.0" layoutX="397.0" stroke="#555555" strokeType="INSIDE" width="1446.0" />
-            <ScrollPane hbarPolicy="NEVER" layoutX="423.0" layoutY="337.0" prefHeight="594.0" prefWidth="1402.0" style="-fx-background-color: #2E2E2E; -fx-background-radius: 50; -fx-border-radius: 50;">
+            <ScrollPane hbarPolicy="NEVER" layoutX="423.0" layoutY="438.0" prefHeight="493.0" prefWidth="1402.0" style="-fx-background-color: #2E2E2E; -fx-background-radius: 50; -fx-border-radius: 50;">
                <content>
                   <FlowPane fx:id="recipeFlowPane" prefHeight="927.0" prefWidth="1388.0" style="-fx-vgap: 10; -fx-hgap: 10; -fx-background-radius: 50; -fx-border-radius: 50;" />
                </content>
             </ScrollPane>
             <Text fx:id="noRecipesTXT" layoutX="1052.0" layoutY="596.0" style="-fx-font-size: 29px; -fx-fill: white;" text="No Recipes" />
-            <ScrollPane layoutX="423.0" layoutY="76.0" prefHeight="200.0" prefWidth="1402.0" vbarPolicy="NEVER">
+            <ScrollPane layoutX="423.0" layoutY="76.0" prefHeight="300.0" prefWidth="1402.0" vbarPolicy="NEVER">
                <content>
-                  <HBox fx:id="suggestedRecipesBox" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="1395.0" style="-fx-spacing: 5;" />
+                  <HBox fx:id="suggestedRecipesBox" alignment="CENTER_LEFT" prefHeight="300.0" prefWidth="1395.0" style="-fx-spacing: 5;" />
                </content>
             </ScrollPane>
             <Text layoutX="423.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: White; -fx-font-weight: bold; -fx-font-size: 40;" text="Suggested Recipes" />
-            <Text layoutX="423.0" layoutY="319.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: White; -fx-font-weight: bold; -fx-font-size: 40;" text="Explore Recipes" />
+            <Text layoutX="423.0" layoutY="419.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: White; -fx-font-weight: bold; -fx-font-size: 40;" text="Explore Recipes" />
             <Button fx:id="ingredientFilter" layoutX="72.0" layoutY="179.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Ingredient Filter" />
             <Button fx:id="tagsFilter" layoutX="72.0" layoutY="117.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Tag Filter" />
             <Button fx:id="resetFilters" layoutX="72.0" layoutY="239.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Reset Filters" />

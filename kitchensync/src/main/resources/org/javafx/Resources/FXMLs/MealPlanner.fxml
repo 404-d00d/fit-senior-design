@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -22,324 +21,215 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MealPlannerController">
+<AnchorPane fx:id="mealPlannerMainPane" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MealPlannerController">
    <children>
-      <Rectangle fill="#727272" height="112.0" layoutX="-24.0" layoutY="-11.0" stroke="BLACK" strokeType="INSIDE" width="1944.0" />
-      <Text layoutX="118.0" layoutY="72.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Meal Planner" wrappingWidth="409.40234375">
-         <font>
-            <Font size="56.0" />
-         </font>
-      </Text>
-      <Circle id="Profile" fill="#ffac1f" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
-      <Pane fx:id="calanderPane" layoutX="18.0" layoutY="127.0" prefHeight="934.0" prefWidth="1881.0">
+      
+      <Rectangle fill="#3C3C3C" height="112.0" layoutX="-24.0" layoutY="-11.0" stroke="#444444" strokeType="INSIDE" width="1944.0" />
+      <Text layoutX="118.0" layoutY="72.0" style="-fx-font-size: 56px; -fx-font-weight: bold; -fx-fill: white;" text="Meal Planner" />
+      <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="#444444" strokeType="INSIDE" />
+      
+      <Pane fx:id="calendarPane" layoutX="18.0" layoutY="127.0" prefHeight="934.0" prefWidth="1881.0">
          <children>
-            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="934.0" layoutX="434.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="1449.0" />
-            <Button fx:id="addMealButton" layoutX="449.0" layoutY="14.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: darkgrey; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: black;" text="Add Meal">
-               <font>
-                  <Font size="25.0" />
-               </font>
-            </Button>
-            <ComboBox fx:id="calanderViewDropdown" layoutX="1657.0" layoutY="14.0" prefHeight="44.0" prefWidth="210.0" promptText="Week" style="-fx-background-color: darkgrey; -fx-background-radius: 50;" />
-            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="934.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="409.0" />
+            <Button fx:id="addMealButton" layoutX="449.0" layoutY="14.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Add Meal" />
+            <ComboBox fx:id="calendarViewDropdown" layoutX="1657.0" layoutY="14.0" prefHeight="44.0" prefWidth="210.0" promptText="Week" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-fill: white;" />
+            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#3C3C3C" height="934.0" layoutY="1.0" stroke="#444444" strokeType="INSIDE" width="409.0" />
             <DatePicker fx:id="datePicker" layoutX="34.0" layoutY="69.0" prefHeight="53.0" prefWidth="336.0" />
-            <Text layoutX="85.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Daily Summery" textAlignment="CENTER">
-               <font>
-                  <Font size="36.0" />
-               </font>
-            </Text>
-            <Text layoutX="158.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Meals" textAlignment="CENTER">
-               <font>
-                  <Font size="36.0" />
-               </font>
-            </Text>
-            <Text fx:id="breakfastMeal" layoutX="34.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Breakfast:" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Text>
-            <Text fx:id="lunchMeal" layoutX="34.0" layoutY="245.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lunch:" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Text>
-            <Text fx:id="dinnerMeal" layoutX="34.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Dinner:" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Text>
-            <Text fx:id="snacksMeal" layoutX="34.0" layoutY="315.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Snacks:" textAlignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Text>
-            <Text layoutX="20.0" layoutY="584.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Daily Nutritional Breakdown" textAlignment="CENTER">
-               <font>
-                  <Font size="30.0" />
-               </font>
-            </Text>
-            <ComboBox fx:id="nutritionalMeals" layoutX="147.0" layoutY="592.0" prefHeight="25.0" prefWidth="114.0" promptText="Meal" style="-fx-background-color: darkgrey; -fx-background-radius: 50;" />
+            <Text layoutX="85.0" layoutY="50.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Daily Summary" />
+            
+            <Text fx:id="breakfastMeal" layoutX="34.0" layoutY="210.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Breakfast:" />
+            <Text fx:id="lunchMeal" layoutX="34.0" layoutY="245.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Lunch:" />
+            <Text fx:id="dinnerMeal" layoutX="34.0" layoutY="280.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Dinner:" />
+            <Text fx:id="snacksMeal" layoutX="34.0" layoutY="315.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Snacks:" />
+            
+            <Text layoutX="20.0" layoutY="584.0" style="-fx-font-size: 30px; -fx-fill: white;" text="Daily Nutritional Breakdown" />
+            <ComboBox fx:id="nutritionalMeals" layoutX="147.0" layoutY="592.0" prefHeight="44.0" prefWidth="143.0" promptText="Meal" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white;" />
             <PieChart fx:id="dailyNutritionalBreakdown" layoutX="36.0" layoutY="630.0" prefHeight="269.0" prefWidth="336.0" />
+            
             <Pane layoutX="446.0" layoutY="87.0" prefHeight="832.0" prefWidth="1426.0">
-               <children>
-                  <GridPane fx:id="dayView" alignment="CENTER" gridLinesVisible="true" layoutX="300.0" layoutY="11.0" prefHeight="810.0" prefWidth="800.0" visible="false">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="33.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="42.0" minHeight="10.0" prefHeight="37.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                  </GridPane>
-                  <GridPane fx:id="weekView" alignment="CENTER" gridLinesVisible="true" layoutX="-12.0" layoutY="3.0" prefHeight="810.0" prefWidth="1424.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                  </GridPane>
-                  <GridPane fx:id="monthView" alignment="CENTER" gridLinesVisible="true" layoutX="1.0" layoutY="1.0" prefHeight="810.0" prefWidth="1425.0" visible="false">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                  </GridPane>
-               </children>
+                  <children>
+                     <GridPane fx:id="dayView" alignment="CENTER" gridLinesVisible="true" layoutX="300.0" layoutY="11.0" prefHeight="810.0" prefWidth="800.0" visible="false">
+                        <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                     </GridPane>
+                     <GridPane fx:id="weekView" alignment="CENTER" gridLinesVisible="true" layoutX="-12.0" layoutY="3.0" prefHeight="810.0" prefWidth="1424.0">
+                        <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                     </GridPane>
+                     <GridPane fx:id="monthView" alignment="CENTER" gridLinesVisible="true" layoutX="1.0" layoutY="1.0" prefHeight="810.0" prefWidth="1425.0" visible="false">
+                        <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                     </GridPane>
+                  </children>
             </Pane>
             <DatePicker fx:id="dateInView" layoutX="928.0" layoutY="16.0" prefHeight="53.0" prefWidth="462.0" showWeekNumbers="true" />
          </children>
       </Pane>
-      <VBox fx:id="menuPane" alignment="CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: grey; -fx-background-radius: 50;" visible="false">
+      
+      <VBox fx:id="menuPane" alignment="TOP_CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: #3C3C3C; -fx-background-radius: 50; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
          <children>
-            <Button fx:id="userDashboardButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="User Dashboard" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="45.0" />
-               </font>
-            </Button>
-            <Button fx:id="mealPlannerButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 280;" text="Meal Planner" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="45.0" />
-               </font>
-            </Button>
-            <Button fx:id="myRecipesButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="My Recipes" textAlignment="CENTER" />
-            <Button fx:id="inventoryButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Inventory" textAlignment="CENTER" />
-            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Inbox" textAlignment="CENTER" />
-            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="150.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: black; -fx-effect: none; -fx-font-size: 40;" text="Find Recipes" textAlignment="CENTER" wrapText="true" />
-            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: Black; -fx-effect: none; -fx-font-size: 40;" text="Profile" textAlignment="CENTER" />
-            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40;" text="Settings" textAlignment="CENTER">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Button>
-            <Button fx:id="myListsButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" maxHeight="-Infinity" minHeight="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: BLack; -fx-effect: none; -fx-font-size: 40; -fx-pref-width: 270;" text="My Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true">
-               <font>
-                  <Font name="System Bold" size="45.0" />
-               </font>
-            </Button>
+            <Button alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="270.0" style="-fx-background-color: transparent;" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+            <!-- User Dashboard Button -->
+            <Button fx:id="userDashboardButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="66.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-width: 5; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="User Dashboard" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+
+            <!-- Meal Planner Button -->
+            <Button fx:id="mealPlannerButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Meal Planner" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+
+            <!-- My Recipes Button -->
+            <Button fx:id="myRecipesButton" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="My Recipes" textAlignment="CENTER" />
+
+            <!-- Inventory Button -->
+            <Button fx:id="inventoryButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Inventory" textAlignment="CENTER" />
+
+            <!-- Inbox Button -->
+            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Inbox" textAlignment="CENTER" />
+
+            <!-- Browse Recipes Button -->
+            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="47.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Find Recipes" textAlignment="CENTER" wrapText="true" />
+
+            <!-- Profile Button -->
+            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Profile" textAlignment="CENTER" />
+
+            <!-- Settings Button -->
+            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Settings" textAlignment="CENTER" />
+
+            <!-- My Lists Button -->
+            <Button fx:id="myListsButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="My Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
          </children>
       </VBox>
-      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" text="Menu" textFill="WHITE" />
+
+      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #444444; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: #FF7F11; -fx-border-width: 2;" text="Menu" />
+      
       <Pane fx:id="AddMealMenu" layoutX="20.0" layoutY="127.0" prefHeight="934.0" prefWidth="1881.0" visible="false">
          <children>
-            <Rectangle fill="#727272" height="934.0" layoutX="4.0" stroke="BLACK" strokeType="INSIDE" width="409.0" />
-            <Text layoutX="13.0" layoutY="479.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select A Meal To View Details">
-               <font>
-                  <Font size="30.0" />
-               </font>
+            <Rectangle fill="#727272" height="934.0" layoutX="4.0" stroke="WHITE" strokeType="INSIDE" width="409.0" />
+            <Text fill="WHITE" layoutX="13.0" layoutY="479.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select A Meal To View Details">
+                  <font>
+                     <Font size="30.0" />
+                  </font>
             </Text>
-            <ScrollPane fx:id="mealDetailsPane" hbarPolicy="NEVER" layoutX="6.0" pannable="true" prefHeight="934.0" prefWidth="400.0" style="-fx-background-color: transparent; -fx-border-color: transparent;" visible="false">
-               <content>
-                  <VBox alignment="TOP_CENTER" prefHeight="1075.0" prefWidth="394.0" style="-fx-alignment: top-center; -fx-background-color: grey; -fx-padding: 20; -fx-spacing: 10;">
-                     <children>
-                        <Text fx:id="mealNameTXT" strokeType="OUTSIDE" strokeWidth="0.0" text="Meal Name" textAlignment="CENTER">
-                           <font>
-                              <Font size="40.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="complecityTXT" strokeType="OUTSIDE" strokeWidth="0.0" text="Complexity" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Text>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Description" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Text>
-                        <TextArea fx:id="descriptionArea" editable="false" prefHeight="200.0" prefWidth="258.0">
-                           <opaqueInsets>
-                              <Insets />
-                           </opaqueInsets>
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </TextArea>
-                        <Text fx:id="servingsTXT" strokeType="OUTSIDE" strokeWidth="0.0" text="Servings:" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="prepTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" text="Prep Time:">
-                           <font>
-                              <Font name="System Italic" size="30.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="passiveTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" text="Passive Time:">
-                           <font>
-                              <Font name="System Italic" size="30.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="cookTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" text="Cook Time:">
-                           <font>
-                              <Font name="System Italic" size="30.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="totalTimeTXT" strokeType="OUTSIDE" strokeWidth="0.0" text="Total:" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Text>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Special Equipment:" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Text>
-                        <ListView fx:id="specialEqupmentListView" prefHeight="200.0" prefWidth="200.0" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ingredients:" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Text>
-                        <ListView fx:id="recipeIngredientsListView" prefHeight="342.0" prefWidth="544.0" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Meal Planner Details" textAlignment="CENTER">
-                           <font>
-                              <Font name="System Bold" size="30.0" />
-                           </font>
-                        </Text>
-                        <ComboBox fx:id="mealSlot" prefHeight="25.0" prefWidth="176.0" promptText="Meal Slot" style="-fx-background-radius: 50;" />
-                        <DatePicker fx:id="mealPlanDate" prefHeight="25.0" prefWidth="244.0" />
-                        <Button fx:id="addMealToPlan" mnemonicParsing="false" prefHeight="29.0" prefWidth="174.0" text="Add Meal" />
-                     </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </VBox>
-               </content>
+            <ScrollPane fx:id="mealDetailsPane" hbarPolicy="NEVER" layoutX="6.0" pannable="true" prefHeight="934.0" prefWidth="400.0" style="-fx-background-color: transparent; -fx-border-color: white;" visible="false">
+                  <content>
+                     <VBox alignment="TOP_CENTER" prefHeight="1075.0" prefWidth="394.0" style="-fx-alignment: top-center; -fx-background-color: grey; -fx-padding: 20; -fx-spacing: 10;">
+                        <children>
+                              <Text fx:id="mealNameTXT" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Meal Name" textAlignment="CENTER">
+                                 <font>
+                                    <Font size="40.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="complecityTXT" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Complexity" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Description" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <TextArea fx:id="descriptionArea" editable="false" prefHeight="200.0" prefWidth="258.0" style="-fx-text-fill: white;">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </TextArea>
+                              <Text fx:id="servingsTXT" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Servings:" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="prepTimeTXT" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Prep Time:">
+                                 <font>
+                                    <Font name="System Italic" size="30.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="passiveTimeTXT" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Passive Time:">
+                                 <font>
+                                    <Font name="System Italic" size="30.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="cookTimeTXT" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Cook Time:">
+                                 <font>
+                                    <Font name="System Italic" size="30.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="totalTimeTXT" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Total:" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Special Equipment:" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <ListView fx:id="specialEqupmentListView" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: white;" />
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Ingredients:" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <ListView fx:id="recipeIngredientsListView" prefHeight="342.0" prefWidth="544.0" style="-fx-border-color: white;" />
+                              <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Meal Planner Details" textAlignment="CENTER">
+                                 <font>
+                                    <Font name="System Bold" size="30.0" />
+                                 </font>
+                              </Text>
+                              <ComboBox fx:id="mealSlot" prefHeight="25.0" prefWidth="176.0" promptText="Meal Slot" style="-fx-background-radius: 50; -fx-text-fill: white;" />
+                              <DatePicker fx:id="mealPlanDate" prefHeight="25.0" prefWidth="244.0" />
+                              <Button fx:id="addMealToPlan" mnemonicParsing="false" prefHeight="29.0" prefWidth="174.0" style="-fx-text-fill: white;" text="Add Meal" />
+                        </children>
+                     </VBox>
+                  </content>
             </ScrollPane>
-            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="869.0" layoutX="432.0" layoutY="65.0" stroke="BLACK" strokeType="INSIDE" width="1449.0" />
-            <ComboBox layoutX="823.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Ingredient" style="-fx-background-radius: 50;" />
-            <ComboBox layoutX="996.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Category" style="-fx-background-radius: 50;" />
-            <ComboBox layoutX="1166.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Tags" style="-fx-background-radius: 50;" />
-            <ComboBox layoutX="653.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Sort By" style="-fx-background-radius: 50;" />
-            <ComboBox fx:id="calanderViewDropdown1" layoutX="432.0" layoutY="14.0" prefHeight="36.0" prefWidth="202.0" promptText="Ready To Cook" style="-fx-background-color: darkgrey; -fx-background-radius: 50;" />
-            <TextField layoutX="1333.0" layoutY="14.0" prefHeight="36.0" prefWidth="400.0" promptText="Can't Find Somthing?" style="-fx-background-color: Orange; -fx-background-radius: 50;" />
-            <ScrollPane hbarPolicy="NEVER" layoutX="457.0" layoutY="94.0" prefHeight="810.0" prefWidth="1401.0" style="-fx-background-color: grey;">
-               <content>
-                  <FlowPane fx:id="recipeFlowPane" prefHeight="803.0" prefWidth="1402.0" style="-fx-vgap: 10; -fx-hgap: 10;" />
-               </content>
+            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#727272" height="869.0" layoutX="432.0" layoutY="65.0" stroke="WHITE" strokeType="INSIDE" width="1449.0" />
+            <ComboBox layoutX="823.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Ingredient" style="-fx-background-radius: 50; -fx-text-fill: white;" />
+            <ComboBox layoutX="996.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Category" style="-fx-background-radius: 50; -fx-text-fill: white;" />
+            <ComboBox layoutX="1166.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Tags" style="-fx-background-radius: 50; -fx-text-fill: white;" />
+            <ComboBox layoutX="653.0" layoutY="14.0" prefHeight="36.0" prefWidth="150.0" promptText="Sort By" style="-fx-background-radius: 50; -fx-text-fill: white;" />
+            <ComboBox fx:id="calanderViewDropdown1" layoutX="432.0" layoutY="14.0" prefHeight="36.0" prefWidth="202.0" promptText="Ready To Cook" style="-fx-background-radius: 50; -fx-text-fill: white;" />
+            <TextField layoutX="1333.0" layoutY="14.0" prefHeight="36.0" prefWidth="400.0" promptText="Can't Find Something?" style="-fx-background-color: Orange; -fx-background-radius: 50; -fx-text-fill: white;" />
+            <ScrollPane hbarPolicy="NEVER" layoutX="457.0" layoutY="94.0" prefHeight="810.0" prefWidth="1401.0" style="-fx-background-color: grey; -fx-border-color: white;">
+                  <content>
+                     <FlowPane fx:id="recipeFlowPane" prefHeight="803.0" prefWidth="1402.0" style="-fx-vgap: 10; -fx-hgap: 10;" />
+                  </content>
             </ScrollPane>
-            <Button fx:id="closeButton" layoutX="1755.0" layoutY="12.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="114.0" style="-fx-background-radius: 50;" text="Close" />
+            <Button fx:id="closeButton" layoutX="1755.0" layoutY="12.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="114.0" style="-fx-background-radius: 50; -fx-background-color: grey; -fx-text-fill: white;" text="Close" />
          </children>
       </Pane>
-      <Pane fx:id="recipeCookingPane" layoutX="36.0" layoutY="119.0" visible="false">
+      
+      <Pane fx:id="recipeCookingPane" layoutX="44.0" layoutY="146.0" prefHeight="917.0" prefWidth="1827.0" style="-fx-background-color: #3C3C3C; -fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
          <children>
-            <Rectangle fill="#727272" height="917.0" stroke="BLACK" strokeType="INSIDE" width="589.0" />
-            <Text layoutX="134.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Ingredients" wrappingWidth="321.30859375">
-               <font>
-                  <Font size="56.0" />
-               </font>
-            </Text>
-            <Rectangle fill="#727272" height="409.0" layoutX="860.0" layoutY="1.0" stroke="BLACK" strokeType="INSIDE" width="589.0" />
-            <Text fx:id="stepOfTXT" layoutX="1005.0" layoutY="497.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Step * of *" wrappingWidth="321.30859375">
-               <font>
-                  <Font size="56.0" />
-               </font>
-            </Text>
-            <Button fx:id="closeRecipeButton" layoutX="1750.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="115.0" style="-fx-background-radius: 50;" text="Close">
-               <font>
-                  <Font size="24.0" />
-               </font>
-            </Button>
-            <Button fx:id="nextStep" layoutX="1327.0" layoutY="448.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
-            <TextArea fx:id="stepArea" editable="false" layoutX="748.0" layoutY="529.0" prefHeight="367.0" prefWidth="835.0">
-               <font>
-                  <Font size="18.0" />
-               </font>
-            </TextArea>
-            <ImageView fx:id="recipeImages" fitHeight="409.0" fitWidth="596.0" layoutX="856.0" pickOnBounds="true" preserveRatio="true" />
-            <Button fx:id="prevStep" layoutX="929.0" layoutY="448.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: black;" />
-            <Text fx:id="recipeCookingNameTXT" layoutX="77.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-weight: bold;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="434.30859375">
-               <font>
-                  <Font size="56.0" />
-               </font>
-            </Text>
-            <ListView fx:id="ingredientsArea" layoutX="21.0" layoutY="214.0" prefHeight="691.0" prefWidth="544.0" />
+            <Text layoutX="190.0" layoutY="93.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Ingredients" />
+            <Text fx:id="stepOfTXT" layoutX="1239.0" layoutY="486.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Step * of *" />
+            <Text fx:id="recipeCookingNameTXT" layoutX="590.0" layoutY="90.0" style="-fx-font-size: 48; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Name" textAlignment="CENTER" wrappingWidth="425.30859375" />
+            <Button fx:id="closeRecipeButton" layoutX="1671.0" layoutY="14.0" prefHeight="48.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50;" text="Close" />
+            
+            <!-- Main step text area with larger font -->
+            <TextArea fx:id="stepArea" layoutX="1076.0" layoutY="511.0" prefHeight="367.0" prefWidth="500.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 24px;" wrapText="true" />
+            
+            <!-- Ingredients list with larger font -->
+            <ListView fx:id="ingredientsArea" layoutX="36.0" layoutY="116.0" prefHeight="762.0" prefWidth="500.0" style="-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-size: 16px;" />
+            
+            <ImageView fx:id="recipeImages" fitHeight="400.0" fitWidth="400.0" layoutX="1126.0" layoutY="29.0" pickOnBounds="true" />
+            
+            <!-- Notes text area with larger font -->
+            <TextArea fx:id="recipeNotesArea" layoutX="553.0" layoutY="328.0" prefHeight="550.0" prefWidth="500.0" promptText="Add Any Notes or Ideas That You Have Here" style="-fx-background-color: #555555; -fx-text-fill: black; -fx-font-size: 24px;" wrapText="true" />
+            <Text layoutX="692.0" layoutY="305.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Recipe Notes" />
+            <Button fx:id="prevStep" focusTraversable="false" layoutX="1126.0" layoutY="448.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 20px; -fx-background-radius: 25;" text="◀" />
+            <Button fx:id="nextStep" focusTraversable="false" layoutX="1472.0" layoutY="448.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 20px; -fx-background-radius: 25;" text="▶" />
          </children>
       </Pane>
+   
    </children>
 </AnchorPane>

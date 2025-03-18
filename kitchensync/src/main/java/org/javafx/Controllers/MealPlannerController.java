@@ -42,18 +42,18 @@ public class MealPlannerController {
     // FXML UI COMPONENTS
     // ==================
 
-    @FXML private ComboBox<String> calanderViewDropdown, nutritionalMeals, mealSlot;
+    @FXML private ComboBox<String> calendarViewDropdown, nutritionalMeals, mealSlot;
     @FXML private Button addMealButton, userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
                         closeButton, inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton, 
                         menuButton, addMealToPlan, prevStep, nextStep, closeRecipeButton;
     @FXML private DatePicker datePicker, dateInView, mealPlanDate;
     @FXML private PieChart dailyNutritionalBreakdown;
     @FXML private ScrollPane mealDetailsPane;
-    @FXML private Text mealNameTXT, complecityTXT, servingsTXT, prepTimeTXT, passiveTimeTXT, cookTimeTXT, totalTimeTXT, 
+    @FXML private Text mealNameTXT, complexityTXT, servingsTXT, prepTimeTXT, passiveTimeTXT, cookTimeTXT, totalTimeTXT, 
                         stepOfTXT, recipeCookingNameTXT, breakfastMeal, lunchMeal, dinnerMeal, snacksMeal;
-    @FXML private ListView<String> specialEqupmentListView, recipeIngredientsListView, ingredientsArea;
+    @FXML private ListView<String> specialEquipmentListView, recipeIngredientsListView, ingredientsArea;
     @FXML private TextArea descriptionArea, stepArea;
-    @FXML private Pane menuPane, calanderPane, AddMealMenu, recipeCookingPane;
+    @FXML private Pane menuPane, calendarPane, AddMealMenu, recipeCookingPane, mealPlannerMainPane;
     @FXML private GridPane dayView, weekView, monthView;
     @FXML private ImageView recipeImages;
 
@@ -66,6 +66,8 @@ public class MealPlannerController {
     private MyListsController myListsController;
     private int currentStep = 0, displayStep = 0;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d'th'");
+
+    private Recipe selectedRecipe;
 
     // ====================================================================
     // INITIALIZATION
@@ -92,8 +94,8 @@ public class MealPlannerController {
         setHoverEffect(settingsButton);
 
         // Configure the calendar dropdown and date pickers
-        calanderViewDropdown.getItems().addAll("Day View", "Week View", "Month View");
-        calanderViewDropdown.setValue("Week View");
+        calendarViewDropdown.getItems().addAll("Day View", "Week View", "Month View");
+        calendarViewDropdown.setValue("Week View");
         datePicker.setValue(LocalDate.now());
         datePicker.setStyle("-fx-font-size: 18px;");
         dateInView.setValue(LocalDate.now());
@@ -105,7 +107,7 @@ public class MealPlannerController {
         calculateMealNutrition();
 
         // UI event handlers
-        calanderViewDropdown.setOnAction(event -> loadCalendarView());
+        calendarViewDropdown.setOnAction(event -> loadCalendarView());
         dateInView.setOnAction(event -> updateDateInView());
         nutritionalMeals.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snacks", "All Meals", "Total Per Serving");
         nutritionalMeals.setOnAction(event -> calculateMealNutrition());
@@ -152,11 +154,11 @@ public class MealPlannerController {
         AddMealMenu.setVisible(false);
         mealDetailsPane.setVisible(false);
         //reset mealDetails pane to null
-        calanderPane.setVisible(true);
+        calendarPane.setVisible(true);
     }
 
     private void closeRecipeCookingPane() {
-        calanderPane.setVisible(true);
+        calendarPane.setVisible(true);
         recipeCookingPane.setVisible(false);
     }
 
@@ -201,7 +203,7 @@ public class MealPlannerController {
     }
 
     private void loadCalendarView() {
-        String selectedView = calanderViewDropdown.getValue();
+        String selectedView = calendarViewDropdown.getValue();
     
         // Hide all views initially
         dayView.setVisible(false);
@@ -229,6 +231,9 @@ public class MealPlannerController {
         dayView.getChildren().clear(); // Clear previous content
         dayView.getRowConstraints().clear(); // Clear row constraints
         dayView.getColumnConstraints().clear(); // Clear column constraints
+
+        dayView.setStyle("-fx-border-color: white; -fx-grid-lines-visible: true;");
+
     
         // Set up a column for time labels and another for meal blocks
         ColumnConstraints timeColumn = new ColumnConstraints();
@@ -249,7 +254,7 @@ public class MealPlannerController {
         // Add time labels to the left column
         for (int hour = 0; hour < 24; hour++) {
             Label timeLabel = new Label(String.format("%02d:00", hour)); // Format as "HH:00"
-            timeLabel.setStyle("-fx-font-size: 14px; -fx-padding: 5px; -fx-font-weight: bold;");
+            timeLabel.setStyle("-fx-font-size: 18px; -fx-padding: 5px; -fx-font-weight: bold; -fx-text-fill: white;"); 
             GridPane.setConstraints(timeLabel, 0, hour); // Column 0, corresponding row
             dayView.getChildren().add(timeLabel);
         }
@@ -265,6 +270,7 @@ public class MealPlannerController {
     
         dayView.setGridLinesVisible(false); // Refresh grid lines
         dayView.setGridLinesVisible(true);
+        
 
         stylePastDates();
     }
@@ -273,6 +279,8 @@ public class MealPlannerController {
         weekView.getChildren().clear();
         weekView.getRowConstraints().clear();
         weekView.getColumnConstraints().clear();
+
+        weekView.setStyle("-fx-border-color: white; -fx-grid-lines-visible: true;");
     
         // Set up 25 rows for 24 hours and one row for the day label
         for (int i = 0; i < 25; i++) {
@@ -298,7 +306,7 @@ public class MealPlannerController {
         for (int hour = 0; hour < 24; hour++) {
             String hourText = String.format("%02d:00", hour); // Display in HH:00 format
             Label hourLabel = new Label(hourText);
-            hourLabel.setStyle("-fx-font-size: 14px; -fx-padding: 5px; -fx-font-weight: bold;");
+            hourLabel.setStyle("-fx-font-size: 18px; -fx-padding: 5px; -fx-font-weight: bold; -fx-text-fill: white;");
             GridPane.setConstraints(hourLabel, 0, hour + 1); // +1 to account for the title row
             weekView.getChildren().add(hourLabel);
         }
@@ -309,14 +317,12 @@ public class MealPlannerController {
             String dayOfWeek = currentDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.ENGLISH);
             String dayLabel = dayOfWeek + ", " + currentDate.format(DateTimeFormatter.ofPattern("MM/dd"));
             Text dayTitle = new Text(dayLabel);
-            dayTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+            dayTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-fill: white;");
             GridPane.setConstraints(dayTitle, i + 1, 0); // +1 to skip the hour column
             weekView.getChildren().add(dayTitle);
     
             // Get meals for the current day
             List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(currentDate, new ArrayList<>());
-
-            
     
             // Render time blocks for meals
             for (Map<String, Object> mealData : mealsForDay) {
@@ -334,6 +340,8 @@ public class MealPlannerController {
         monthView.getChildren().clear();
         monthView.getRowConstraints().clear();
         monthView.getColumnConstraints().clear();
+
+        monthView.setStyle("-fx-border-color: white; -fx-grid-lines-visible: true;");
     
         // Ensure we have 7 columns for the days of the week
         for (int col = 0; col < 7; col++) {
@@ -370,12 +378,13 @@ public class MealPlannerController {
                     List<Map<String, Object>> mealsForDay = getMealsForDay(dayDate);
     
                     VBox dayBox = new VBox();
-                    dayBox.setStyle("-fx-padding: 5px;");
     
                     // Add day number
                     Text dayNumber = new Text(String.valueOf(dayCount));
-                    dayNumber.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
+                    dayNumber.setStyle("-fx-font-size: 18px; -fx-fill: white;");
+
                     dayBox.getChildren().add(dayNumber);
+                    dayBox.setStyle("-fx-border-color: white; -fx-padding: 5px;");
     
                     // Display meals
                     int mealCount = 0;
@@ -393,7 +402,7 @@ public class MealPlannerController {
     
                     if (mealCount > 3) {
                         Label moreLabel = new Label("+" + (mealCount - 3) + " more");
-                        moreLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
+                        moreLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;");
                         dayBox.getChildren().add(moreLabel);
                     }
     
@@ -409,6 +418,8 @@ public class MealPlannerController {
 
         stylePastDates();
     }
+
+    
 
     private void loadDailyMeals(LocalDate date) {
         List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
@@ -455,7 +466,8 @@ public class MealPlannerController {
     // ===========================================================
     
     private void openAddMealDialog() {
-        // TODO: Implement a dialog where the user can select the meal and times.
+        calendarPane.setVisible(false);
+        AddMealMenu.setVisible(true);
     
         // Once a meal is selected, create meal time blocks:
         LocalDate selectedDate = datePicker.getValue();
@@ -629,13 +641,13 @@ public class MealPlannerController {
                     String color;
                     switch (timePartKey) {
                         case "prepTime":
-                            color = "lightgreen";
+                            color = "#4CAF50";
                             break;
                         case "passiveTime":
-                            color = "lightyellow";
+                            color = "FFC107";
                             break;
                         case "cookTime":
-                            color = "lightcoral";
+                            color = "FF5733";
                             break;
                         default:
                             color = "lightgray";
@@ -661,7 +673,21 @@ public class MealPlannerController {
             String blockId = String.join("|", mealName, timePartKey, blockDate, String.valueOf(hour));
     
             Label block = new Label(mealName + " (" + timePartKey + ": " + duration + " mins)");
-            block.setStyle("-fx-background-color: " + color + "; -fx-padding: 10px; -fx-font-size: 14px; -fx-border-radius: 5px;");
+
+            switch (timePartKey) {
+                case "prepTime":
+                block.setStyle("-fx-background-color: " + color + "; -fx-text-fill: black; -fx-padding: 10px; -fx-font-size: 18px; -fx-border-radius: 10px;");
+                    break;
+                case "passiveTime":
+                block.setStyle("-fx-background-color: " + color + "; -fx-text-fill: black; -fx-padding: 10px; -fx-font-size: 18px; -fx-border-radius: 10px;");
+                    break;
+                case "cookTime":
+                block.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-padding: 10px; -fx-font-size: 18px; -fx-border-radius: 10px;");
+                    break;
+                default:
+                block.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-padding: 10px; -fx-font-size: 18px; -fx-border-radius: 10px;");
+            }
+
             block.setId(blockId); // Assign the ID to the block
     
             GridPane.setConstraints(block, dayColumn, currentRow);
@@ -793,7 +819,7 @@ public class MealPlannerController {
     public void showRecipeDetails(String name, Image image, Recipe recipe) {
 
         recipeCookingPane.setVisible(true);
-        calanderPane.setVisible(false);
+        calendarPane.setVisible(false);
 
         displayStep = 0;
 
@@ -843,7 +869,7 @@ public class MealPlannerController {
     private void openRecipeDetails(Recipe recipe) {
         // Set recipe details in the mealDetailsPane
         mealNameTXT.setText(recipe.getName());
-        complecityTXT.setText(String.valueOf(recipe.getComplexity()));
+        complexityTXT.setText(String.valueOf(recipe.getComplexity()));
         servingsTXT.setText("Servings: " + String.valueOf(recipe.getServings()));
         prepTimeTXT.setText("Prep Time: " + String.valueOf(recipe.getPrepTime()));
         passiveTimeTXT.setText("Passive Time: " + String.valueOf(recipe.getPassiveTime()));
@@ -858,8 +884,8 @@ public class MealPlannerController {
         recipeIngredientsListView.getItems().addAll(recipe.getIngredients());
     
         // Populate special equipment
-        specialEqupmentListView.getItems().clear();
-        specialEqupmentListView.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
+        specialEquipmentListView.getItems().clear();
+        specialEquipmentListView.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
     
         // Set description
         descriptionArea.setText(recipe.getDescription());
@@ -914,6 +940,8 @@ public class MealPlannerController {
     // ==========================================================
 
     private void calculateMealNutrition() {
+        dailyNutritionalBreakdown.getData().clear();
+
         LocalDate selectedDate = datePicker.getValue();  // Get selected date
         List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(selectedDate, new ArrayList<>());
     
@@ -980,9 +1008,9 @@ public class MealPlannerController {
             Tooltip.install(dailyNutritionalBreakdown, calorieTooltip);
 
             for (PieChart.Data data : dailyNutritionalBreakdown.getData()) {
-                data.getNode().setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+                data.getNode().setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
             }
-    
+            
         } else {
             System.out.println("Failed to fetch nutrition data.");
         }
@@ -1334,7 +1362,7 @@ public class MealPlannerController {
                 Label block = (Label) node;
                 LocalDate blockDate = getDateFromBlock(block); // Implement this to parse date from block
                 if (blockDate.isBefore(LocalDate.now())) {
-                    block.setStyle(block.getStyle() + "-fx-opacity: 0.5;");
+                    block.setStyle(block.getStyle() + "-fx-opacity: 0.5; -fx-text-fill: gray;");
                 }
             }
         });

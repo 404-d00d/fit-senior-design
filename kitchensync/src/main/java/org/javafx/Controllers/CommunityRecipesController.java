@@ -1,7 +1,15 @@
 package org.javafx.Controllers;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.Writer;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -14,6 +22,9 @@ import java.util.stream.Collectors;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -105,6 +116,8 @@ public class CommunityRecipesController {
 
    private File selectedImageFile;
    private Image selectedImage;
+
+   private static final String RECIPES_FILE_PATH = "recipes.json";
 
    // ==============================
    // DATA STORAGE & CONSTANTS
@@ -536,11 +549,90 @@ public class CommunityRecipesController {
 
    }
 
+   private List<Recipe> loadRecipesFromJson() {
+      File file = new File(RECIPES_FILE_PATH);
+      boolean isFileValid = file.exists() && file.length() > 0;
+   
+      if (isFileValid) {
+         try (Reader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            Recipe[] recipesArray = gson.fromJson(reader, Recipe[].class);
+            if (recipesArray != null) {
+               System.out.println("Recipes successfully loaded from JSON.");
+               return new ArrayList<>(List.of(recipesArray));
+            }
+         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Load Error - Failed to load recipes from JSON file.");
+         }
+      } else {
+         System.out.println("No recipe file found. Starting with an empty recipe list.");
+      }
+      return new ArrayList<>();
+   }
+
    public void saveRecipe(Recipe recipe, Image image) throws IOException {
-      MyRecipesController myRecipesController = new MyRecipesController();
-      myRecipesController.saveCommunityRecipe(recipe, image);
-      System.out.println("Recipe passed to MyRecipesController for saving.");
+      
+      recipeList.addAll(loadRecipesFromJson()); 
+
+      List<Integer> existingIds = recipeList.stream()
+      .map(Recipe::getID)
+      .sorted()
+      .collect(Collectors.toList());
+
+      int newId = 1;
+
+      for (int id : existingIds) {
+         if (id == newId) {
+             newId++; // Move to the next available number
+         } else {
+             break; // Found a gap, use this ID
+         }
+      }
+
+      recipe.setID(newId);
+
+      recipeList.add(recipe);
+
+      // Ensure destination directory exists
+      File destinationFolder = new File("src/main/resources/org/javafx/Resources/Recipe Images");
+      if (!destinationFolder.exists() && !destinationFolder.mkdirs()) {
+         throw new IOException("Failed to create directory: " + destinationFolder.getAbsolutePath());
+      }
+
+      // Define image file
+      String imageName = recipe.getName() + ".png";
+      File destinationFile = new File(destinationFolder, imageName);
+
+      if (image.getUrl() != null) {
+         try (InputStream in = URI.create(image.getUrl()).toURL().openStream()) {
+            Files.copy(in, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Image successfully saved to: " + destinationFile.getAbsolutePath());
+         } catch (Exception e) {
+            System.err.println("Failed to download image from URL: " + image.getUrl());
+            e.printStackTrace();
+         }
+      } else {
+            System.out.println("No valid URL for the image. Image not saved.");
+      }
+      
+      saveRecipesToJson(recipeList);
   }
+
+   private void saveRecipesToJson(List<Recipe> recipes) {
+      System.out.println(recipes);
+
+      File file = new File(RECIPES_FILE_PATH);
+   
+      try (Writer writer = new FileWriter(file)) {
+         Gson gson = new GsonBuilder().setPrettyPrinting().create();
+         gson.toJson(recipes, writer);
+         System.out.println("Recipes successfully saved to JSON.");
+      } catch (IOException e) {
+         e.printStackTrace();
+         System.out.println("Save Error - Failed to save recipes to JSON file.");
+      }
+   }
 
    private void setHoverEffect(Button button) {
       button.setOnMouseEntered(this::handleMouseEntered);
@@ -638,8 +730,6 @@ public class CommunityRecipesController {
                // **Construct S3 Image URL**
                String imageUrl = S3_BASE_URL + recipeName.replace(" ", "%20") + ".jpg"; // URL encode spaces
                Image image = new Image(imageUrl, true);
-
-               System.out.println(image);
 
                // Set data on the card
                controller.setRecipeData(recipe, image, this, "community");

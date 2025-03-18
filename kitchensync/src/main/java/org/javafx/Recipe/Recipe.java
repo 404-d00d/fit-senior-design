@@ -18,6 +18,8 @@ public class Recipe {
     private int localRating;
     private int communityRating;
     private String recipeNotes;
+    private String[] suggestedIngredients;
+    private int randIngredientID;
 
     public Recipe(int id, String name, String category, String collection, String description, int prepTime, int passiveTime, int cookTime, int complexity, int servings, 
                   String[] tags, String[] ingredients, String[] specialEquipment, String[] steps) {
@@ -39,6 +41,9 @@ public class Recipe {
         this.localRating = 0;
         this.communityRating = 0;
         this.recipeNotes = null;
+
+        this.randIngredientID = 0;
+        this.suggestedIngredients = null;
 
     }
 
@@ -93,6 +98,12 @@ public class Recipe {
 
     public String getRecipeNotes() { return recipeNotes; }
     public void setRecipeNotes(String recipeNotes) { this.recipeNotes = recipeNotes; }
+
+    public String[] getSuggestedIngredients() { return suggestedIngredients; }
+    public void setSuggestedIngredients(String[] suggestedIngredients) { this.suggestedIngredients = suggestedIngredients; }
+
+    public int getRandIngredientID() { return randIngredientID; }
+    public void setRandIngredientID(int randIngredientID) { this.randIngredientID = randIngredientID; }
 }
 
 // Custom classes to manage ingredients

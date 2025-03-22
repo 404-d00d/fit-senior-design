@@ -28,6 +28,7 @@ public class RecipeCardController {
 
    private MyRecipesController myRecipesController;
    private CommunityRecipesController communityRecipesController;
+   private MealPlannerController mealPlannerController;
 
    // View type flag ("myrecipes" or "community")
    private String viewType;
@@ -45,6 +46,10 @@ public class RecipeCardController {
 
       if ("community".equals(viewType)) {
          this.communityRecipesController = (CommunityRecipesController) controller;
+      }
+
+      if ("mealPlanner".equals(viewType)) {
+         this.mealPlannerController = (MealPlannerController) controller;
       }
 
       configureContextMenu();
@@ -75,6 +80,8 @@ public class RecipeCardController {
          });
          
          contextMenu.getItems().addAll(reviewsAndFeedback, saveRecipeItem);
+      } else if ("mealPlanner".equals(viewType)) {
+
       } else {
          // Default: MyRecipes context menu items
          MenuItem editItem = new MenuItem("Edit");
@@ -103,7 +110,9 @@ public class RecipeCardController {
                myRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
             } else if ("community".equals(viewType)) {
                communityRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
-            }
+            } else if ("mealPlanner".equals(viewType)) {
+               mealPlannerController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
+            } 
          }
       });
    }

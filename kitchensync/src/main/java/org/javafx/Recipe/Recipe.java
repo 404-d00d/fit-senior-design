@@ -104,7 +104,14 @@ public class Recipe {
 
     public int getRandIngredientID() { return randIngredientID; }
     public void setRandIngredientID(int randIngredientID) { this.randIngredientID = randIngredientID; }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
 }
+
+
 
 // Custom classes to manage ingredients
 class Ingredient {

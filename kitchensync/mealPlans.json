@@ -674,34 +674,34 @@
     {
       "prepTime": {
         "date": "2025-03-17",
-        "duration": 30,
-        "hour": 0,
+        "duration": 30.0,
+        "hour": 0.0,
         "name": "Sample Meal",
-        "id": 0,
+        "id": 0.0,
         "isMealMade": false,
-        "recipeID": 0
+        "recipeID": 0.0
       }
     },
     {
       "passiveTime": {
         "date": "2025-03-17",
-        "duration": 60,
-        "hour": 1,
+        "duration": 60.0,
+        "hour": 1.0,
         "name": "Sample Meal",
-        "id": 0,
+        "id": 0.0,
         "isMealMade": false,
-        "recipeID": 0
+        "recipeID": 0.0
       }
     },
     {
       "cookTime": {
         "date": "2025-03-17",
-        "duration": 30,
-        "hour": 2,
+        "duration": 30.0,
+        "hour": 2.0,
         "name": "Sample Meal",
-        "id": 0,
+        "id": 0.0,
         "isMealMade": false,
-        "recipeID": 0
+        "recipeID": 0.0
       }
     }
   ],
@@ -715,6 +715,107 @@
         "id": 0.0,
         "isMealMade": false,
         "recipeID": 0.0
+      }
+    }
+  ],
+  "2025-03-21": [
+    {
+      "prepTime": {
+        "date": "2025-03-21",
+        "duration": 30.0,
+        "hour": 0.0,
+        "name": "Sample Meal",
+        "id": 0.0,
+        "isMealMade": false,
+        "recipeID": 0.0
+      }
+    },
+    {
+      "passiveTime": {
+        "date": "2025-03-21",
+        "duration": 60.0,
+        "hour": 1.0,
+        "name": "Sample Meal",
+        "id": 0.0,
+        "isMealMade": false,
+        "recipeID": 0.0
+      }
+    },
+    {
+      "cookTime": {
+        "date": "2025-03-21",
+        "duration": 30.0,
+        "hour": 2.0,
+        "name": "Sample Meal",
+        "id": 0.0,
+        "isMealMade": false,
+        "recipeID": 0.0
+      }
+    },
+    {
+      "prepTime": {
+        "date": "2025-03-21",
+        "duration": 30,
+        "hour": 0,
+        "name": "Sample Meal",
+        "id": 0,
+        "isMealMade": false,
+        "recipeID": 0
+      }
+    },
+    {
+      "passiveTime": {
+        "date": "2025-03-21",
+        "duration": 60,
+        "hour": 1,
+        "name": "Sample Meal",
+        "id": 0,
+        "isMealMade": false,
+        "recipeID": 0
+      }
+    },
+    {
+      "cookTime": {
+        "date": "2025-03-21",
+        "duration": 30,
+        "hour": 2,
+        "name": "Sample Meal",
+        "id": 0,
+        "isMealMade": false,
+        "recipeID": 0
+      }
+    },
+    {
+      "prepTime": {
+        "date": "2025-03-21",
+        "duration": 30,
+        "hour": 0,
+        "name": "Sample Meal",
+        "id": 0,
+        "isMealMade": false,
+        "recipeID": 0
+      }
+    },
+    {
+      "passiveTime": {
+        "date": "2025-03-21",
+        "duration": 60,
+        "hour": 1,
+        "name": "Sample Meal",
+        "id": 0,
+        "isMealMade": false,
+        "recipeID": 0
+      }
+    },
+    {
+      "cookTime": {
+        "date": "2025-03-21",
+        "duration": 30,
+        "hour": 2,
+        "name": "Sample Meal",
+        "id": 0,
+        "isMealMade": false,
+        "recipeID": 0
       }
     }
   ]

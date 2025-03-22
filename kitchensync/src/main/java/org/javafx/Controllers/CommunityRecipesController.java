@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
@@ -26,6 +27,7 @@ import org.javafx.Recipe.Recipe;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -34,13 +36,18 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -161,6 +168,9 @@ public class CommunityRecipesController {
       loadCommunityRecipes();
       configureSortBy();
       configureFilters();
+      configureDropdowns();
+      configureEquipmentTable();
+      configureIngredientTable();
 
       searchBar.textProperty().addListener((obs, oldText, newText) -> filterRecipesBySearch(newText));
 
@@ -298,10 +308,9 @@ public class CommunityRecipesController {
       prevStep.setOnAction(event -> detailsSteps(-1));
       nextStep.setOnAction(event -> detailsSteps(1));
       postRecipe.setOnAction(event -> openPostRecipeForm());
-      manualButton.setOnAction(event -> openManualPostRecipeForm());
-      recipeUploadMyrecipes.setOnAction(event -> openRecipeSelectFromMyRecipes());
       cancelButton.setOnAction(event -> closeRecipeUploadOptions());
-      closeP2Button.setOnAction(event -> closeRecipeUpload());
+      closeP1Button.setOnAction(event -> closeRecipe1Upload());
+      closeP2Button.setOnAction(event -> closeRecipe2Upload());
       nextButton.setOnAction(event -> nextToP2());
       backButton.setOnAction(event -> backToP1());
       manualButton.setOnAction(event -> openManualEntryForm());
@@ -315,25 +324,133 @@ public class CommunityRecipesController {
    }
 
    private void openRecipeSelection() {
-      //recipeList.addAll(MyRecipesController.loadRecipesFromJson()); // Fetch saved recipes
+      recipeList.addAll(loadRecipesFromJson()); // Ensure recipes are loaded
+
+      if (recipeList.isEmpty()) {   
+         System.out.println("No saved recipes available to upload.");
+         return;
+      }
+
       ChoiceDialog<Recipe> dialog = new ChoiceDialog<>(recipeList.get(0), recipeList);
       dialog.setTitle("Select a Recipe");
       dialog.setHeaderText("Choose a recipe to upload");
+
+      // Access the dialog pane to apply styling
+      DialogPane dialogPane = dialog.getDialogPane();
+
+
+      // Style the labels and combo box
+      dialogPane.lookupAll(".label").forEach(label -> label.setStyle("-fx-text-fill: white; -fx-font-size: 16px;"));
+      
+      dialog.getDialogPane().getStylesheets().add(getClass().getResource("/org/javafx/Resources/css/styles.css").toExternalForm());
+      dialog.getDialogPane().lookupAll(".combo-box").forEach(cb -> cb.getStyleClass().add("combo-box"));
+
+
+      // Style the buttons
+      dialogPane.getButtonTypes().forEach(buttonType -> {
+         Button button = (Button) dialogPane.lookupButton(buttonType);
+         button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;");
+      });
+
+      dialog.setGraphic(null);
+      Label headerLabel = (Label) dialog.getDialogPane().lookup(".header-panel .label");
+      if (headerLabel != null) {
+         headerLabel.setStyle("\"-fx-background-color: #2E2E2E; -fx-text-fill: white; -fx-font-size: 18px;");
+      }
+      dialog.getDialogPane().setStyle("-fx-background-color: #2E2E2E; -fx-text-fill: white;");
+      
 
       Optional<Recipe> result = dialog.showAndWait();
       result.ifPresent(this::fillRecipeDetails);
    }
 
+   private void configureEquipmentTable() {
+      equipmentList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue()));
+      equipmentTable.setItems(equipment);
+      equipmentTable.setEditable(true);
+      equipmentList.setCellFactory(TextFieldTableCell.forTableColumn());
+      equipmentTable.setRowFactory(tv -> {
+         TableRow<String> row = new TableRow<>();
+         ContextMenu contextMenu = new ContextMenu();
+         MenuItem deleteItem = new MenuItem("Delete");
+         deleteItem.setOnAction(event -> equipment.remove(row.getItem()));
+         contextMenu.getItems().add(deleteItem);
+         row.setContextMenu(contextMenu);
+         return row;
+      });
+   }
+
+   private void configureIngredientTable() {
+      ingredientList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+      amountList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAmount() + " " + data.getValue().getUnit()));
+      ingredientTable.setItems(ingredients);
+      ingredientTable.setEditable(true);
+      ingredientList.setCellFactory(TextFieldTableCell.forTableColumn());
+      amountList.setCellFactory(TextFieldTableCell.forTableColumn());
+      ingredientTable.setRowFactory(tv -> {
+          TableRow<Ingredient> row = new TableRow<>();
+          ContextMenu contextMenu = new ContextMenu();
+          MenuItem deleteItem = new MenuItem("Delete");
+          deleteItem.setOnAction(event -> ingredients.remove(row.getItem()));
+          contextMenu.getItems().add(deleteItem);
+          row.setContextMenu(contextMenu);
+          return row;
+      });
+  }
+
    private void fillRecipeDetails(Recipe recipe) {
+
+      // Ensure upload form is visible
+      uploadPane.setVisible(false);
+      addRecipePaneP1.setVisible(true);
+
       UploadRecipeName.setText(recipe.getName());
       recipeCategory.setValue(recipe.getCategory());
-      recipeCollection.setValue(recipe.getCollection());
       recipeYield.setText(String.valueOf(recipe.getServings()));
       recipeETAPrep.setText(String.valueOf(recipe.getPrepTime()));
       recipeETAPassive.setText(String.valueOf(recipe.getPassiveTime()));
       recipeETA.setText(String.valueOf(recipe.getCookTime()));
       recipeDescription.setText(recipe.getDescription());
+      
+      // Populate steps
+      preparationSteps.clear();
       preparationSteps.addAll(Arrays.asList(recipe.getSteps()));
+      currentStep = 0;
+      updateStepView();
+
+      // Populate ingredients
+      ingredients.clear();
+      ingredientEntries.clear();
+
+      for (String ing : recipe.getIngredients()) {
+         ingredientEntries.add(ing); // Still store full string version
+
+         // Try to split into name, amount, unit
+         String[] parts = ing.split(":");
+         if (parts.length == 2) {
+            String name = parts[0].trim();
+            String amountUnit = parts[1].trim();
+
+            // Extract amount and unit
+            String[] amountUnitParts = amountUnit.split(" ", 2);
+            String amount = amountUnitParts.length >= 1 ? amountUnitParts[0].trim() : "";
+            String unit = amountUnitParts.length == 2 ? amountUnitParts[1].trim() : "";
+
+            ingredients.add(new Ingredient(name, amount, unit));
+         } else {
+            // If not parsable, fallback
+            ingredients.add(new Ingredient(ing, "", ""));
+         }
+      }
+
+      // Populate special equipment
+      equipment.clear();
+      equipment.addAll(Arrays.asList(recipe.getEquipment()));
+
+      // Populate tags
+      tags.clear();
+      tags.addAll(Arrays.asList(recipe.getTags()));
+      updateTagView();
   
       // Load Image
       File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
@@ -470,15 +587,38 @@ public class CommunityRecipesController {
       String description = recipeDescription.getText();
 
       Map<String, AttributeValue> recipeItem = new HashMap<>();
+      String uniqueId = UUID.randomUUID().toString();
+      recipeItem.put("Recipe", AttributeValue.builder().s(uniqueId).build());
       recipeItem.put("name", AttributeValue.builder().s(recipeName).build());
       recipeItem.put("prepTime", AttributeValue.builder().n(String.valueOf(prepTime)).build());
       recipeItem.put("cookTime", AttributeValue.builder().n(String.valueOf(cookTime)).build());
       recipeItem.put("passiveTime", AttributeValue.builder().n(String.valueOf(passiveTime)).build());
       recipeItem.put("servings", AttributeValue.builder().n(String.valueOf(servings)).build());
       recipeItem.put("description", AttributeValue.builder().s(description).build());
-      recipeItem.put("ingredients", AttributeValue.builder().s(String.join("\n", ingredientEntries)).build());
-      recipeItem.put("steps", AttributeValue.builder().s(String.join("\n", preparationSteps)).build());
-      recipeItem.put("tags", AttributeValue.builder().s(String.join(", ", tags)).build());
+
+      recipeItem.put("ingredients", AttributeValue.builder()
+         .l(ingredientEntries.stream()
+            .map(val -> AttributeValue.builder().s(val).build())
+            .collect(Collectors.toList()))
+         .build());
+
+      recipeItem.put("steps", AttributeValue.builder()
+         .l(preparationSteps.stream()
+            .map(step -> AttributeValue.builder().s(step).build())
+            .collect(Collectors.toList()))
+         .build());
+
+      recipeItem.put("tags", AttributeValue.builder()
+         .l(tags.stream()
+            .map(tag -> AttributeValue.builder().s(tag).build())
+            .collect(Collectors.toList()))
+         .build());
+
+      recipeItem.put("equipment", AttributeValue.builder()
+         .l(equipment.stream()
+            .map(eq -> AttributeValue.builder().s(eq).build())
+            .collect(Collectors.toList()))
+         .build());
 
       try {
          // Upload Recipe to DynamoDB
@@ -489,7 +629,7 @@ public class CommunityRecipesController {
 
          // Upload Image to S3
          if (selectedImageFile != null) {
-               String s3Key = recipeName.replace(" ", "_") + ".jpg";
+               String s3Key = recipeName + ".jpg";
                s3Client.putObject(PutObjectRequest.builder()
                   .bucket("kitchensyncimages")
                   .key(s3Key)
@@ -500,8 +640,11 @@ public class CommunityRecipesController {
          }
 
          System.out.println("Recipe uploaded successfully!");
-         ((Stage) uploadButton.getScene().getWindow()).close();
+
          loadCommunityRecipes(); // Refresh community recipes
+
+         addRecipePaneP2.setVisible(false);
+         myRecipesPane.setVisible(true);
 
       } catch (Exception e) {
          e.printStackTrace();
@@ -531,7 +674,12 @@ public class CommunityRecipesController {
       uploadPane.setVisible(false);
    }
 
-   private void closeRecipeUpload() {
+   private void closeRecipe1Upload() {
+      myRecipesPane.setVisible(true);
+      addRecipePaneP1.setVisible(false);
+   }
+
+   private void closeRecipe2Upload() {
       myRecipesPane.setVisible(true);
       addRecipePaneP2.setVisible(false);
    }
@@ -539,14 +687,6 @@ public class CommunityRecipesController {
    private void openPostRecipeForm() {
       myRecipesPane.setVisible(false);
       uploadPane.setVisible(true);
-   }
-
-   private void openRecipeSelectFromMyRecipes() {
-
-   }
-
-   private void openManualPostRecipeForm() {
-
    }
 
    private List<Recipe> loadRecipesFromJson() {
@@ -664,7 +804,7 @@ public class CommunityRecipesController {
       } catch (DynamoDbException e) {
           System.err.println("Failed to fetch recipes: " + e.getMessage());
       }
-  
+
       return recipes;
    }
   
@@ -684,6 +824,11 @@ public class CommunityRecipesController {
       }
    }
 
+   private void configureDropdowns() {
+      recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
+      ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
+   }
+
    private void configureFilters() {
       categoryDropDown.setOnAction(e -> filterRecipes());
    }
@@ -693,6 +838,7 @@ public class CommunityRecipesController {
       recipeCards.clear();
 
       for (Map<String, AttributeValue> item : items) {
+
          AttributeValue nameAttr = item.get("name");
          AttributeValue descAttr = item.get("description");
 
@@ -985,8 +1131,13 @@ public class CommunityRecipesController {
 
       preparationSteps = FXCollections.observableArrayList(recipe.getSteps());
 
-      stepOfTXT.setText("Step " + 1 + " of " + preparationSteps.size());
-      stepArea.setText(preparationSteps.get(0));
+      if (!preparationSteps.isEmpty()) {
+         stepOfTXT.setText("Step 1 of " + preparationSteps.size());
+         stepArea.setText(preparationSteps.get(0));
+      } else {
+         stepOfTXT.setText("Step 1 of 1");
+         stepArea.setText("");
+      }
 
       // Styling
       specialEquipmentTXTArea.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;");

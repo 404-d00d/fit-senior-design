@@ -1,9 +1,11 @@
 package org.javafx.Controllers;
 
+import java.io.File;
 // Java Imports
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,12 +20,16 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyStringWrapper;
 // JavaFX Imports
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -42,20 +48,26 @@ public class MealPlannerController {
     // FXML UI COMPONENTS
     // ==================
 
-    @FXML private ComboBox<String> calendarViewDropdown, nutritionalMeals, mealSlot;
+    @FXML private ComboBox<String> calendarViewDropdown, nutritionalMeals, mealSlot, mealReadiness, mealType, sortBy;
     @FXML private Button addMealButton, userDashboardButton, mealPlannerButton, myRecipesButton, inventoryButton,
                         closeButton, inboxButton, browseRecipesButton, profileButton, settingsButton, myListsButton, 
-                        menuButton, addMealToPlan, prevStep, nextStep, closeRecipeButton;
+                        menuButton, addMealToPlan, prevStep, nextStep, closeRecipeButton, ingredientFilter, tagsFilter, resetFilters;
     @FXML private DatePicker datePicker, dateInView, mealPlanDate;
     @FXML private PieChart dailyNutritionalBreakdown;
     @FXML private ScrollPane mealDetailsPane;
     @FXML private Text mealNameTXT, complexityTXT, servingsTXT, prepTimeTXT, passiveTimeTXT, cookTimeTXT, totalTimeTXT, 
-                        stepOfTXT, recipeCookingNameTXT, breakfastMeal, lunchMeal, dinnerMeal, snacksMeal;
-    @FXML private ListView<String> specialEquipmentListView, recipeIngredientsListView, ingredientsArea;
+                        stepOfTXT, recipeCookingNameTXT, breakfastMeal, lunchMeal, dinnerMeal, snacksMeal, noRecipesTXT,
+                        mealSelectTXT;
+    @FXML private ListView<String> specialEquipmentListView, ingredientsArea;
     @FXML private TextArea descriptionArea, stepArea;
-    @FXML private Pane menuPane, calendarPane, AddMealMenu, recipeCookingPane, mealPlannerMainPane;
+    @FXML private Pane menuPane, calendarPane, AddMealMenu, recipeCookingPane, mealPlannerMainPane, recipeFlowPane;
     @FXML private GridPane dayView, weekView, monthView;
     @FXML private ImageView recipeImages;
+    @FXML private TextField searchBar;
+    
+    @FXML private TableView<Ingredient> ingredientTable;
+    @FXML private TableColumn<Ingredient, String> ingredientList, amountList;
+    private ObservableList<Ingredient> ingredients = FXCollections.observableArrayList();
 
     // ==============================
     // DATA STORAGE & CONSTANTS
@@ -66,6 +78,9 @@ public class MealPlannerController {
     private MyListsController myListsController;
     private int currentStep = 0, displayStep = 0;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d'th'");
+    private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
+    private Map<Integer, VBox> recipeWidgets = new HashMap<>();
+    private static final String RECIPES_FILE_PATH = "recipes.json";
 
     private Recipe selectedRecipe;
 
@@ -79,6 +94,8 @@ public class MealPlannerController {
 
         // Load meal plans from JSON
         loadMealPlansFromJson();
+        // Load Users Recipes from JSON
+        loadRecipes();
 
         menuButton.setOnAction(event -> toggleMenuPane());
         
@@ -470,14 +487,14 @@ public class MealPlannerController {
         AddMealMenu.setVisible(true);
     
         // Once a meal is selected, create meal time blocks:
-        LocalDate selectedDate = datePicker.getValue();
+        //LocalDate selectedDate = datePicker.getValue();
     
-        Recipe newMeal = new Recipe(0, "Sample Meal", null, null, null, 30, 60, 30, 0, 0, null, null, null, null); // Replace with selected meal details
-        addMealToPlan(newMeal, selectedDate, 0, selectedDate, 1, selectedDate, 2);
+        //Recipe newMeal = new Recipe(0, "Sample Meal", null, null, null, 30, 60, 30, 0, 0, null, null, null, null); // Replace with selected meal details
+        //addMealToPlan(newMeal, selectedDate, 0, selectedDate, 1, selectedDate, 2);
         
-        loadDailyMeals(selectedDate);
-        loadCalendarView();
-        calculateMealNutrition();
+        //loadDailyMeals(selectedDate);
+        //loadCalendarView();
+        //calculateMealNutrition();
     }
 
     private void addMealToPlan(Recipe meal, LocalDate prepDate, int prepHour, LocalDate passiveDate, int passiveHour, LocalDate cookDate, int cookHour) {
@@ -864,34 +881,6 @@ public class MealPlannerController {
                 }
             }
         });
-    }
-
-    private void openRecipeDetails(Recipe recipe) {
-        // Set recipe details in the mealDetailsPane
-        mealNameTXT.setText(recipe.getName());
-        complexityTXT.setText(String.valueOf(recipe.getComplexity()));
-        servingsTXT.setText("Servings: " + String.valueOf(recipe.getServings()));
-        prepTimeTXT.setText("Prep Time: " + String.valueOf(recipe.getPrepTime()));
-        passiveTimeTXT.setText("Passive Time: " + String.valueOf(recipe.getPassiveTime()));
-        cookTimeTXT.setText("Cook Time: " + String.valueOf(recipe.getCookTime()));
-
-        int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime();
-
-        totalTimeTXT.setText("Total Time: " + String.valueOf(totalTime));
-    
-        // Populate ingredients
-        recipeIngredientsListView.getItems().clear();
-        recipeIngredientsListView.getItems().addAll(recipe.getIngredients());
-    
-        // Populate special equipment
-        specialEquipmentListView.getItems().clear();
-        specialEquipmentListView.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
-    
-        // Set description
-        descriptionArea.setText(recipe.getDescription());
-    
-        // Show the details pane
-        mealDetailsPane.setVisible(true);
     }
 
     private Recipe getRecipeById(int id) {
@@ -1283,6 +1272,183 @@ public class MealPlannerController {
     }
 
     // ==========================
+    // Recipe Card Methods: 
+    // Get and Populate the Recipe Pane
+    // ==========================
+
+    private List<Recipe> loadRecipesFromJson() {
+      File file = new File(RECIPES_FILE_PATH);
+      boolean isFileValid = file.exists() && file.length() > 0;
+   
+      if (isFileValid) {
+         try (Reader reader = new FileReader(file)) {
+            Gson gson = new Gson();
+            Recipe[] recipesArray = gson.fromJson(reader, Recipe[].class);
+            if (recipesArray != null) {
+               System.out.println("Recipes successfully loaded from JSON.");
+               return new ArrayList<>(List.of(recipesArray));
+            }
+         } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Load Error - Failed to load recipes from JSON file.");
+         }
+      } else {
+         System.out.println("No recipe file found. Starting with an empty recipe list.");
+      }
+      return new ArrayList<>();
+   }
+
+    private void loadRecipes() {
+        recipeList.addAll(loadRecipesFromJson()); 
+        loadRecipesCards();
+     }
+
+    private void loadRecipesCards() {
+        recipeFlowPane.getChildren().clear(); // Clear any existing children before repopulating
+    
+        for (Recipe recipe : recipeList) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
+                VBox recipeCard = loader.load();
+                RecipeCardController controller = loader.getController();
+    
+                // Load the recipe's image from the "Recipe Images" folder
+                File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
+                Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
+    
+                controller.setRecipeData(recipe, image, this, "mealPlanner"); // Pass recipe data and image
+                
+                recipeFlowPane.getChildren().add(recipeCard);
+                recipeWidgets.put(recipe.getID(), recipeCard);
+                recipeCard.setUserData(controller);
+    
+                applyHoverEffect(recipeCard, recipe);
+    
+                if (noRecipesTXT.isVisible()) {
+                    noRecipesTXT.setVisible(false);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
+        Tooltip tooltip = new Tooltip();
+        tooltip.setStyle(
+                          "-fx-background-color: #3C3C3C; " +
+                          "-fx-text-fill: white; " +
+                          "-fx-padding: 10; " +
+                          "-fx-font-size: 14px; " +
+                          "-fx-border-radius: 10; " +
+                          "-fx-background-radius: 10; " +
+                          "-fx-border-color: #FF7F11;"
+                       );
+        
+        // Set tooltip max width and enable wrapping
+        tooltip.setMaxWidth(300);  // Set maximum width to prevent excessive horizontal stretching
+        tooltip.setWrapText(true); // Ensure text wraps to the next line
+    
+        String tooltipContent = String.format(
+            "Name: %s%nServings: %d%nPrep Time: %d min%nCook Time: %d min%nDescription: %s%nTags: %s",
+            recipe.getName(),
+            recipe.getServings(),
+            recipe.getPrepTime(),
+            recipe.getCookTime(),
+            recipe.getDescription(),
+            String.join(", ", recipe.getTags())
+        );
+    
+        tooltip.setText(tooltipContent);
+    
+        // Attach tooltip explicitly to the VBox (recipe card)
+        recipeCard.setOnMouseEntered(event -> {
+            if (!tooltip.isShowing()) {
+                tooltip.show(recipeCard, event.getScreenX(), event.getScreenY() + 10);
+            }
+        });
+    
+        recipeCard.setOnMouseExited(event -> tooltip.hide());
+    
+        recipeCard.setOnMouseMoved(event -> {
+            tooltip.setX(event.getScreenX());
+            tooltip.setY(event.getScreenY() + 10);
+        });
+    }
+
+    public void showRecipeDetails(int recipeId, String recipeName, Image image, Recipe recipe) {
+
+        mealDetailsPane.setVisible(true);
+    
+        mealNameTXT.setText(recipeName);
+        complexityTXT.setText("Complexity: " + recipe.getComplexity());
+        descriptionArea.setText(recipe.getDescription());
+
+        descriptionArea.setWrapText(true);
+
+        // Bind height to text content
+        descriptionArea.setPrefRowCount(Math.max(5, descriptionArea.getText().split("\n").length + 1));
+
+        descriptionArea.textProperty().addListener((obs, oldText, newText) -> {
+            int lines = newText.split("\n").length + (newText.length() / 40); // crude line estimate
+            descriptionArea.setPrefRowCount(Math.max(5, lines));
+        });
+
+        
+        servingsTXT.setText("Servings: " + recipe.getServings());
+    
+        prepTimeTXT.setText("Prep Time: " + recipe.getPrepTime() + " min");
+        passiveTimeTXT.setText("Passive Time: " + recipe.getPassiveTime() + " min");
+        cookTimeTXT.setText("Cook Time: " + recipe.getCookTime() + " min");
+    
+        int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime();
+        totalTimeTXT.setText("Total Time: " + totalTime + " min");
+    
+        // Populate equipment list
+        specialEquipmentListView.getItems().clear();
+        if (recipe.getEquipment() != null) {
+            specialEquipmentListView.getItems().addAll(recipe.getEquipment());
+        }
+
+        specialEquipmentListView.setFixedCellSize(40); // Adjust cell height if needed
+        specialEquipmentListView.prefHeightProperty().bind(
+            specialEquipmentListView.fixedCellSizeProperty().multiply(Bindings.size(specialEquipmentListView.getItems()))
+        );
+    
+        // Populate ingredients Table
+        ingredientList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+        amountList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAmount() + " " + data.getValue().getUnit()));
+        
+        ingredients.clear();
+        for (String ingredientString : recipe.getIngredients()) {
+            Ingredient parsed = parseIngredient(ingredientString);
+            ingredients.add(parsed);
+        }
+        
+        ingredientTable.setItems(ingredients);
+        ingredientTable.setEditable(false);
+        ingredientList.setCellFactory(TextFieldTableCell.forTableColumn());
+        amountList.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        ingredientTable.setFixedCellSize(40); // Adjust row height if needed
+        ingredientTable.prefHeightProperty().bind(
+            ingredientTable.fixedCellSizeProperty().multiply(Bindings.size(ingredientTable.getItems()).add(2)) // +1 for header
+        );
+
+
+        // Pre-select current date and a default meal slot
+        mealPlanDate.setValue(LocalDate.now());
+        if (mealSlot.getItems().isEmpty()) {
+            mealSlot.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snacks");
+        }
+        mealSlot.setValue("Dinner"); // Default selection
+
+        this.selectedRecipe = recipe;
+    
+    }
+    
+    
+    // ==========================
     // Utility Methods: 
     // General helper functions
     // ==========================
@@ -1383,4 +1549,3 @@ public class MealPlannerController {
 
 
 }
-

@@ -58,7 +58,7 @@
                   <FlowPane fx:id="recipeFlowPane" prefHeight="917.0" prefWidth="1088.0" style="-fx-vgap: 10; -fx-hgap: 10;" />
                </content>
             </ScrollPane>
-            <Text fx:id="noRecipesTXT" layoutX="898.0" layoutY="482.7060546875" style="-fx-font-size: 29px; -fx-font-weight: bold; -fx-fill: white;" text="No Recipes" />
+            <Text fx:id="noRecipesTXT" layoutX="898.0" layoutY="482.7060546875" style="-fx-font-size: 29px; -fx-font-weight: bold; -fx-fill: Black;" text="No Recipes" />
             <Button fx:id="ingredientFilter" layoutX="72.0" layoutY="185.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Ingredient Filter" />
             <Button fx:id="tagsFilter" layoutX="72.0" layoutY="123.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Tag Filter" />
             <Button fx:id="resetFilters" layoutX="72.0" layoutY="245.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Reset Filters" />
@@ -150,8 +150,8 @@
                <center>
                   <TableView fx:id="ingredientTable" prefHeight="620.0" prefWidth="475.0" BorderPane.alignment="CENTER">
                      <columns>
-                        <TableColumn fx:id="ingredientList" prefWidth="75.0" text="Ingredient" />
-                        <TableColumn fx:id="amountList" prefWidth="75.0" text="Amount" />
+                        <TableColumn fx:id="ingredientList" prefWidth="433.0" text="Ingredient" />
+                        <TableColumn fx:id="amountList" prefWidth="184.0" text="Amount" />
                      </columns>
                   </TableView>
                </center>

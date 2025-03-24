@@ -1,0 +1,46 @@
+.combo-box {
+   -fx-background-color: #777777;
+   -fx-border-color: #FF7F11;
+   -fx-border-radius: 50;
+   -fx-background-radius: 50;
+   -fx-font-size: 28px;
+   -fx-text-fill: white;
+   -fx-border-width: 3;
+}
+
+/* The selected item in the combo box */
+.combo-box .text {
+   -fx-fill: white; /* Ensures text inside the box is white */
+}
+
+/* The dropdown button */
+.combo-box .arrow-button {
+   -fx-background-color: transparent;
+   -fx-border-radius: 50;
+   -fx-background-radius: 50;
+}
+
+/* The dropdown list */
+.combo-box .list-view {
+   -fx-background-color: #777777;
+}
+
+/* The dropdown list cells */
+.combo-box .list-cell {
+   -fx-background-color: transparent;
+   -fx-background-radius: 50;
+   -fx-text-fill: white;
+   -fx-font-size: 14px;
+}
+
+/* When a dropdown item is hovered */
+.combo-box .list-cell:hover {
+   -fx-background-color: #FF7F11; /* Highlight in orange */
+   -fx-text-fill: white;
+}
+
+/* When a dropdown item is selected */
+.combo-box .list-cell:selected {
+   -fx-background-color: #777777;
+   -fx-text-fill: white;
+}

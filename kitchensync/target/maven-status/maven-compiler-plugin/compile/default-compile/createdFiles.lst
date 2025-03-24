@@ -25,7 +25,6 @@ org\javafx\Controllers\RecipeReviewController.class
 org\javafx\Controllers\UserInboxController.class
 org\javafx\Controllers\SignUpPageController$2.class
 org\javafx\Controllers\IngredientCardController.class
-org\javafx\Controllers\MealPlannerController$5.class
 org\javafx\Controllers\MyListsController.class
 org\javafx\Recipe\Recipe.class
 org\javafx\Controllers\MyListsController$1.class

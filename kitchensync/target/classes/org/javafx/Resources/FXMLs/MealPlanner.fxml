@@ -25,7 +25,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="mealPlannerMainPane" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MealPlannerController">
+<AnchorPane fx:id="mealPlannerMainPane" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MealPlannerController">
    <children>
       
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="-24.0" layoutY="-11.0" stroke="#444444" strokeType="INSIDE" width="1944.0" />
@@ -100,40 +100,6 @@
             <DatePicker fx:id="dateInView" layoutX="928.0" layoutY="16.0" prefHeight="53.0" prefWidth="462.0" showWeekNumbers="true" />
          </children>
       </Pane>
-      
-      <VBox fx:id="menuPane" alignment="TOP_CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: #3C3C3C; -fx-background-radius: 50; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
-         <children>
-            <Button alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="270.0" style="-fx-background-color: transparent;" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
-            <!-- User Dashboard Button -->
-            <Button fx:id="userDashboardButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="66.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-width: 5; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="User Dashboard" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
-
-            <!-- Meal Planner Button -->
-            <Button fx:id="mealPlannerButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Meal Planner" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
-
-            <!-- My Recipes Button -->
-            <Button fx:id="myRecipesButton" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="My Recipes" textAlignment="CENTER" />
-
-            <!-- Inventory Button -->
-            <Button fx:id="inventoryButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Inventory" textAlignment="CENTER" />
-
-            <!-- Inbox Button -->
-            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Inbox" textAlignment="CENTER" />
-
-            <!-- Browse Recipes Button -->
-            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="47.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Find Recipes" textAlignment="CENTER" wrapText="true" />
-
-            <!-- Profile Button -->
-            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Profile" textAlignment="CENTER" />
-
-            <!-- Settings Button -->
-            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Settings" textAlignment="CENTER" />
-
-            <!-- My Lists Button -->
-            <Button fx:id="myListsButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="My Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
-         </children>
-      </VBox>
-
-      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #444444; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: #FF7F11; -fx-border-width: 2;" text="Menu" />
       
       <Pane fx:id="AddMealMenu" layoutX="20.0" layoutY="127.0" prefHeight="952.0" prefWidth="1881.0" visible="false">
          <children>
@@ -295,6 +261,40 @@
          </children>
       </Pane>
       <TextField fx:id="searchBar" layoutX="704.0" layoutY="37.0" prefHeight="48.0" prefWidth="595.0" promptText="Search Recipes" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 18px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5; -fx-prompt-text-fill: #555555; -fx-font-weight: bold;" />
+      
+      <VBox fx:id="menuPane" alignment="TOP_CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: #3C3C3C; -fx-background-radius: 50; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
+         <children>
+            <Button alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="270.0" style="-fx-background-color: transparent;" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+            <!-- User Dashboard Button -->
+            <Button fx:id="userDashboardButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="66.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-width: 5; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="User Dashboard" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+
+            <!-- Meal Planner Button -->
+            <Button fx:id="mealPlannerButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Meal Planner" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+
+            <!-- My Recipes Button -->
+            <Button fx:id="myRecipesButton" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="My Recipes" textAlignment="CENTER" />
+
+            <!-- Inventory Button -->
+            <Button fx:id="inventoryButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Inventory" textAlignment="CENTER" />
+
+            <!-- Inbox Button -->
+            <Button fx:id="inboxButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Inbox" textAlignment="CENTER" />
+
+            <!-- Browse Recipes Button -->
+            <Button fx:id="browseRecipesButton" mnemonicParsing="false" prefHeight="47.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Find Recipes" textAlignment="CENTER" wrapText="true" />
+
+            <!-- Profile Button -->
+            <Button fx:id="profileButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Profile" textAlignment="CENTER" />
+
+            <!-- Settings Button -->
+            <Button fx:id="settingsButton" mnemonicParsing="false" prefHeight="75.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="Settings" textAlignment="CENTER" />
+
+            <!-- My Lists Button -->
+            <Button fx:id="myListsButton" alignment="CENTER" contentDisplay="CENTER" lineSpacing="1.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="270.0" style="-fx-background-color: transparent; -fx-text-fill: #FFFFFF; -fx-font-size: 30px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;" text="My Lists" textAlignment="CENTER" textOverrun="CLIP" wrapText="true" />
+         </children>
+      </VBox>
+
+      <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #444444; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: #FF7F11; -fx-border-width: 2;" text="Menu" />
    
    </children>
 </AnchorPane>

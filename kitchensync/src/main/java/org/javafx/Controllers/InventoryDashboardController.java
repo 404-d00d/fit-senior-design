@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -22,6 +23,7 @@ import java.util.LinkedHashMap;
 import org.javafx.Item.Item;
 
 import org.javafx.Main.Main;
+import org.javafx.Recipe.Recipe;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,6 +44,8 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -64,6 +68,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -71,7 +76,6 @@ import javafx.scene.control.TextInputDialog;
 
 import java.util.Optional;
 import java.util.Set;
-
 import javafx.scene.control.CheckBox;
 
 public class InventoryDashboardController {
@@ -80,7 +84,7 @@ public class InventoryDashboardController {
    private Button addIngredientSpacesButton, addIngredientPlacesButton, spacesButton, placesButton, menuButton, inventoryButton, myRecipesButton, inboxButton,
                   browseRecipesButton, profileButton, settingsButton, myListsButton, cancelButton, manualButton, closeIngredient, addTagButton, imageSelect, 
                   removeButton, saveButton, productIDSearchButton, addSpace, addCategory, userDashboardButton, mealPlannerButton, fridgeButton, freezerButton, 
-                  pantryButton, gridViewButton, listViewButton, allFiltersButton, barcodeButton, receiptButton, clearFilters;
+                  pantryButton, gridViewButton, listViewButton, barcodeButton, receiptButton, clearFilters, tagsFilter;
 
    @FXML
    private VBox menuPane, categoryContainer, spacesButtons;
@@ -89,7 +93,7 @@ public class InventoryDashboardController {
    private TextField productID, productName, productQuantity, productTag, minItemCount;
 
    @FXML
-   private ComboBox<String> productUnit, productLoc, locationFilter, categoryFilter, tagsFilter, sortByFilter;
+   private ComboBox<String> productUnit, productLoc, locationFilter, categoryFilter, sortByFilter;
 
    @FXML
    private DatePicker productEXPDate;
@@ -119,6 +123,8 @@ public class InventoryDashboardController {
    private ObservableList<String> tags = FXCollections.observableArrayList();
 
    private ArrayList<Item> ingredientInventory = new ArrayList<Item>(); //ingredient interface 
+   private Set<String> selectedTags = new HashSet<>();
+   private Set<String> availableTags = new HashSet<>();
 
    private Map<String, Map<String, FlowPane>> spacesCategories = new HashMap<>();
    private Map<String, List<String>> defaultCategories; // Map to hold categories for each space
@@ -257,7 +263,12 @@ public class InventoryDashboardController {
       // Set event handlers for filters
       locationFilter.setOnAction(event -> applyFilters());
       categoryFilter.setOnAction(event -> applyFilters());
-      tagsFilter.setOnAction(event -> applyFilters());
+
+      tagsFilter.setOnAction(event -> {
+         selectedTags = showMultiSelectDialog("Select Tags", availableTags, selectedTags);
+         applyFilters();
+     });
+
       clearFilters.setOnAction(event -> clearAllFilters());
 
       saveButton.setOnAction(event -> {
@@ -426,7 +437,7 @@ public class InventoryDashboardController {
       // Switch to Profile Screen
       profileButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showUserProfileScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -437,7 +448,7 @@ public class InventoryDashboardController {
       // Switch to Browse Settings Screen
       settingsButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showUserSettingsScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -499,7 +510,75 @@ public class InventoryDashboardController {
     * Filters
    */
 
+   private Set<String> showMultiSelectDialog(String title, Set<String> availableOptions, Set<String> selectedOptions) {
+      Stage dialogStage = new Stage();
+      dialogStage.initModality(Modality.APPLICATION_MODAL);
+      dialogStage.setTitle(title);
+
+      VBox vbox = new VBox(10);
+      vbox.setPadding(new Insets(10));
+
+      // Search Bar
+      TextField searchField = new TextField();
+      searchField.setPromptText("Search...");
+
+      // ListView with checkboxes
+      ListView<CheckBox> listView = new ListView<>();
+      ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
+
+      // Populate checkboxes
+      for (String option : availableOptions) {
+         CheckBox checkBox = new CheckBox(option);
+         checkBox.setSelected(selectedOptions.contains(option));
+         checkBoxes.add(checkBox);
+      }
+
+      listView.setItems(checkBoxes);
+
+      // Search functionality
+      searchField.textProperty().addListener((obs, oldText, newText) -> {
+         listView.setItems(checkBoxes.filtered(cb -> cb.getText().toLowerCase().contains(newText.toLowerCase())));
+      });
+
+      // Buttons
+      Button applyButton = new Button("Apply");
+      Button cancelButton = new Button("Cancel");
+
+      applyButton.setOnAction(event -> {
+         selectedOptions.clear();
+         for (CheckBox checkBox : checkBoxes) {
+               if (checkBox.isSelected()) {
+                  selectedOptions.add(checkBox.getText());
+               }
+         }
+         dialogStage.close();
+      });
+
+      cancelButton.setOnAction(event -> dialogStage.close());
+
+      HBox buttonBox = new HBox(10, applyButton, cancelButton);
+      buttonBox.setAlignment(Pos.CENTER_RIGHT);
+
+      vbox.getChildren().addAll(searchField, listView, buttonBox);
+      Scene scene = new Scene(vbox, 300, 400);
+      dialogStage.setScene(scene);
+      dialogStage.showAndWait();
+
+      return selectedOptions;
+   }
+
    private void populateFilterOptions() {
+
+      Set<String> tagSet = new HashSet<>();
+
+      // Collect unique tags from existing items
+      for (Item ingredient : ingredientInventory) {
+         tagSet.addAll(ingredient.getTags());
+      }
+
+      // Set up available options
+      availableTags = tagSet;
+
       // Populate location filter
       locationFilter.getItems().clear();
       locationFilter.getItems().add("All Locations");
@@ -518,19 +597,14 @@ public class InventoryDashboardController {
       uniqueCategories.remove("All Items");
 
       // Add unique categories to the filter
-      categoryFilter.getItems().addAll(uniqueCategories);
-   
-      // Populate tags filter
-      tagsFilter.getItems().clear();
-      tagsFilter.getItems().add("All Tags");
-      tags.forEach(tagsFilter.getItems()::add);
+      categoryFilter.getItems().addAll(uniqueCategories);   
    }
    
    private void applyFilters() {
       String selectedLocation = locationFilter.getValue();
       String selectedCategory = categoryFilter.getValue();
-      String selectedTag = tagsFilter.getValue();
   
+      // Start with all items
       List<Item> filteredItems = new ArrayList<>(ingredientInventory);
   
       // Filter by location
@@ -542,47 +616,65 @@ public class InventoryDashboardController {
   
       // Filter by category
       if (selectedCategory != null && !"All Categories".equals(selectedCategory)) {
-         String normalizedCategory = selectedCategory.toLowerCase();
-
-         filteredItems = filteredItems.stream()
-            .filter(item -> {
-               // Handle "Expiring Soon" as a special case
-               if (normalizedCategory.equals("expiring soon")) {
-                     return isExpiringSoon(item); // Check expiration logic
-               }
-               // Otherwise, check tags
-               return item.getTags() != null && item.getTags().stream()
-                     .map(String::toLowerCase)
-                     .collect(Collectors.toSet())
-                     .contains(normalizedCategory);
-            })
-            .collect(Collectors.toList());
-   }
+          String normalizedCategory = selectedCategory.toLowerCase();
   
-      // Filter by tag
-      if (selectedTag != null && !"All Tags".equals(selectedTag)) {
-          String normalizedTag = selectedTag.toLowerCase();
           filteredItems = filteredItems.stream()
-              .filter(item -> item.getTags() != null && item.getTags().stream()
-                  .map(String::toLowerCase)
-                  .collect(Collectors.toSet())
-                  .contains(normalizedTag))
+              .filter(item -> {
+                  // "Expiring Soon" special case
+                  if ("expiring soon".equals(normalizedCategory)) {
+                      return isExpiringSoon(item);
+                  }
+                  // Otherwise, check whether the item’s tags contain the category
+                  return item.getTags() != null
+                      && item.getTags().stream()
+                          .map(String::toLowerCase)
+                          .collect(Collectors.toSet())
+                          .contains(normalizedCategory);
+              })
               .collect(Collectors.toList());
       }
   
-      // Update the UI with filtered results
+      // Filter by multi-selected tags (OR logic)
+      // If selectedTags is empty, we skip this filter
+      if (!selectedTags.isEmpty()) {
+          // Convert each item’s tags to lowercase
+          filteredItems = filteredItems.stream()
+              .filter(item -> {
+                  if (item.getTags() == null || item.getTags().isEmpty()) {
+                      return false;
+                  }
+                  // Lowercase set of item tags
+                  Set<String> itemTagSetLower = item.getTags().stream()
+                                                    .map(String::toLowerCase)
+                                                    .collect(Collectors.toSet());
+                  // Keep the item if it shares at least one tag with selectedTags
+                  for (String chosenTag : selectedTags) {
+                      if (itemTagSetLower.contains(chosenTag.toLowerCase())) {
+                          return true; // OR logic
+                      }
+                  }
+                  return false;
+              })
+              .collect(Collectors.toList());
+      }
+  
+      // Finally, update the UI
       if (placesGrid) {
           updateIngredientGrid(filteredItems);
       } else if (placesList) {
           updateIngredientList(filteredItems);
       }
-   }
+  }
+  
    
    private void clearAllFilters() {
-         locationFilter.setValue("All Locations");
-         categoryFilter.setValue("All Categories");
-         tagsFilter.setValue("All Tags");
-         applyFilters();
+      locationFilter.setValue("All Locations");
+      categoryFilter.setValue("All Categories");
+      
+      // we reset the selected tags set directly:
+      selectedTags.clear();
+
+      applyFilters();
    }
       
 

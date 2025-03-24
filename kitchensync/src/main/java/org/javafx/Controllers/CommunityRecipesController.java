@@ -886,13 +886,16 @@ public class CommunityRecipesController {
 
                applyHoverEffect(recipeCard, recipe);
 
+               // Recipe Card Style to match theme but seems a bit too much
+               /*
                recipeCard.setStyle(
-                                    "-fx-background-color: #444444; " +
-                                    "-fx-border-color: #FF7F11; " +
-                                    "-fx-border-radius: 10; " +
-                                    "-fx-padding: 10; " +
-                                    "-fx-background-radius: 10;"
-                                 );
+                  "-fx-background-color: #444444; " +
+                  "-fx-border-color: #FF7F11; " +
+                  "-fx-border-radius: 10; " +
+                  "-fx-padding: 10; " +
+                  "-fx-background-radius: 10;"
+               );
+               */
 
          } catch (Exception e) {
                e.printStackTrace();

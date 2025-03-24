@@ -20,7 +20,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="inventoryPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.InventoryDashboardController">
+<AnchorPane fx:id="inventoryPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.InventoryDashboardController">
    <children>
       <!-- Header Bar -->  
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="0.0" layoutY="0.0" stroke="BLACK" strokeType="INSIDE" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1920.0" />
@@ -101,16 +101,12 @@
             <Text layoutX="107.0" layoutY="141.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: White;" text="Toggle View" textAlignment="CENTER" />
 
             <!-- Grid and List View Buttons -->
-            <Button fx:id="gridViewButton" layoutX="2.0" layoutY="158.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 28; -fx-text-fill: white; -fx-border-width: 4; -fx-border-color: transparent;" text="Grid" />
-            <Button fx:id="listViewButton" layoutX="197.0" layoutY="158.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-border-color: #FF7F11; -fx-border-width: 4; -fx-font-size: 28; -fx-text-fill: white; -fx-border-radius: 50;" text="List" />
-
-            <!-- All Filters Button -->
-            <Button fx:id="allFiltersButton" layoutX="4.0" layoutY="266.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="346.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 28; -fx-text-fill: white;" text="All Filters" />
+            <Button fx:id="gridViewButton" layoutX="2.0" layoutY="158.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20; -fx-text-fill: white; -fx-border-width: 4; -fx-border-color: transparent;" text="Grid" />
+            <Button fx:id="listViewButton" layoutX="197.0" layoutY="158.0" mnemonicParsing="false" prefHeight="57.0" prefWidth="156.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-border-color: #FF7F11; -fx-border-width: 4; -fx-font-size: 20; -fx-text-fill: white; -fx-border-radius: 50;" text="List" />
 
             <!-- Filter ComboBoxes -->
-            <ComboBox fx:id="locationFilter" layoutX="4.0" layoutY="360.0" prefHeight="36.0" prefWidth="346.0" promptText="All Locations" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-font-size: 20; -fx-background-radius: 50;" />
-            <ComboBox fx:id="categoryFilter" layoutX="4.0" layoutY="427.0" prefHeight="36.0" prefWidth="346.0" promptText="All Categories" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-font-size: 20; -fx-background-radius: 50;" />
-            <ComboBox fx:id="tagsFilter" layoutX="4.0" layoutY="497.0" prefHeight="36.0" prefWidth="346.0" promptText="All Tags" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-font-size: 20; -fx-background-radius: 50;" />
+            <ComboBox fx:id="locationFilter" layoutX="77.0" layoutY="266.0" prefHeight="48.0" prefWidth="202.0" promptText="All Locations" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-font-size: 20; -fx-background-radius: 50;" />
+            <ComboBox fx:id="categoryFilter" layoutX="76.0" layoutY="327.0" prefHeight="48.0" prefWidth="202.0" promptText="All Categories" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-font-size: 20; -fx-background-radius: 50;" />
             <ComboBox fx:id="sortByFilter" layoutX="502.0" layoutY="17.0" prefHeight="48.0" prefWidth="229.0" promptText="Sort By" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-background-radius: 50; -fx-border-width: 5; -fx-font-size: 20;">
                <styleClass>
                   <String fx:value="combo-box" />
@@ -126,7 +122,8 @@
             </ScrollPane>
 
             <!-- Clear Filters Button -->
-            <Button fx:id="clearFilters" layoutX="63.0" layoutY="870.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="229.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 28; -fx-text-fill: white;" text="Clear Filters" />
+            <Button fx:id="clearFilters" layoutX="77.0" layoutY="483.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="202.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 18; -fx-text-fill: white;" text="Clear Filters" />
+            <Button fx:id="tagsFilter" layoutX="76.0" layoutY="387.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="202.0" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-border-width: 4;" text="Tag Filter" />
          </children>
       </Pane>
       

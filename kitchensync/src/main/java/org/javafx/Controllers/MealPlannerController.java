@@ -220,13 +220,13 @@ public class MealPlannerController {
     private void handleMouseEntered(MouseEvent event) {
         Button button = (Button) event.getSource();
         // Change style when mouse enters
-        button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+        button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
     }
 
     private void handleMouseExited(MouseEvent event) {
         Button button = (Button) event.getSource();
         // Reset style when mouse exits
-        button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+        button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
     }
 
     private void toggleMenuPane() {

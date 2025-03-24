@@ -143,7 +143,7 @@ public class MyListsController {
       // Switch to Inbox Screen
       inboxButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showInboxScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -165,7 +165,7 @@ public class MyListsController {
       // Switch to Profile Screen
       profileButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showUserProfileScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -176,7 +176,7 @@ public class MyListsController {
       // Switch to Browse Settings Screen
       settingsButton.setOnAction(event -> {
          try {
-            //Main.  // Switch to ...
+            Main.showUserSettingsScreen();
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -284,13 +284,13 @@ public class MyListsController {
    private void handleMouseEntered(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Change style when mouse enters
-      button.setStyle("-fx-background-color: orange; -fx-text-fill: white; -fx-wrap-text: true; -fx-font-size: 40px;");
+      button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
    }
 
    private void handleMouseExited(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Reset style when mouse exits
-      button.setStyle("-fx-background-color: transparent; -fx-text-fill: black; -fx-wrap-text: true; -fx-font-size: 40px;");
+      button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; -fx-background-radius: 50; ");
    }
 
    private boolean isInputValid(String name, String quantity, String unit) {

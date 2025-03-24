@@ -29,15 +29,11 @@ public class UserSettingsController {
    private void initialize() {
 
       menuButton.setOnAction(event -> {
-         try {
-            if(menuPane.isVisible()) {
-               menuPane.setVisible(false); // hide menu pane
-            }
-            else {
-               menuPane.setVisible(true); // show menu pane
-            }
-         } catch (Exception e) {
-            e.printStackTrace();
+         if(menuPane.isVisible()) {
+            menuPane.setVisible(false); // hide menu pane
+         }
+         else {
+            menuPane.setVisible(true); // show menu pane
          }
       });
 

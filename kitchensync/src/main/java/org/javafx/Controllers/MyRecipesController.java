@@ -157,6 +157,7 @@ public class MyRecipesController {
    private String currentCollection = "All Recipes";
 
    private Recipe currentRecipe;
+   private VBox currentRecipeCard;
 
    // Selected filters for recipes
    private Set<String> selectedIngredients = new HashSet<>();
@@ -233,8 +234,16 @@ public class MyRecipesController {
 
       closeRecipeDetailsButton.setOnAction(event -> {
          try {
+
+            currentRecipeCard.setOnMouseEntered(null);
+            currentRecipeCard.setOnMouseExited(null);
+            currentRecipeCard.setOnMouseMoved(null);            
+
+            applyHoverEffect(currentRecipeCard, currentRecipe);
+
             myRecipesPane.setVisible(true);
             recipeDetailsPane.setVisible(false);
+            
          } catch (Exception e) {
             e.printStackTrace();
          }
@@ -363,6 +372,7 @@ public class MyRecipesController {
       settingsButton.setOnAction(event -> navigateToScreen("Settings"));
       myListsButton.setOnAction(event -> navigateToScreen("MyLists"));
       userDashboardButton.setOnAction(event -> navigateToScreen("UserDashboard"));
+      mealPlannerButton.setOnAction(event -> navigateToScreen("MealPlanner"));
    }
 
    private void navigateToScreen(String screen) {
@@ -376,6 +386,7 @@ public class MyRecipesController {
                case "Settings": Main.showUserSettingsScreen(); break;
                case "MyLists": Main.showMyListsScreen(); break;
                case "UserDashboard": Main.showUserDashboardScreen(); break;
+               case "MealPlanner" : Main.showMealPlannerScreen(); break;
                default: System.out.println("Screen not implemented: " + screen);
             }
          } catch (Exception e) {
@@ -649,35 +660,40 @@ public class MyRecipesController {
       }
   
       try {
-          FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
-          VBox recipeCard = loader.load();
-          RecipeCardController controller = loader.getController();
-  
-          // Save the image
-          String imageName = recipeName.getText() + ".png";
-          if (selectedImageFile != null) {
-              copyImageToResources(selectedImageFile, imageName);
-          }
-  
-          File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + imageName);
-          Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
-  
-          controller.setRecipeData(updatedRecipe, image, this, "myrecipes");
-          recipeFlowPane.getChildren().add(recipeCard);
-          recipeWidgets.put(updatedRecipe.getID(), recipeCard);
-          recipeCard.setUserData(controller);
-  
-          applyHoverEffect(recipeCard, updatedRecipe);
-          clearForms();
-          updateTagView();
-          updateStepView();
-          loadRecipesCards();
-  
-          addRecipePaneP2.setVisible(false);
-          myRecipesPane.setVisible(true);
-  
-          // Save the updated list to JSON
-          saveRecipesToJson(recipeList);
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
+         VBox recipeCard = loader.load();
+         RecipeCardController controller = loader.getController();
+
+         // Save the image
+         String imageName = recipeName.getText() + ".png";
+         if (selectedImageFile != null) {
+            copyImageToResources(selectedImageFile, imageName);
+         }
+
+         File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + imageName);
+         Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
+
+         controller.setRecipeData(updatedRecipe, image, this, "myrecipes");
+         recipeFlowPane.getChildren().add(recipeCard);
+         recipeWidgets.put(updatedRecipe.getID(), recipeCard);
+         recipeCard.setUserData(controller);
+
+         // Remove the old hover effect
+         recipeCard.setOnMouseEntered(null);
+         recipeCard.setOnMouseExited(null);
+         recipeCard.setOnMouseMoved(null);
+         
+         applyHoverEffect(recipeCard, updatedRecipe);
+         clearForms();
+         updateTagView();
+         updateStepView();
+         loadRecipesCards();
+
+         addRecipePaneP2.setVisible(false);
+         myRecipesPane.setVisible(true);
+
+         // Save the updated list to JSON
+         saveRecipesToJson(recipeList);
   
       } catch (Exception e) {
           e.printStackTrace();
@@ -793,6 +809,10 @@ public class MyRecipesController {
    public void showRecipeDetails(int recipeId, String name, Image image, Recipe recipe) {
 
       currentRecipe = recipe;
+
+      VBox recipeCard = recipeWidgets.get(recipe.getID());
+      currentRecipeCard = recipeCard;
+
       displayStep = 0;
 
       myRecipesPane.setVisible(false);
@@ -1056,14 +1076,26 @@ public class MyRecipesController {
       tooltip.setMaxWidth(300);  // Set maximum width to prevent excessive horizontal stretching
       tooltip.setWrapText(true); // Ensure text wraps to the next line
   
+      // Create a tooltip string with added spacing (\n\n) between items
       String tooltipContent = String.format(
-          "Name: %s%nServings: %d%nPrep Time: %d min%nCook Time: %d min%nDescription: %s%nTags: %s",
-          recipe.getName(),
-          recipe.getServings(),
-          recipe.getPrepTime(),
-          recipe.getCookTime(),
-          recipe.getDescription(),
-          String.join(", ", recipe.getTags())
+         "Name: %s\n\n" +
+         "Servings: %d\n\n" +
+         "Prep Time: %d min\n\n" +
+         "Cook Time: %d min\n\n" +
+         "Description: %s\n\n" +
+         "Tags: %s\n\n" +
+         "Local Rating: %d\n\n" +
+         "Community Rating: %d\n\n" +
+         "Recipe Notes: %s",
+         recipe.getName(),
+         recipe.getServings(),
+         recipe.getPrepTime(),
+         recipe.getCookTime(),
+         recipe.getDescription(),
+         String.join(", ", recipe.getTags()),
+         recipe.getLocalRating(),
+         recipe.getCommunityRating(),
+         recipe.getRecipeNotes()
       );
   
       tooltip.setText(tooltipContent);

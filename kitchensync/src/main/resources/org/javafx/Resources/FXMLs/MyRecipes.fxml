@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
+<AnchorPane fx:id="myRecipeMainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyRecipesController">
    <children>
 
       <!-- Header Bar -->
@@ -109,7 +109,7 @@
             <Text layoutX="36.0" layoutY="521.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Cook Time* (In Minutes)" />
             <TextField fx:id="recipeETA" layoutX="34.0" layoutY="527.0" prefHeight="38.0" prefWidth="475.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-radius: 5;" />
             <Text layoutX="556.0" layoutY="537.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Description*" />
-            <TextArea fx:id="recipeDescription" layoutX="539.0" layoutY="572.0" prefHeight="352.0" prefWidth="434.0" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-radius: 5;" />
+            <TextArea fx:id="recipeDescription" layoutX="539.0" layoutY="572.0" prefHeight="352.0" prefWidth="434.0" style="-fx-background-color: #555555; -fx-text-fill: black; -fx-border-radius: 5;" />
             <Text layoutX="36.0" layoutY="605.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Special Equipment" />
             <BorderPane layoutX="34.0" layoutY="622.0" prefHeight="300.0" prefWidth="475.0">
                <center>
@@ -170,7 +170,7 @@
                   </VBox>
                </top>
             </BorderPane>
-            <TextArea fx:id="prepStepField" layoutX="671.0" layoutY="156.0" prefHeight="400.0" prefWidth="511.0" promptText="Enter Steps Here, Hit 'Add Step' To Create Another Step" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-radius: 5;" wrapText="true" />
+            <TextArea fx:id="prepStepField" layoutX="671.0" layoutY="156.0" prefHeight="400.0" prefWidth="511.0" promptText="Enter Steps Here, Hit 'Add Step' To Create Another Step" style="-fx-background-color: #555555; -fx-text-fill: black; -fx-border-radius: 5;" wrapText="true" />
             <Button fx:id="addStepButton" layoutX="1067.0" layoutY="101.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="115.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Add Step" />
             <Text fx:id="stepIndex" layoutX="764.0" layoutY="130.0" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-fill: white;" text="Step 1 of 1" />
             <Button fx:id="nextStepButton" layoutX="965.0" layoutY="101.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="83.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 50; -fx-font-weight: bold;" text="Next" />

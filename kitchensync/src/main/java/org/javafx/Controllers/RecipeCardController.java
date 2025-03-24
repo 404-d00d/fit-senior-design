@@ -36,7 +36,8 @@ public class RecipeCardController {
    public void setRecipeData(Recipe newRecipe, Image image, Object controller, String viewType) {
       this.recipe = newRecipe;
       this.recipeId = newRecipe.getID();
-      recipeName.setText(newRecipe.getName());
+      String fixedName = capitalizeWords(newRecipe.getName());
+      recipeName.setText(fixedName);
       recipeImage.setImage(image);
       this.viewType = viewType;
 
@@ -125,6 +126,27 @@ public class RecipeCardController {
    private void handleShareRecipe() {
       // Implement share functionality.
       System.out.println("Community view: Sharing recipe " + recipe.getName());
+   }
+
+   private String capitalizeWords(String input) {
+      if (input == null || input.isEmpty()) {
+          return input;
+      }
+      
+      String[] words = input.split("\\s+");
+      StringBuilder sb = new StringBuilder();
+      
+      for (String word : words) {
+          if (word.length() > 0) {
+              // Capitalize the first letter, lowercase the rest
+              sb.append(Character.toUpperCase(word.charAt(0)))
+                .append(word.substring(1).toLowerCase())
+                .append(" ");
+          }
+      }
+      
+      // Trim any trailing space
+      return sb.toString().trim();
    }
 
 }

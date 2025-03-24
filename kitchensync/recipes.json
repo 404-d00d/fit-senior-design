@@ -39,6 +39,7 @@
     ],
     "localRating": 0,
     "communityRating": 0,
+    "recipeNotes": "things",
     "randIngredientID": 0
   },
   {
@@ -89,6 +90,7 @@
     ],
     "localRating": 0,
     "communityRating": 0,
+    "recipeNotes": "things",
     "randIngredientID": 0
   },
   {
@@ -269,6 +271,34 @@
       "In a small bowl, mix the Parmesan cheese, salt, and pepper. Sprinkle 1/2 the Parmesan cheese mixture over the pork chops. Layer chops with the potatoes. Sprinkle with remaining Parmesan cheese mixture. Top with onion slices.",
       "In a small bowl, dissolve the beef bouillon cubes in hot water. Stir in the lemon juice. Pour over the layered pork chops.",
       "Cover skillet, and reduce heat. Simmer 40 minutes, until vegetables are tender and pork chops have reached an internal temperature of 145 degrees F (63 degrees C)."
+    ],
+    "localRating": 0,
+    "communityRating": 0,
+    "randIngredientID": 0
+  },
+  {
+    "id": 6,
+    "name": "test",
+    "category": "dinner",
+    "collection": "All Recipes",
+    "servings": 1,
+    "description": "test description",
+    "prepTime": 2,
+    "passiveTime": 3,
+    "cookTime": 4,
+    "complexity": 1,
+    "tags": [
+      "test tag"
+    ],
+    "specialEquipment": [
+      "test item"
+    ],
+    "ingredients": [
+      "test ingredient: 5 dash"
+    ],
+    "steps": [
+      "test step",
+      ""
     ],
     "localRating": 0,
     "communityRating": 0,

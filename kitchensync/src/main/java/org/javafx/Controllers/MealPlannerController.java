@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 
+import org.javafx.Item.Item;
 // External Libraries
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
@@ -69,6 +70,12 @@ public class MealPlannerController {
     @FXML private TableColumn<Ingredient, String> ingredientList, amountList;
     private ObservableList<Ingredient> ingredients = FXCollections.observableArrayList();
 
+    @FXML private ComboBox<String> prepHourPicker, passiveHourPicker, cookHourPicker;
+
+    @FXML private ScrollPane dayViewScroll;
+    @FXML private ScrollPane weekViewScroll;
+    @FXML private ScrollPane monthViewScroll;
+
     // ==============================
     // DATA STORAGE & CONSTANTS
     // ==============================
@@ -80,9 +87,14 @@ public class MealPlannerController {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("d'th'");
     private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
     private Map<Integer, VBox> recipeWidgets = new HashMap<>();
+    private ArrayList<Item> ingredientInventory = new ArrayList<Item>(); //ingredient interface 
+
     private static final String RECIPES_FILE_PATH = "recipes.json";
 
     private Recipe selectedRecipe;
+    private int nextIngredientID = 1;
+
+    private static int nextMealBlockID = 1;
 
     // ====================================================================
     // INITIALIZATION
@@ -92,10 +104,16 @@ public class MealPlannerController {
     @FXML
     private void initialize() {
 
+        // Load Users Item Inventory from JSON
+        loadIngredientInventory();
+
         // Load meal plans from JSON
         loadMealPlansFromJson();
+
         // Load Users Recipes from JSON
         loadRecipes();
+
+
 
         menuButton.setOnAction(event -> toggleMenuPane());
         
@@ -117,20 +135,35 @@ public class MealPlannerController {
         datePicker.setStyle("-fx-font-size: 18px;");
         dateInView.setValue(LocalDate.now());
         dateInView.setStyle("-fx-font-size: 18px;");
+
+        for (int i = 0; i < 24; i++) {
+            String label = String.format("%02d %s", (i % 12 == 0 ? 12 : i % 12), (i < 12 ? "AM" : "PM"));
+        
+            prepHourPicker.getItems().add(label);
+            passiveHourPicker.getItems().add(label);
+            cookHourPicker.getItems().add(label);
+        }
+        
+        // Default time suggestions
+        prepHourPicker.setValue("09 AM");
+        passiveHourPicker.setValue("12 PM");
+        cookHourPicker.setValue("06 PM");
         
         // Load the default views
         loadDailyMeals(LocalDate.now());
         loadCalendarView();
-        calculateMealNutrition();
+        //calculateMealNutrition();
 
         // UI event handlers
         calendarViewDropdown.setOnAction(event -> loadCalendarView());
         dateInView.setOnAction(event -> updateDateInView());
         nutritionalMeals.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snacks", "All Meals", "Total Per Serving");
         nutritionalMeals.setOnAction(event -> calculateMealNutrition());
-        addMealButton.setOnAction(event -> addMeal());
+        addMealButton.setOnAction(event -> openAddMealDialog());
         closeButton.setOnAction(event -> closeMealDetails());
         closeRecipeButton.setOnAction(event -> closeRecipeCookingPane());
+
+        addMealToPlan.setOnAction(event -> addMeal());
     }
 
     // =============================================
@@ -222,23 +255,23 @@ public class MealPlannerController {
     private void loadCalendarView() {
         String selectedView = calendarViewDropdown.getValue();
     
-        // Hide all views initially
-        dayView.setVisible(false);
-        weekView.setVisible(false);
-        monthView.setVisible(false);
+        // Hide all scroll panes initially
+        dayViewScroll.setVisible(false);
+        weekViewScroll.setVisible(false);
+        monthViewScroll.setVisible(false);
     
         // Show the appropriate view based on the selection
         switch (selectedView) {
             case "Day View":
-                dayView.setVisible(true);
+                dayViewScroll.setVisible(true);
                 loadDayView();
                 break;
             case "Week View":
-                weekView.setVisible(true);
+                weekViewScroll.setVisible(true);
                 loadWeekView();
                 break;
             case "Month View":
-                monthView.setVisible(true);
+                monthViewScroll.setVisible(true);
                 loadMonthView();
                 break;
         }
@@ -268,11 +301,14 @@ public class MealPlannerController {
             dayView.getRowConstraints().add(row);
         }
     
-        // Add time labels to the left column
+        // Add time labels with AM/PM
         for (int hour = 0; hour < 24; hour++) {
-            Label timeLabel = new Label(String.format("%02d:00", hour)); // Format as "HH:00"
-            timeLabel.setStyle("-fx-font-size: 18px; -fx-padding: 5px; -fx-font-weight: bold; -fx-text-fill: white;"); 
-            GridPane.setConstraints(timeLabel, 0, hour); // Column 0, corresponding row
+            String label = String.format("%d %s", 
+                (hour % 12 == 0 ? 12 : hour % 12), 
+                (hour < 12 ? "AM" : "PM"));
+            Label timeLabel = new Label(label);
+            timeLabel.setStyle("-fx-font-size: 18px; -fx-padding: 5px; -fx-font-weight: bold; -fx-text-fill: white;");
+            GridPane.setConstraints(timeLabel, 0, hour);
             dayView.getChildren().add(timeLabel);
         }
     
@@ -282,7 +318,7 @@ public class MealPlannerController {
         System.out.println(mealsForDay);
     
         for (Map<String, Object> mealData : mealsForDay) {
-            createTimeBlocksForMeal(mealData, dayView, 1); // Column 1 for meals
+            createTimeBlocksForMeal(mealData, dayView, 1, datePicker.getValue()); // Column 1 for meals
         }
     
         dayView.setGridLinesVisible(false); // Refresh grid lines
@@ -319,12 +355,14 @@ public class MealPlannerController {
     
         LocalDate startDate = datePicker.getValue();
     
-        // Add hour labels in the left-most column
+        // Time labels (1:00 AM – 12:00 PM)
         for (int hour = 0; hour < 24; hour++) {
-            String hourText = String.format("%02d:00", hour); // Display in HH:00 format
-            Label hourLabel = new Label(hourText);
+            String label = String.format("%d %s", 
+                (hour % 12 == 0 ? 12 : hour % 12), 
+                (hour < 12 ? "AM" : "PM"));
+            Label hourLabel = new Label(label);
             hourLabel.setStyle("-fx-font-size: 18px; -fx-padding: 5px; -fx-font-weight: bold; -fx-text-fill: white;");
-            GridPane.setConstraints(hourLabel, 0, hour + 1); // +1 to account for the title row
+            GridPane.setConstraints(hourLabel, 0, hour + 1); // +1 skips header
             weekView.getChildren().add(hourLabel);
         }
     
@@ -343,7 +381,7 @@ public class MealPlannerController {
     
             // Render time blocks for meals
             for (Map<String, Object> mealData : mealsForDay) {
-                createTimeBlocksForMeal(mealData, weekView, i + 1); // Add blocks to the correct day column
+                createTimeBlocksForMeal(mealData, weekView, i + 1, currentDate); // Add blocks to the correct day column
             }
         }
     
@@ -436,8 +474,6 @@ public class MealPlannerController {
         stylePastDates();
     }
 
-    
-
     private void loadDailyMeals(LocalDate date) {
         List<Map<String, Object>> mealsForDay = mealPlans.getOrDefault(date, new ArrayList<>());
     
@@ -456,15 +492,18 @@ public class MealPlannerController {
     
                     // Only process if the block date matches the selected date
                     if (LocalDate.parse(blockDate).equals(date)) {
-                        String mealName = (String) mealData.get("name");
-                        if (hour >= 7 && hour < 10) {
-                            breakfast = mealName;
-                        } else if (hour >= 12 && hour < 14) {
-                            lunch = mealName;
-                        } else if (hour >= 18 && hour < 20) {
-                            dinner = mealName;
-                        } else {
-                            snacks = mealName;
+                        Map<String, Object> block = (Map<String, Object>) mealData.get(timePartKey);
+                        if (block != null) {
+                            String mealName = (String) block.get("name");
+                            if (hour >= 7 && hour < 10) {
+                                breakfast = mealName;
+                            } else if (hour >= 12 && hour < 14) {
+                                lunch = mealName;
+                            } else if (hour >= 18 && hour < 20) {
+                                dinner = mealName;
+                            } else {
+                                snacks = mealName;
+                            }
                         }
                     }
                 }
@@ -485,57 +524,92 @@ public class MealPlannerController {
     private void openAddMealDialog() {
         calendarPane.setVisible(false);
         AddMealMenu.setVisible(true);
-    
-        // Once a meal is selected, create meal time blocks:
-        //LocalDate selectedDate = datePicker.getValue();
-    
-        //Recipe newMeal = new Recipe(0, "Sample Meal", null, null, null, 30, 60, 30, 0, 0, null, null, null, null); // Replace with selected meal details
-        //addMealToPlan(newMeal, selectedDate, 0, selectedDate, 1, selectedDate, 2);
-        
-        //loadDailyMeals(selectedDate);
-        //loadCalendarView();
-        //calculateMealNutrition();
     }
 
     private void addMealToPlan(Recipe meal, LocalDate prepDate, int prepHour, LocalDate passiveDate, int passiveHour, LocalDate cookDate, int cookHour) {
+        String mealTypeValue = mealSlot.getValue(); // Get selected value
+        String mealGroupId = UUID.randomUUID().toString();
+    
+        Map<String, Object> fullMealMap = new HashMap<>();
+    
         // Add prepTime block
         if (meal.getPrepTime() > 0) {
-            addTimeBlock("prepTime", meal, prepDate, prepHour, meal.getPrepTime());
+            fullMealMap.put("prepTime", createTimeBlock("prepTime", meal, prepDate, prepHour, meal.getPrepTime(), mealTypeValue, mealGroupId));
         }
+    
         // Add passiveTime block
         if (meal.getPassiveTime() > 0) {
-            addTimeBlock("passiveTime", meal, passiveDate, passiveHour, meal.getPassiveTime());
+            fullMealMap.put("passiveTime", createTimeBlock("passiveTime", meal, passiveDate, passiveHour, meal.getPassiveTime(), mealTypeValue, mealGroupId));
         }
+    
         // Add cookTime block
         if (meal.getCookTime() > 0) {
-            addTimeBlock("cookTime", meal, cookDate, cookHour, meal.getCookTime());
+            fullMealMap.put("cookTime", createTimeBlock("cookTime", meal, cookDate, cookHour, meal.getCookTime(), mealTypeValue, mealGroupId));
         }
+    
+        // Save the unified meal under the date of the cook block (or prep if no cook)
+        LocalDate mainDate = cookDate != null ? cookDate : prepDate;
+        List<Map<String, Object>> mealsForDay = mealPlans.computeIfAbsent(mainDate, k -> new ArrayList<>());
+        mealsForDay.add(fullMealMap);
+    
         saveMealPlansToJson();
     }
 
     private void addMeal() {
-        openAddMealDialog();
-        calculateMealNutrition();
+        
+        if (selectedRecipe == null) {
+            showAlert("No Recipe Selected", "Please select a recipe to add.");
+            return;
+        }
+    
+        LocalDate selectedDate = mealPlanDate.getValue();
+        if (selectedDate == null) {
+            showAlert("No Date Selected", "Please select a date to plan this meal.");
+            return;
+        }
+    
+        int prepHour = parseHourLabel(prepHourPicker.getValue());
+        int passiveHour = parseHourLabel(passiveHourPicker.getValue());
+        int cookHour = parseHourLabel(cookHourPicker.getValue());
+
+        addMealToPlan(selectedRecipe, selectedDate, prepHour, selectedDate, passiveHour, selectedDate, cookHour);
+    
+        AddMealMenu.setVisible(false);
+        calendarPane.setVisible(true);
+        loadCalendarView();
+        loadDailyMeals(selectedDate);
+        //calculateMealNutrition();
+
+        refreshNeededIngredients();
     }
 
-    private void deleteMealFromPlan(String mealName) {
-        for (LocalDate date : new ArrayList<>(mealPlans.keySet())) { // Iterate over a copy of the keys
+    private void deleteMealById(int targetId) {
+        for (LocalDate date : new ArrayList<>(mealPlans.keySet())) {
             List<Map<String, Object>> mealsForDay = mealPlans.get(date);
             if (mealsForDay != null) {
                 mealsForDay.removeIf(meal -> {
-                    // Remove the meal if the name matches
-                    return mealName.equals(meal.get("name"));
+                    for (String blockType : List.of("prepTime", "passiveTime", "cookTime")) {
+                        if (meal.containsKey(blockType)) {
+                            Map<String, Object> block = (Map<String, Object>) meal.get(blockType);
+                            if (block != null && ((Number) block.get("id")).intValue() == targetId) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
                 });
-                // Remove the date entry if no meals are left
                 if (mealsForDay.isEmpty()) {
                     mealPlans.remove(date);
                 }
             }
         }
-        saveMealPlansToJson(); // Persist changes to the JSON file
-        loadCalendarView(); // Refresh UI
-        calculateMealNutrition();
+    
+        saveMealPlansToJson();
+        loadCalendarView();
+        refreshNeededIngredients();
     }
+    
+    
 
     private void markMealAsMade(LocalDate date, String blockId) {
         try {
@@ -623,21 +697,21 @@ public class MealPlannerController {
         return true;
     }
 
-    private void addTimeBlock(String blockType, Recipe meal, LocalDate date, int hour, int duration) {
+    private Map<String, Object> createTimeBlock(String blockType, Recipe meal, LocalDate date, int hour, int duration, String mealType, String mealGroupId) {
         Map<String, Object> timeBlock = new HashMap<>();
-        timeBlock.put("id", meal.getID());
+        timeBlock.put("id", nextMealBlockID++);
         timeBlock.put("recipeID", meal.getID());
         timeBlock.put("name", meal.getName());
         timeBlock.put("isMealMade", false);
         timeBlock.put("date", date.toString());
         timeBlock.put("duration", duration);
         timeBlock.put("hour", hour);
-    
-        List<Map<String, Object>> mealsForDay = mealPlans.computeIfAbsent(date, k -> new ArrayList<>());
-        mealsForDay.add(Map.of(blockType, timeBlock));
+        timeBlock.put("mealType", mealType);
+        timeBlock.put("mealGroupId", mealGroupId);
+        return timeBlock;
     }
 
-    private void createTimeBlocksForMeal(Map<String, Object> mealData, GridPane targetView, int dayColumn) {
+    private void createTimeBlocksForMeal(Map<String, Object> mealData, GridPane targetView, int dayColumn, LocalDate currentDate) {
 
         for (String timePartKey : List.of("prepTime", "passiveTime", "cookTime")) {
             Map<String, Object> timePart = (Map<String, Object>) mealData.get(timePartKey);
@@ -650,7 +724,7 @@ public class MealPlannerController {
                 if (duration > 0) {
                     // If the block's date is not the same as the current day's date, skip it
                     LocalDate blockLocalDate = LocalDate.parse(blockDate);
-                    if (!blockLocalDate.equals(datePicker.getValue())) {
+                    if (!blockLocalDate.equals(currentDate)) {
                         continue;
                     }
     
@@ -687,7 +761,9 @@ public class MealPlannerController {
             int hour = ((Number) timePart.get("hour")).intValue();
     
             // Create a unique ID for the block
-            String blockId = String.join("|", mealName, timePartKey, blockDate, String.valueOf(hour));
+            String mealGroupId = (String) timePart.get("mealGroupId");
+            String blockId = String.join("|", mealName, timePartKey, blockDate, String.valueOf(hour), mealGroupId);
+            
     
             Label block = new Label(mealName + " (" + timePartKey + ": " + duration + " mins)");
 
@@ -890,7 +966,6 @@ public class MealPlannerController {
             List<Recipe> recipes = gson.fromJson(reader, type);
 
             for (Recipe recipe : recipes) {
-                System.out.println("Checking recipe: " + recipe.getID());
                 if (recipe.getID() == (id)) {
                     return recipe;
                 }
@@ -910,7 +985,6 @@ public class MealPlannerController {
             List<Recipe> recipes = gson.fromJson(reader, type);
     
             for (Recipe recipe : recipes) {
-                System.out.println("Checking recipe: " + recipe.getName());
                 if (recipe.getName().equals(mealName)) {
                     return recipe;
                 }
@@ -965,7 +1039,7 @@ public class MealPlannerController {
                     Ingredient parsedIngredient = parseIngredient(ingredient);
                     Map<String, Object> ingredientData = new HashMap<>();
                     ingredientData.put("name", parsedIngredient.getName());
-                    ingredientData.put("amount", Double.parseDouble(parsedIngredient.getAmount()));
+                    ingredientData.put("amount", parseAmount(parsedIngredient.getAmount()));
                     ingredients.add(ingredientData);
                 }
             }
@@ -980,7 +1054,7 @@ public class MealPlannerController {
     
             for (Map<String, Object> ingredient : nutritionData) {
                 if (!ingredient.containsKey("error")) {
-                    totalCalories += (double) ingredient.get("calories");
+                    totalCalories += roundToTwo((double) ingredient.get("calories"));
                     totalProtein += (double) ingredient.get("protein");
                     totalCarbs += (double) ingredient.get("carbs");
                     totalFats += (double) ingredient.get("fats");
@@ -988,9 +1062,9 @@ public class MealPlannerController {
             }
             
             // Update PieChart UI with labels containing values
-            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Protein: " + totalProtein + "g", totalProtein));
-            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Carbs: " + totalCarbs + "g", totalCarbs));
-            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Fats: " + totalFats + "g", totalFats));
+            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Protein: " + roundToTwo(totalProtein) + "g", totalProtein));
+            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Carbs: " + roundToTwo(totalCarbs) + "g", totalCarbs));
+            dailyNutritionalBreakdown.getData().add(new PieChart.Data("Fats: " + roundToTwo(totalFats) + "g", totalFats));
 
             // Add total calories as a tooltip over the pie chart
             Tooltip calorieTooltip = new Tooltip("Total Calories: " + totalCalories + " kcal");
@@ -1006,85 +1080,100 @@ public class MealPlannerController {
     }
     
     private void deductFromInventory(Ingredient ingredient) {
-        List<Map<String, Object>> inventory = getInventory();
-        for (Map<String, Object> item : inventory) {
-            if (item.get("name").equals(ingredient.getName()) &&
-                item.get("unit").equals(ingredient.getUnit())) {
-                int availableQuantity = Integer.parseInt((String) item.get("quantity"));
-                int requiredQuantity = Integer.parseInt(ingredient.getAmount());
-                if (availableQuantity >= requiredQuantity) {
-                    item.put("quantity", String.valueOf(availableQuantity - requiredQuantity));
-                } else {
-                    // Handle case where inventory is insufficient
-                    System.out.println("Not enough inventory for " + ingredient.getName());
-                }
-                break;
-            }
-        }
-        saveInventory(inventory);
+
+
     }
 
     private List<Map<String, Object>> generateNeededIngredientsList() {
-        List<Map<String, Object>> neededIngredients = new ArrayList<>();
+        Map<String, Map<String, Object>> aggregatedMap = new HashMap<>();
+        LocalDate today = LocalDate.now();
+        LocalDate oneWeekFromNow = today.plusDays(7);
     
         for (Map.Entry<LocalDate, List<Map<String, Object>>> entry : mealPlans.entrySet()) {
+            LocalDate mealDate = entry.getKey();
+    
+            if (mealDate.isBefore(today) || mealDate.isAfter(oneWeekFromNow)) {
+                continue;
+            }
+    
             for (Map<String, Object> meal : entry.getValue()) {
-                // Skip if the meal is already made
-                if (Boolean.TRUE.equals(meal.get("isMealMade"))) {
+                if (meal == null || meal.isEmpty()) continue;
+    
+                Map.Entry<String, Object> blockEntry = meal.entrySet().iterator().next();
+                Map<String, Object> block = (Map<String, Object>) blockEntry.getValue();
+    
+                if (block == null || Boolean.TRUE.equals(block.get("isMealMade"))) continue;
+    
+                int recipeID = block.containsKey("recipeID") ? ((Number) block.get("recipeID")).intValue() : -1;
+                if (recipeID == -1) {
+                    System.out.println("Skipping: Missing recipe ID");
                     continue;
                 }
     
-                int recipeID = meal.containsKey("recipeID") ? (int) meal.get("recipeID") : -1;
-                if (recipeID == -1) {
-                    continue; // Skip invalid meal entries
+                Recipe recipe = getRecipeById(recipeID);
+                if (recipe == null) {
+                    System.out.println("Recipe not found for ID: " + recipeID);
+                    continue;
                 }
     
-                Recipe recipe = getRecipeById(recipeID);
-                if (recipe != null) {
-                    for (String ingredient : recipe.getIngredients()) {
-                        Ingredient parsedIngredient = parseIngredient(ingredient);
+                System.out.println("Loaded Recipe: " + recipe.getName());
     
-                        // Check inventory for the ingredient
-                        boolean foundInInventory = false;
-                        for (Map<String, Object> inventoryItem : getInventory()) {
-                            String inventoryName = (String) inventoryItem.getOrDefault("name", "");
-                            String inventoryUnit = (String) inventoryItem.getOrDefault("unit", "");
-                            int availableQuantity = inventoryItem.get("quantity") instanceof Number
-                                    ? ((Number) inventoryItem.get("quantity")).intValue()
-                                    : 0;
+                for (String ingredient : recipe.getIngredients()) {
+                    Ingredient parsedIngredient = parseIngredient(ingredient);
+                    boolean foundInInventory = false;
     
-                            if (inventoryName.equals(parsedIngredient.getName()) &&
-                                inventoryUnit.equals(parsedIngredient.getUnit())) {
+                    for (Item inventoryItem : ingredientInventory) {
+                        String inventoryName = inventoryItem.getName();
+                        String inventoryUnit = inventoryItem.getUnit();
+                        double availableQuantity = inventoryItem.getQuantity(); // consider making quantity in Item a double
     
-                                int requiredQuantity = parsedIngredient.getAmount().contains(".")
-                                        ? (int) Math.ceil(Double.parseDouble(parsedIngredient.getAmount()))
-                                        : Integer.parseInt(parsedIngredient.getAmount());
+                        if (inventoryName.equals(parsedIngredient.getName()) &&
+                            inventoryUnit.equals(parsedIngredient.getUnit())) {
     
-                                if (availableQuantity >= requiredQuantity) {
-                                    foundInInventory = true;
-                                    break;
-                                }
+                            double requiredQuantity = parseAmount(parsedIngredient.getAmount());
+    
+                            if (availableQuantity >= requiredQuantity) {
+                                foundInInventory = true;
+                                break;
                             }
                         }
+                    }
     
-                        if (!foundInInventory) {
-                            // Add ingredient to the needed list
+                    if (!foundInInventory) {
+                        String key = parsedIngredient.getName().toLowerCase() + "|" + parsedIngredient.getUnit().toLowerCase();
+                        double requiredQuantity = parseAmount(parsedIngredient.getAmount());
+    
+                        if (aggregatedMap.containsKey(key)) {
+                            Map<String, Object> existing = aggregatedMap.get(key);
+                            double updatedQuantity = (double) existing.get("quantity") + requiredQuantity;
+                            existing.put("quantity", updatedQuantity);
+                            existing.put("meal", existing.get("meal") + ", " + block.get("name"));
+                        } else {
                             Map<String, Object> neededItem = new HashMap<>();
                             neededItem.put("name", parsedIngredient.getName());
-                            neededItem.put("quantity", parsedIngredient.getAmount());
+                            neededItem.put("quantity", requiredQuantity);
                             neededItem.put("unit", parsedIngredient.getUnit());
-                            neededItem.put("meal", meal.get("name"));
-                            neededIngredients.add(neededItem);
+                            neededItem.put("meal", block.get("name"));
+                            aggregatedMap.put(key, neededItem);
                         }
                     }
                 }
             }
         }
-        return neededIngredients;
+    
+        return new ArrayList<>(aggregatedMap.values());
     }
 
     public void refreshNeededIngredients() {
         List<Map<String, Object>> neededIngredients = generateNeededIngredientsList();
+
+        System.out.println("=== Needed Ingredients List ===");
+        for (Map<String, Object> ingredient : neededIngredients) {
+            System.out.println("- " + ingredient.get("quantity") + " " +
+                            ingredient.get("unit") + " of " +
+                            ingredient.get("name"));
+        }
+
         if (myListsController != null) {
             myListsController.updateNeededIngredientsList(neededIngredients);
         } else {
@@ -1092,16 +1181,35 @@ public class MealPlannerController {
         }
     }
 
-    private List<Map<String, Object>> getInventory() {
-        // Load inventory from the JSON file or database
-        try (FileReader reader = new FileReader("itemInventory.json")) {
+    private void loadIngredientInventory() {
+      File file = new File("itemInventory.json");
+  
+      if (file.exists() && file.length() > 0) { // Check if the file exists and is not empty
+         try (Reader reader = new FileReader(file)) {
             Gson gson = new Gson();
-            Type type = new TypeToken<List<Map<String, Object>>>() {}.getType();
-            return gson.fromJson(reader, type);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
+            Item[] items = gson.fromJson(reader, Item[].class); // Deserialize JSON to an array of Items
+            ingredientInventory.clear(); // Clear the existing inventory
+            ingredientInventory.addAll(List.of(items)); // Add all items to the inventory list
+
+            // Determine the highest ID
+            for (Item item : ingredientInventory) {
+               if (item.getTags() == null) {
+                  item.setTags(new HashSet<>()); // Initialize tags if null
+               }
+            }
+
+            System.out.println("Inventory successfully loaded from JSON file.");
+
+            int maxID = ingredientInventory.stream().mapToInt(Item::getID).max().orElse(0);
+            nextIngredientID = maxID + 1;
+
+          } catch (IOException e) {
+              e.printStackTrace();
+              showAlert("Load Error", "Failed to load inventory from JSON file.");
+          }
+      } else {
+          System.out.println("No inventory file found. Starting with an empty inventory.");
+      }
     }
 
     // ======================================================================
@@ -1164,25 +1272,61 @@ public class MealPlannerController {
     private void addRightClickOptions(Label block, LocalDate date) {
         block.setOnContextMenuRequested(event -> {
             ContextMenu contextMenu = new ContextMenu();
-            MenuItem deleteItem = new MenuItem("Delete");
+            MenuItem deleteTimeBlock = new MenuItem("Delete Time Block");
+            MenuItem deleteEntireMeal = new MenuItem("Delete Entire Meal");
             MenuItem editItem = new MenuItem("Edit");
             MenuItem markAsMade = new MenuItem("Mark as Made");
 
-            deleteItem.setOnAction(e -> {
+            deleteTimeBlock.setOnAction(e -> {
                 try {
-                    // Extract meal name from block ID
                     Map<String, String> blockData = parseBlockId(block.getId());
-                    String mealName = blockData.get("mealName");
-    
-                    // Delete all time blocks for the meal
-                    deleteMealFromPlan(mealName);
-    
-                    // Update the UI
+                    int mealId = findBlockIdFromMealPlans(blockData);
+            
+                    if (mealId != -1) {
+                        deleteMealById(mealId);
+                    } else {
+                        showAlert("Error", "Unable to locate the meal block.");
+                    }
+            
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    showAlert("Error", "Failed to delete the meal.");
+                }
+            });
+
+            deleteEntireMeal.setOnAction(e -> {
+                try {
+                    Map<String, String> blockData = parseBlockId(block.getId());
+                    String blockDate = blockData.get("date");
+                    LocalDate dateTime = LocalDate.parse(blockDate);
+            
+                    List<Map<String, Object>> meals = mealPlans.getOrDefault(dateTime, new ArrayList<>());
+            
+                    String mealGroupId = blockData.get("mealGroupId");
+
+                    meals.removeIf(meal -> {
+                        for (String part : List.of("prepTime", "passiveTime", "cookTime")) {
+                            if (meal.containsKey(part)) {
+                                Map<String, Object> blockMap = (Map<String, Object>) meal.get(part);
+                                if (blockMap != null && mealGroupId.equals(blockMap.get("mealGroupId"))) {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
+                    });
+                    
+            
+                    if (meals.isEmpty()) {
+                        mealPlans.remove(date);
+                    }
+            
+                    saveMealPlansToJson();
                     loadCalendarView();
                     refreshNeededIngredients();
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    showAlert("Error", "Failed to delete the meal.");
+                    showAlert("Error", "Failed to delete entire meal.");
                 }
             });
 
@@ -1241,7 +1385,8 @@ public class MealPlannerController {
                 block.setStyle(block.getStyle() + "-fx-opacity: 0.5;"); // Grey out the block
             });
     
-            contextMenu.getItems().addAll(markAsMade, editItem, deleteItem);
+            contextMenu.getItems().addAll(markAsMade, deleteTimeBlock, deleteEntireMeal, editItem);
+
             contextMenu.show(block, event.getScreenX(), event.getScreenY());
         });
     }
@@ -1269,6 +1414,26 @@ public class MealPlannerController {
         alert.showAndWait();
     
         return hourPicker.getValue();
+    }
+
+    private int findBlockIdFromMealPlans(Map<String, String> blockData) {
+        String targetName = blockData.get("mealName");
+        String timeBlockType = blockData.get("timeBlockType");
+        String date = blockData.get("date");
+        int hour = Integer.parseInt(blockData.get("hour"));
+    
+        List<Map<String, Object>> meals = mealPlans.getOrDefault(LocalDate.parse(date), new ArrayList<>());
+        for (Map<String, Object> meal : meals) {
+            if (meal.containsKey(timeBlockType)) {
+                Map<String, Object> block = (Map<String, Object>) meal.get(timeBlockType);
+                if (block != null && targetName.equals(block.get("name")) &&
+                    hour == ((Number) block.get("hour")).intValue()) {
+                    return ((Number) block.get("id")).intValue();
+                }
+            }
+        }
+    
+        return -1; // not found
     }
 
     // ==========================
@@ -1439,11 +1604,19 @@ public class MealPlannerController {
         // Pre-select current date and a default meal slot
         mealPlanDate.setValue(LocalDate.now());
         if (mealSlot.getItems().isEmpty()) {
-            mealSlot.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snacks");
+            mealSlot.getItems().addAll("Breakfast", "Lunch", "Dinner", "Snack");
         }
-        mealSlot.setValue("Dinner"); // Default selection
-
+        
         this.selectedRecipe = recipe;
+        
+        mealSlot.setValue("Dinner"); // Default selection
+        String mealTypeFromPlan = fetchMealTypeForRecipe(recipe.getID());
+
+        if (mealTypeFromPlan != null && !mealTypeFromPlan.isEmpty()) {
+
+            mealTypeFromPlan = mealTypeFromPlan.substring(0, 1).toUpperCase() + mealTypeFromPlan.substring(1).toLowerCase();
+            mealSlot.setValue(mealTypeFromPlan);
+        }
     
     }
     
@@ -1462,7 +1635,7 @@ public class MealPlannerController {
 
     private Map<String, String> parseBlockId(String blockId) {
         String[] parts = blockId.split("\\|");
-        if (parts.length != 4) {
+        if (parts.length != 5) {
             throw new IllegalArgumentException("Invalid block ID format: " + blockId);
         }
     
@@ -1471,6 +1644,7 @@ public class MealPlannerController {
         parsedData.put("timeBlockType", parts[1]);
         parsedData.put("date", parts[2]);
         parsedData.put("hour", parts[3]);
+        parsedData.put("mealGroupId", parts[4]);
         return parsedData;
     }
 
@@ -1492,6 +1666,72 @@ public class MealPlannerController {
     public void setMyListController(MyListsController controller) {
         this.myListsController = controller;
     }
+
+    private int parseHourLabel(String label) {
+        String[] parts = label.split(" ");
+        int hour = Integer.parseInt(parts[0]);
+        String meridian = parts[1];
+    
+        if (meridian.equals("PM") && hour != 12) {
+            hour += 12;
+        } else if (meridian.equals("AM") && hour == 12) {
+            hour = 0;
+        }
+    
+        return hour;
+    }
+
+    private double parseAmount(String amountStr) {
+        if (amountStr == null || amountStr.isBlank()) return 0;
+    
+        amountStr = amountStr.trim().toLowerCase();
+    
+        // Handle non-numeric keywords gracefully
+        if (amountStr.matches(".*[a-z].*") && !amountStr.contains("/")) {
+            return 0; // Skip values like "to taste", "pinch", "some"
+        }
+    
+        try {
+            // Handle whole number + fraction like "1 1/2"
+            if (amountStr.contains(" ")) {
+                String[] parts = amountStr.split(" ");
+                return parseAmount(parts[0]) + parseAmount(parts[1]);
+            }
+    
+            // Handle fractions like "1/2"
+            if (amountStr.contains("/")) {
+                String[] fraction = amountStr.split("/");
+                if (fraction.length == 2) {
+                    double numerator = Double.parseDouble(fraction[0]);
+                    double denominator = Double.parseDouble(fraction[1]);
+                    return numerator / denominator;
+                }
+            }
+    
+            // Otherwise, try parsing as a decimal
+            return Double.parseDouble(amountStr);
+    
+        } catch (NumberFormatException e) {
+            // If anything goes wrong, just return 0 and print debug info
+            System.err.println("Could not parse amount: '" + amountStr + "'");
+            return 0;
+        }
+    }
+    
+    private double roundToTwo(double val) {
+        return Math.round(val * 100.0) / 100.0;
+    }
+
+    private String fetchMealTypeForRecipe(int recipeId) {
+        for (Recipe recipe : recipeList) {
+        
+            if (recipe.getID() == recipeId) {
+                return recipe.getCategory();
+            }
+        }
+        return null; // If not found
+    }
+    
 
     // =======================================================
     // Visual Enhancements: 
@@ -1526,26 +1766,28 @@ public class MealPlannerController {
         dayView.getChildren().forEach(node -> {
             if (node instanceof Label) {
                 Label block = (Label) node;
-                LocalDate blockDate = getDateFromBlock(block); // Implement this to parse date from block
-                if (blockDate.isBefore(LocalDate.now())) {
+                LocalDate blockDate = getDateFromBlock(block.getId());
+    
+                if (blockDate != null && blockDate.isBefore(LocalDate.now())) {
                     block.setStyle(block.getStyle() + "-fx-opacity: 0.5; -fx-text-fill: gray;");
                 }
             }
         });
     }
+    
 
-    private LocalDate getDateFromBlock(Label block) {
-        String blockId = block.getId(); // Format: "mealName-date-hour"
-        String[] parts = blockId.split("-");
-        if (parts.length >= 3) {
-            try {
-                return LocalDate.parse(parts[1], DateTimeFormatter.ISO_LOCAL_DATE);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private LocalDate getDateFromBlock(String blockId) {
+        if (blockId == null || !blockId.contains("|")) {
+            return null; // Instead of throwing an exception
         }
-        return null;
+    
+        try {
+            String[] parts = blockId.split("\\|");
+            return LocalDate.parse(parts[2]); // This is the 'date' part from the block ID
+        } catch (Exception e) {
+            System.err.println("Error parsing date from blockId: " + blockId);
+            return null;
+        }
     }
-
 
 }

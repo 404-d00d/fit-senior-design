@@ -32,7 +32,7 @@
       <Text layoutX="118.0" layoutY="72.0" style="-fx-font-size: 56px; -fx-font-weight: bold; -fx-fill: white;" text="Meal Planner" />
       <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="#444444" strokeType="INSIDE" />
       
-      <Pane fx:id="calendarPane" layoutX="18.0" layoutY="127.0" prefHeight="934.0" prefWidth="1881.0" visible="false">
+      <Pane fx:id="calendarPane" layoutX="18.0" layoutY="127.0" prefHeight="934.0" prefWidth="1881.0">
          <children>
             <Button fx:id="addMealButton" layoutX="449.0" layoutY="14.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Add Meal" />
             <ComboBox fx:id="calendarViewDropdown" layoutX="1657.0" layoutY="14.0" prefHeight="44.0" prefWidth="210.0" promptText="Week" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-fill: white;" />
@@ -46,37 +46,57 @@
             <Text fx:id="snacksMeal" layoutX="34.0" layoutY="315.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Snacks:" />
             
             <Text layoutX="20.0" layoutY="584.0" style="-fx-font-size: 30px; -fx-fill: white;" text="Daily Nutritional Breakdown" />
-            <ComboBox fx:id="nutritionalMeals" layoutX="147.0" layoutY="592.0" prefHeight="44.0" prefWidth="143.0" promptText="Meal" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white;" />
+            <ComboBox fx:id="nutritionalMeals" layoutX="94.0" layoutY="592.0" prefHeight="44.0" prefWidth="222.0" promptText="Meal" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white;" />
             <PieChart fx:id="dailyNutritionalBreakdown" layoutX="36.0" layoutY="630.0" prefHeight="269.0" prefWidth="336.0" />
             
-            <Pane layoutX="446.0" layoutY="87.0" prefHeight="832.0" prefWidth="1426.0">
-                  <children>
-                     <GridPane fx:id="dayView" alignment="CENTER" gridLinesVisible="true" layoutX="300.0" layoutY="11.0" prefHeight="810.0" prefWidth="800.0" visible="false">
-                        <columnConstraints>
+            <Pane layoutX="446.0" layoutY="87.0" prefHeight="832.0" prefWidth="1426.0" style="-fx-background-color: #2E2E2E;">
+               <children>
+
+                  <!-- Day View -->
+                  <ScrollPane fx:id="dayViewScroll" hbarPolicy="NEVER" layoutX="300.0" prefHeight="832.0" prefWidth="800.0" style="-fx-background-color: #2E2E2E; -fx-background: #2E2E2E; -fx-border-color: transparent;" visible="false">
+                     <content>
+                        <GridPane fx:id="dayView" alignment="CENTER" gridLinesVisible="true" prefHeight="833.0" prefWidth="800.0" style="-fx-background-color: #2e2e2e; -fx-border-color: white; -fx-text-fill: white;">
+                           <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        </columnConstraints>
-                        <rowConstraints>
+                           </columnConstraints>
+                           <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                     </GridPane>
-                     <GridPane fx:id="weekView" alignment="CENTER" gridLinesVisible="true" layoutX="-12.0" layoutY="3.0" prefHeight="810.0" prefWidth="1424.0">
-                        <columnConstraints>
+                           </rowConstraints>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
+
+                  <!-- Week View -->
+                  <ScrollPane fx:id="weekViewScroll" layoutX="-5.0" layoutY="-5.0" prefHeight="842.0" prefWidth="1437.0" style="-fx-background-color: #2E2E2E; -fx-background: #2E2E2E; -fx-border-color: transparent;" visible="false">
+                     <content>
+                        <GridPane fx:id="weekView" alignment="CENTER" gridLinesVisible="true" prefHeight="810.0" prefWidth="1424.0" style="-fx-background-color: #2e2e2e; -fx-border-color: white; -fx-text-fill: white;">
+                           <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        </columnConstraints>
-                        <rowConstraints>
+                           </columnConstraints>
+                           <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                     </GridPane>
-                     <GridPane fx:id="monthView" alignment="CENTER" gridLinesVisible="true" layoutX="1.0" layoutY="1.0" prefHeight="810.0" prefWidth="1425.0" visible="false">
-                        <columnConstraints>
+                           </rowConstraints>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
+
+                  <!-- Month View -->
+                  <ScrollPane fx:id="monthViewScroll" layoutX="-2.0" layoutY="-6.0" prefHeight="842.0" prefWidth="1437.0" style="-fx-background-color: #2E2E2E; -fx-background: #2E2E2E; -fx-border-color: transparent;" visible="false">
+                     <content>
+                        <GridPane fx:id="monthView" alignment="CENTER" gridLinesVisible="true" prefHeight="802.0" prefWidth="1404.0" style="-fx-background-color: #2e2e2e; -fx-border-color: white; -fx-text-fill: white;">
+                           <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        </columnConstraints>
-                        <rowConstraints>
+                           </columnConstraints>
+                           <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        </rowConstraints>
-                     </GridPane>
-                  </children>
+                           </rowConstraints>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
+
+               </children>
             </Pane>
+
             <DatePicker fx:id="dateInView" layoutX="928.0" layoutY="16.0" prefHeight="53.0" prefWidth="462.0" showWeekNumbers="true" />
          </children>
       </Pane>
@@ -115,7 +135,7 @@
 
       <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #444444; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: #FF7F11; -fx-border-width: 2;" text="Menu" />
       
-      <Pane fx:id="AddMealMenu" layoutX="20.0" layoutY="127.0" prefHeight="952.0" prefWidth="1881.0">
+      <Pane fx:id="AddMealMenu" layoutX="20.0" layoutY="127.0" prefHeight="952.0" prefWidth="1881.0" visible="false">
          <children>
             <Text fx:id="mealSelectTXT" fill="WHITE" layoutX="100.0" layoutY="483.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select A Meal To View Details">
                <font>
@@ -140,10 +160,36 @@
                         </Text>
 
                         <ComboBox fx:id="mealSlot" prefHeight="30.0" prefWidth="176.0" promptText="Meal Slot" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Text fx:id="prepTimeTXT" fill="WHITE" text="Prep Time:">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Text>
+                        <ComboBox fx:id="prepHourPicker" prefHeight="44.0" prefWidth="251.0" promptText="When to Prep?" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Text fx:id="passiveTimeTXT" fill="WHITE" text="Passive Time:">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Text>
+                        <ComboBox fx:id="passiveHourPicker" prefHeight="44.0" prefWidth="251.0" promptText="When To Be Passive?" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Text fx:id="cookTimeTXT" fill="WHITE" text="Cook Time:">
+                           <font>
+                              <Font name="System Bold Italic" size="18.0" />
+                           </font>
+                        </Text>
+                        <ComboBox fx:id="cookHourPicker" prefHeight="44.0" prefWidth="255.0" promptText="When To Cook?" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
+                        <Text fx:id="totalTimeTXT" fill="WHITE" text="Total:">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Text>
 
-                        <DatePicker fx:id="mealPlanDate" prefHeight="30.0" prefWidth="244.0" style="-fx-background-color: #444444; -fx-text-fill: white;" />
+                        <DatePicker fx:id="mealPlanDate" prefHeight="30.0" prefWidth="244.0" style="-fx-background-color: #444444; -fx-text-fill: white; -fx-font-size: 18;" />
 
-                        <Button fx:id="addMealToPlan" prefHeight="36.0" prefWidth="174.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 25;" text="Add Meal" />
+                        <Button fx:id="addMealToPlan" prefHeight="36.0" prefWidth="174.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 25;" text="Add Meal">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Button>
 
                         <Text fx:id="complexityTXT" fill="WHITE" text="Complexity">
                            <font>
@@ -163,26 +209,6 @@
                         </TextArea>
 
                         <Text fx:id="servingsTXT" fill="WHITE" text="Servings:">
-                           <font>
-                              <Font name="System Bold" size="24.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="prepTimeTXT" fill="WHITE" text="Prep Time:">
-                           <font>
-                              <Font name="System Italic" size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="passiveTimeTXT" fill="WHITE" text="Passive Time:">
-                           <font>
-                              <Font name="System Italic" size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="cookTimeTXT" fill="WHITE" text="Cook Time:">
-                           <font>
-                              <Font name="System Italic" size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fx:id="totalTimeTXT" fill="WHITE" text="Total:">
                            <font>
                               <Font name="System Bold" size="24.0" />
                            </font>

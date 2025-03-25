@@ -144,7 +144,8 @@ public class MyRecipesController {
    private Map<String, List<Integer>> recipeCollections = new HashMap<>();
    private Map<Integer, VBox> recipeWidgets = new HashMap<>();
    private ObservableList<Image> recipeThumbnails = FXCollections.observableArrayList();
-   private Map<ImageView, String> imageFileMap = new HashMap<>();
+   private Map<Integer, String> stepImageFileMap = new HashMap<>();
+   private Map<Integer, Image> stepImageMap = new HashMap<>();
 
    private static final String RECIPES_FILE_PATH = "recipes.json";
    private static final String LOCAL_REVIEWS_FILE_PATH = "reviews.json";
@@ -324,7 +325,7 @@ public class MyRecipesController {
    }
 
    private void configureDropdowns() {
-      recipeCategory.getItems().addAll("dinner", "lunch", "breakfast", "snack", "other");
+      recipeCategory.getItems().addAll("Dinner", "Lunch", "Breakfast", "Snack", "Other");
       ingredientUnitEntry.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
       sortBy.getItems().addAll("A-Z", "Z-A", "Complexity", "Prep Time", "Cook Time");
    }
@@ -550,16 +551,26 @@ public class MyRecipesController {
          stepArea.setText(preparationSteps.get(displayStep));
          stepOfTXT.setText("Step " + (displayStep + 1) + " of " + preparationSteps.size());
 
-         // Ensure the index is within bounds before accessing
-         if (!recipeThumbnails.isEmpty()) {
-            if (displayStep < recipeThumbnails.size() - 1) {
-               recipeImages.setImage(recipeThumbnails.get(displayStep + 1)); // Step image
-            } else {
-               recipeImages.setImage(recipeThumbnails.get(0)); // Fallback to main image
-            }
-         }
+         if (stepImageMap.containsKey(displayStep)) {
+            recipeImages.setImage(stepImageMap.get(displayStep));
+        } else if (stepImageMap.containsKey(0)) {
+            recipeImages.setImage(stepImageMap.get(0)); // fallback to main image
+        }
       }
+
+      updateThumbnailHighlight();
    }
+
+   private void updateThumbnailHighlight() {
+      for (int i = 0; i < recipeImagesHbox.getChildren().size(); i++) {
+          ImageView iv = (ImageView) recipeImagesHbox.getChildren().get(i);
+          if (i == displayStep + 1) {
+              iv.setStyle("-fx-border-color: #FF7F11; -fx-border-width: 3px;");
+          } else {
+              iv.setStyle("-fx-border-color: transparent;");
+          }
+      }
+  }  
 
    // Add equipment to table
    private void addEquipment() {
@@ -756,6 +767,11 @@ public class MyRecipesController {
       recipeETAPassive.clear();
       recipeETAPrep.clear();
       selectedImageFile = null;
+
+      // Clear previous images
+      recipeImagesHbox.getChildren().clear();
+      recipeThumbnails.clear();
+
    }
 
    private boolean isFormValid(String name, String category, String servings, String decsription, String prepTime, String passiveTime, String cookTime, String[] ingredientsArray, String[] stepsArray) {
@@ -822,18 +838,31 @@ public class MyRecipesController {
       // Clear previous images
       recipeImagesHbox.getChildren().clear();
       recipeThumbnails.clear();
+      stepImageMap.clear(); // optional, if you reload
 
-      for (int i = 0; ; i++) {
-         File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" +
-                                    (i == 0 ? recipe.getName() + ".png" : recipe.getName() + "_step" + i + ".png"));
-
-         if (!imageFile.exists()) break; // Stop loading when no more images exist
-
-         Image newImage = new Image(imageFile.toURI().toString());
-         recipeThumbnails.add(newImage);
-         ImageView thumbnail = createThumbnail(newImage, imageFile);
-         recipeImagesHbox.getChildren().add(thumbnail);
+      // Load main image (step 0)
+      File mainImageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
+      if (mainImageFile.exists()) {
+         Image mainImage = new Image(mainImageFile.toURI().toString());
+         recipeThumbnails.add(mainImage);
+         stepImageMap.put(0, mainImage);
+         stepImageFileMap.put(0, mainImageFile.getAbsolutePath());
+         recipeImagesHbox.getChildren().add(createThumbnail(mainImage, mainImageFile.getAbsolutePath(), 0));
       }
+
+      // Load step images (step 1 to N), as long as files exist
+      for (int i = 1; ; i++) {
+         File stepImageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + "_step" + i + ".png");
+
+         if (!stepImageFile.exists()) break;
+
+         Image stepImage = new Image(stepImageFile.toURI().toString());
+         recipeThumbnails.add(stepImage);
+         stepImageMap.put(i, stepImage);
+         stepImageFileMap.put(i, stepImageFile.getAbsolutePath());
+         recipeImagesHbox.getChildren().add(createThumbnail(stepImage, stepImageFile.getAbsolutePath(), i));
+      }
+
 
       if (!recipeThumbnails.isEmpty()) {
          recipeDetailsImages.setImage(recipeThumbnails.get(0));
@@ -931,10 +960,33 @@ public class MyRecipesController {
       recipeETAPassive.setText(Integer.toString(recipe.getPassiveTime()));
       recipeETA.setText(Integer.toString(recipe.getCookTime()));
 
-      // Load the image preview
-      File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
-      Image existingImage = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
-      imagePreview.setImage(existingImage);
+      // Re-populate step image maps and HBox
+      stepImageMap.clear();
+      stepImageFileMap.clear();
+      recipeImagesHbox.getChildren().clear();
+
+      // Main image
+      File mainImageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
+      if (mainImageFile.exists()) {
+         Image mainImage = new Image(mainImageFile.toURI().toString());
+         stepImageMap.put(0, mainImage);
+         stepImageFileMap.put(0, mainImageFile.getAbsolutePath());
+
+         imagePreview.setImage(mainImage);
+      }
+
+      // Step images
+      for (int i = 1; ; i++) {
+         File stepImageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + "_step" + i + ".png");
+         if (!stepImageFile.exists()) break;
+
+         Image stepImage = new Image(stepImageFile.toURI().toString());
+         stepImageMap.put(i, stepImage);
+         stepImageFileMap.put(i, stepImageFile.getAbsolutePath());
+      }
+
+      // Display all thumbnails
+      refreshImageThumbnails();
 
       tags.clear();
       tags.addAll(recipe.getTags());
@@ -1454,55 +1506,76 @@ public class MyRecipesController {
    private void SelectImage() {
       FileChooser fileChooser = new FileChooser();
       fileChooser.setTitle("Select Recipe Images");
-      fileChooser.getExtensionFilters().add(
-         new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-      );
-
+      fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+  
       List<File> selectedFiles = fileChooser.showOpenMultipleDialog((Stage) imagePreview.getScene().getWindow());
-
+  
       if (selectedFiles != null && !selectedFiles.isEmpty()) {
-         for (File file : selectedFiles) {
-               Image image = new Image(file.toURI().toString());
-               ImageView thumbnail = createThumbnail(image, file);
-               recipeImagesHbox.getChildren().add(thumbnail);
-               recipeThumbnails.add(image);
-               imageFileMap.put(thumbnail, file.getAbsolutePath());
-
-               if (recipeThumbnails.size() == 1) {
-                  imagePreview.setImage(image);
-               }
-         }
+          for (File file : selectedFiles) {
+              Image image = new Image(file.toURI().toString());
+  
+              // Prompt user for step assignment
+              TextInputDialog dialog = new TextInputDialog("0");
+              dialog.setTitle("Assign Image to Step");
+              dialog.setHeaderText("Assign this image to a step (0 = Main Image)");
+              dialog.setContentText("Step:");
+  
+              Optional<String> result = dialog.showAndWait();
+              result.ifPresent(stepStr -> {
+                  try {
+                      int stepIndex = Integer.parseInt(stepStr);
+                      stepImageMap.put(stepIndex, image);
+                      stepImageFileMap.put(stepIndex, file.getAbsolutePath());
+                      refreshImageThumbnails(); // Update HBox
+                  } catch (NumberFormatException e) {
+                      showAlert("Error", "Invalid Step", "Please enter a valid step number.");
+                  }
+              });
+          }
       }
+  }
+
+   private void refreshImageThumbnails() {
+      recipeImagesHbox.getChildren().clear();
+
+      stepImageMap.entrySet().stream()
+         .sorted(Map.Entry.comparingByKey())
+         .forEach(entry -> {
+            int stepIndex = entry.getKey();
+            Image image = entry.getValue();
+            String path = stepImageFileMap.get(stepIndex);
+            VBox thumbnailBox = createThumbnail(image, path, stepIndex);
+            recipeImagesHbox.getChildren().add(thumbnailBox);
+      });
    }
 
-
-   private ImageView createThumbnail(Image image, File file) {
+   private VBox createThumbnail(Image image, String imagePath, int index) {
       ImageView thumbnail = new ImageView(image);
-      thumbnail.setFitWidth(50);
-      thumbnail.setFitHeight(50);
+      thumbnail.setFitWidth(150);
+      thumbnail.setFitHeight(150);
       thumbnail.setPreserveRatio(true);
-      thumbnail.setOnMouseClicked(event -> imagePreview.setImage(image));
+  
+      Label label = new Label(index == 0 ? "Main Image" : "Step " + index);
+      label.setStyle("-fx-text-fill: white; -fx-font-size: 12px;");
+  
+      VBox wrapper = new VBox(thumbnail, label);
+      wrapper.setAlignment(Pos.CENTER);
+      wrapper.setSpacing(5);
   
       ContextMenu contextMenu = new ContextMenu();
       MenuItem removeItem = new MenuItem("Remove");
-      removeItem.setOnAction(e -> removeImage(thumbnail));
+      removeItem.setOnAction(e -> {
+         stepImageMap.remove(index);
+         stepImageFileMap.remove(index);
+         refreshImageThumbnails();
+     });
       contextMenu.getItems().add(removeItem);
+  
+      thumbnail.setOnMouseClicked(event -> imagePreview.setImage(image));
       thumbnail.setOnContextMenuRequested(e -> contextMenu.show(thumbnail, e.getScreenX(), e.getScreenY()));
   
-      return thumbnail;
+      return wrapper;
   }
-
-   private void removeImage(ImageView thumbnail) {
-      recipeThumbnails.remove(imageFileMap.get(thumbnail));
-      recipeImagesHbox.getChildren().remove(thumbnail);
-      imageFileMap.remove(thumbnail);
-
-      if (!recipeThumbnails.isEmpty()) {
-         imagePreview.setImage(recipeThumbnails.get(0));
-      } else {
-         imagePreview.setImage(null);
-      }
-   }
 
    @FXML
    private void SaveRecipeImages(String recipeName) {
@@ -1517,7 +1590,7 @@ public class MyRecipesController {
          String imageName = (i == 0) ? recipeName + ".jpg" : recipeName + "_step" + i + ".jpg";
          File destinationFile = new File(destinationFolder, imageName);
 
-         File sourceFile = new File(imageFileMap.get(recipeThumbnails.get(i)));
+         File sourceFile = new File(stepImageFileMap.get(i));
 
          try (InputStream input = sourceFile.toURI().toURL().openStream()) {
                Files.copy(input, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);

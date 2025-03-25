@@ -1,1 +1,2 @@
-{"Needed Ingredients":[]}
+{"sigma":[{"name":"cheddar cheese","ID":1,"quantity":12,"location":"Sample Location","expirDate":"2050-12-13","unit":"kg","tags":[],"autoTrack":false,"minThreshold":0}],
+"Needed Ingredients":[{"name":"Pineapple","ID":1,"quantity":23,"location":"Sample Location","expirDate":"2050-12-13","unit":"kg","tags":[],"autoTrack":false,"minThreshold":0}]}

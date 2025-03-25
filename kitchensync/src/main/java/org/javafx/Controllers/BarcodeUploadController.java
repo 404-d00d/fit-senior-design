@@ -39,30 +39,44 @@ public class BarcodeUploadController {
    // Method to run the Python script and print the result to the terminal
    private void runPythonScript(String imagePath) {
         try {
-          // Use ProcessBuilder to run the Python script with the image path
-          // Use environment to find Python if it's in the PATH
-            ProcessBuilder pb = new ProcessBuilder(
-                "python",                      // Will use the 'python' command from PATH
-                "src/Barcode Module/BarcodeModule.py",         // Relative path to the script
-                imagePath                       // Image path passed as argument
-            );
+            String pythonScriptPath = "C:\\Users\\raddi\\Documents\\GitHub\\fit-senior-design\\kitchensync\\src\\main\\python\\PriceFinder.py";
+            String productName = "orange juice";
+            String pageNumber = "1";
 
-            // Set the working directory to the project's base folder
-            pb.directory(new File(System.getProperty("user.dir"))); 
+            String[] command = {
+                "python", pythonScriptPath, productName, pageNumber
+            };
 
-            pb.redirectErrorStream(true);  // Redirect errors to the output stream
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.redirectErrorStream(true);
             Process process = pb.start();
 
-            // Capture the output from the Python script
-            BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String result = in.lines().collect(Collectors.joining("\n"));
-            process.waitFor();  // Wait for the process to finish
-            System.out.println(result);  // Print the result to the terminal
-        } 
-        
-        catch (Exception e) {
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(process.getInputStream())
+            );
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(",")) {
+                    String[] parts = line.split(",");
+                    double avgPrice = Double.parseDouble(parts[0]);
+                    String unit = parts[1];
+
+                    System.out.println("🛒 Product: " + productName);
+                    System.out.println("💰 Avg Price: " + avgPrice + " per " + unit);
+                    System.out.println("📦 Per Pound: " + (avgPrice * 16));
+                    System.out.println("📏 Per Gram: " + (avgPrice * 28.35));
+                    System.out.println("💧 Per mL: " + (avgPrice * 29.57));
+                } else {
+                    System.out.println("🔍 " + line); // for debug or error messages
+                }
+            }
+
+            int exitCode = process.waitFor();
+            System.out.println("✅ Python process exited with code: " + exitCode);
+
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error: " + e.getMessage());
         }
     }
 }

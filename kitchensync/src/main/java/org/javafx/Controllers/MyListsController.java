@@ -1,8 +1,10 @@
 package org.javafx.Controllers;
 
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -363,22 +365,90 @@ public class MyListsController {
 
    private void loadListsFromJson() {
       try (FileReader reader = new FileReader(LISTS_JSON_FILE)) {
-          Gson gson = new Gson();
-          Type type = new TypeToken<Map<String, ArrayList<Item>>>() {}.getType();
-          Map<String, ArrayList<Item>> savedLists = gson.fromJson(reader, type);
-          if (savedLists != null) {
-              savedLists.forEach((key, value) -> {
-                  lists.add(key);
-                  ingredientsMap.put(key, FXCollections.observableArrayList(value));
-                  addListButtonToPane(key); // Add button for each loaded list
-              });
-          }
+         Gson gson = new Gson();
+         Type type = new TypeToken<Map<String, ArrayList<Item>>>() {}.getType();
+         Map<String, ArrayList<Item>> savedLists = gson.fromJson(reader, type);
+
+         if (savedLists != null) {
+            for (Map.Entry<String, ArrayList<Item>> entry : savedLists.entrySet()) {
+                  String listName = entry.getKey();
+                  ArrayList<Item> itemList = entry.getValue();
+
+                  System.out.println("List loaded: " + listName);
+                  lists.add(listName);
+
+                  ObservableList<Item> observableItems = FXCollections.observableArrayList(itemList);
+                  ingredientsMap.put(listName, observableItems);
+                  addListButtonToPane(listName); // add button for this list
+
+                  for (Item item : observableItems) {
+                     String productName = item.getName();
+                     String unitName = item.getUnit();
+                     int productQuantity = item.getQuantity();
+                     if (productName != null && !productName.isEmpty()) {
+                        System.out.println("Calling PriceFinder for: " + productName);
+                        callPriceFinder(productName, unitName, productQuantity);
+                     } else {
+                        System.out.println("Skipping item with missing name in list: " + listName);
+                     }
+                  }
+            }
+         }
       } catch (IOException e) {
-          System.err.println("Could not load lists: " + e.getMessage());
-          // Initialize an empty JSON file if not found
-          saveListsToJson();
+         System.err.println("Could not load lists: " + e.getMessage());
+         saveListsToJson(); // Create an empty file if needed
+      }
+   }
+
+
+   private void callPriceFinder(String productName, String unitName, int productQuantity) {
+      String pythonScriptPath = "C:\\Users\\raddi\\Documents\\GitHub\\fit-senior-design\\kitchensync\\src\\main\\python\\PriceFinder.py";
+      try {
+          String[] command = {
+              "python", pythonScriptPath, "walmart", productName, "1" // <-- Note the "walmart" keyword
+          };
+  
+          ProcessBuilder pb = new ProcessBuilder(command);
+          pb.redirectErrorStream(true);
+          Process process = pb.start();
+  
+          BufferedReader reader = new BufferedReader(
+              new InputStreamReader(process.getInputStream())
+          );
+  
+          String line;
+          while ((line = reader.readLine()) != null) {
+              if (line.matches("^\\d+(\\.\\d+)?,\\s*[a-zA-Z]+$")) {
+                  String[] parts = line.split(",");
+                  double pricePerOz = Double.parseDouble(parts[0]);
+                  String unit = parts[1].trim();
+  
+                  if (unitName.equals("oz")){
+                     System.out.println("Price per oz: " + pricePerOz*productQuantity*0.01);
+                  } else if (unitName.equals("lb")){
+                     System.out.println("Price per lb: " + convertToLb(pricePerOz)*productQuantity*0.01);
+                  } else if (unitName.equals("kg")){
+                     System.out.println("Price per kg: " + convertToKg(pricePerOz)*productQuantity*0.01);
+                  } else if (unitName.equals("g")){
+                     System.out.println("Price per g: " + convertToG(pricePerOz)*productQuantity*0.01);
+                  } else if (unitName.equals("ml")){
+                     System.out.println("Price per ml: " + convertToMl(pricePerOz)*productQuantity*0.01);
+                  } else if (unitName.equals("l")){
+                  System.out.println("Price per l: " + convertToL(pricePerOz)*productQuantity*0.01);
+                  }
+              } else {
+                  System.out.println(line);
+              }
+          }
+  
+          int exitCode = process.waitFor();
+          System.out.println("Python process exited with code: " + exitCode);
+  
+      } catch (Exception e) {
+          e.printStackTrace();
       }
   }
+  
 
    private void saveListsToJson() {
       try (FileWriter writer = new FileWriter(LISTS_JSON_FILE)) {
@@ -470,5 +540,57 @@ public class MyListsController {
          }
       });
    }
+
+   private double convertToLb(double pricePerOz) {
+      return callConversionPython("toLb", pricePerOz);
+   }
+
+   private double convertToKg(double pricePerOz) {
+      return callConversionPython("toKg", pricePerOz);
+   }
+
+   private double convertToG(double pricePerOz) {
+      return callConversionPython("toG", pricePerOz);
+   }
+
+   private double convertToL(double pricePerOz) {
+      return callConversionPython("toL", pricePerOz);
+   }
+
+   private double convertToMl(double pricePerOz) {
+      return callConversionPython("toMl", pricePerOz);
+   }
+  
+   private double callConversionPython(String method, double price) {
+      String pythonScriptPath = "C:\\Users\\raddi\\Documents\\GitHub\\fit-senior-design\\kitchensync\\src\\main\\python\\PriceFinder.py";
+      try {
+          String[] command = {
+              "python", pythonScriptPath, method, String.valueOf(price)
+          };
+  
+          ProcessBuilder pb = new ProcessBuilder(command);
+          pb.redirectErrorStream(true);
+          Process process = pb.start();
+  
+          BufferedReader reader = new BufferedReader(
+              new InputStreamReader(process.getInputStream())
+          );
+  
+          String line;
+          while ((line = reader.readLine()) != null) {
+              try {
+                  return Double.parseDouble(line.trim());
+              } catch (NumberFormatException e) {
+                  System.out.println("Non-numeric output: " + line);
+              }
+          }
+  
+          process.waitFor();
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+  
+      return -1.0;
+  }
 
 }

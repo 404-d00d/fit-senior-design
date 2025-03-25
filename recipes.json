@@ -1,0 +1,27 @@
+[
+  {
+    "id": 0,
+    "name": "Socks",
+    "category": "breakfast",
+    "collection": "Favorites",
+    "servings": 1,
+    "description": "Socks",
+    "prepTime": 2,
+    "passiveTime": 0,
+    "cookTime": 10,
+    "complexity": 1,
+    "tags": [
+      "joke"
+    ],
+    "specialEquipment": [],
+    "ingredients": [
+      "Pair of socks: 1 cup"
+    ],
+    "steps": [
+      "twke a pair o \\f socks",
+      "boil the socks for 10 minutes",
+      ""
+    ],
+    "feedback": 0
+  }
+]

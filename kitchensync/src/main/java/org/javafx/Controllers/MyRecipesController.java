@@ -876,8 +876,8 @@ public class MyRecipesController {
 
       // Review Page Info
 
-      localRatingStarsReviews.setText("Local Reivew: " + getStarsString(recipe.getLocalRating()));
-      communityRatingStarsReview.setText("Community Reivew: " + getStarsString(recipe.getCommunityRating()));
+      localRatingStarsReviews.setText("Local Review: " + getStarsString(recipe.getLocalRating()));
+      communityRatingStarsReview.setText("Community Review: " + getStarsString(recipe.getCommunityRating()));
 
       recipeReviewName.setText(name);
 

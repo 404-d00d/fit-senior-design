@@ -39,6 +39,8 @@ public class RecipeCardController {
       String fixedName = capitalizeWords(newRecipe.getName());
       recipeName.setText(fixedName);
       recipeImage.setImage(image);
+      recipeImage.setFitWidth(200);
+      recipeImage.setFitHeight(150);
       this.viewType = viewType;
 
       if ("myrecipes".equals(viewType)) {

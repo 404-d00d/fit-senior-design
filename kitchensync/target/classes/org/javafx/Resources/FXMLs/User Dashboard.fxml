@@ -125,22 +125,23 @@
         <Text layoutX="339.0" layoutY="70.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="Dashboard" />
 
         <!-- Main Panels -->
-        <Rectangle arcHeight="25.0" arcWidth="25.0" fill="#FFFFFF" height="315.0" layoutX="310.0" layoutY="140.0" strokeWidth="0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1590.0" />
-        <Text layoutX="400.0" layoutY="300.0" style="-fx-font-size: 24px; -fx-fill: #999999;" text="No Meals Planned" />
+        <Rectangle arcHeight="25.0" arcWidth="25.0" fill="#FFFFFF" height="330.0" layoutX="310.0" layoutY="140.0" strokeWidth="0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1590.0" />
+        <Text fx:id="noMealsTXT" layoutX="400.0" layoutY="300.0" style="-fx-font-size: 24px; -fx-fill: #999999;" text="No Meals Planned" />
 
         <!-- Notifications Panel -->
-        <Rectangle arcHeight="25.0" arcWidth="25.0" fill="#FFFFFF" height="487.0" layoutX="305.0" layoutY="480.0" strokeWidth="0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="777.0" />
-        <Text layoutX="400.0" layoutY="530.0" style="-fx-font-size: 24px; -fx-fill: #333333;" text="Notifications" />
+        <Rectangle arcHeight="25.0" arcWidth="25.0" fill="#FFFFFF" height="487.0" layoutX="308.0" layoutY="540.0" strokeWidth="0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="777.0" />
+        <Text layoutX="403.0" layoutY="590.0" style="-fx-font-size: 24px; -fx-fill: #333333;" text="Notifications" />
 
         <!-- Shopping List Panel -->
-        <Rectangle arcHeight="25.0" arcWidth="25.0" fill="#FFFFFF" height="487.0" layoutX="1110.0" layoutY="480.0" strokeWidth="0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="790.0" />
-        <Text layoutX="1200.0" layoutY="530.0" style="-fx-font-size: 24px; -fx-fill: #333333;" text="Shopping List" />
+        <Rectangle arcHeight="25.0" arcWidth="25.0" fill="#FFFFFF" height="487.0" layoutX="1113.0" layoutY="540.0" strokeWidth="0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="790.0" />
+        <Text layoutX="1203.0" layoutY="590.0" style="-fx-font-size: 24px; -fx-fill: #333333;" text="Shopping List" />
 
         <!-- Profile Icon -->
         <Circle fx:id="profileCircle" fill="#FF7F11" layoutX="1845.0" layoutY="56.0" radius="40.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" />
       <TextField fx:id="searchBar" layoutX="808.0" layoutY="30.0" prefHeight="48.0" prefWidth="595.0" promptText="Can't Find Something?" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 16px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5;" />
 
       <Rectangle fx:id="highlightBox" arcHeight="10" arcWidth="10" height="50" style="-fx-fill: rgba(255, 255, 255, 0.3); -fx-stroke: #FF7F11; -fx-stroke-width: 3;" visible="false" width="200" />
+      <HBox fx:id="mealPlans" alignment="CENTER_LEFT" layoutX="310.0" layoutY="140.0" prefHeight="330.0" prefWidth="1590.0" style="-fx-spacing: 10;" />
 
       <AnchorPane fx:id="tutorialOverlay" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: rgba(0, 0, 0, 0.6);" visible="false">
          <VBox alignment="CENTER" prefHeight="1080.0" prefWidth="1920.0" spacing="20">

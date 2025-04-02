@@ -279,7 +279,7 @@
   {
     "id": 6,
     "name": "test",
-    "category": "dinner",
+    "category": "Dinner",
     "collection": "All Recipes",
     "servings": 1,
     "description": "test description",

@@ -33,9 +33,9 @@
 
       <Pane fx:id="myRecipesPane" layoutX="61.0" layoutY="127.0" prefHeight="951.0" prefWidth="1827.0" style="-fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);">
          <children>
-            <ScrollPane hbarPolicy="NEVER" layoutX="1579.0" layoutY="44.0" prefHeight="789.0" prefWidth="202.0" style="-fx-background-color: transparent;">
+            <ScrollPane hbarPolicy="NEVER" layoutX="1558.0" layoutY="44.0" prefHeight="789.0" prefWidth="244.0" style="-fx-background-color: transparent;">
                <content>
-                  <VBox fx:id="collectionsButtons" alignment="TOP_CENTER" prefHeight="787.0" prefWidth="200.0" spacing="20.0" style="-fx-background-color: #3c3c3c;">
+                  <VBox fx:id="collectionsButtons" alignment="TOP_CENTER" prefHeight="787.0" prefWidth="242.0" spacing="20.0" style="-fx-background-color: #3c3c3c;">
                      <padding>
                         <Insets top="20.0" />
                      </padding>
@@ -50,12 +50,11 @@
             <Button layoutY="65.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="346.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="All Filters" visible="false" />
             <ComboBox fx:id="sortBy" layoutY="8.0" prefHeight="36.0" prefWidth="346.0" promptText="Sort By" style="-fx-background-color: #555555; -fx-text-fill: white; -fx-border-color: #FF7F11; -fx-border-radius: 50; -fx-font-size: 20px;" />
             <Button fx:id="addRecipeButton" layoutX="61.0" layoutY="841.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white; -fx-font-weight: bold;" text="Add Recipe" />
-            <Text layoutX="1608.0" layoutY="38.0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-fill: white;" text="Collections" />
-            <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#3C3C3C" height="940.0" layoutX="396.0" stroke="BLACK" strokeType="INSIDE" width="1147.0" />
-            <Button fx:id="addCollectionButton" layoutX="1577.0" layoutY="863.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Add Collection" />
-            <ScrollPane hbarPolicy="NEVER" layoutX="423.0" layoutY="14.0" prefHeight="917.0" prefWidth="1105.0" style="-fx-background-color: transparent;">
+            <Text layoutX="1603.0" layoutY="38.0" style="-fx-font-size: 30px; -fx-font-weight: bold; -fx-fill: white;" text="Collections" />
+            <Button fx:id="addCollectionButton" layoutX="1579.0" layoutY="841.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="202.0" style="-fx-background-color: #FF7F11; -fx-background-radius: 50; -fx-font-size: 20px; -fx-text-fill: white;" text="Add Collection" />
+            <ScrollPane hbarPolicy="NEVER" layoutX="454.0" layoutY="8.0" prefHeight="900.0" prefWidth="1040.0" style="-fx-background-color: transparent;">
                <content>
-                  <FlowPane fx:id="recipeFlowPane" prefHeight="917.0" prefWidth="1088.0" style="-fx-vgap: 10; -fx-hgap: 10;" />
+                  <FlowPane fx:id="recipeFlowPane" prefHeight="900.0" prefWidth="1040.0" style="-fx-vgap: 10; -fx-hgap: 10;" />
                </content>
             </ScrollPane>
             <Text fx:id="noRecipesTXT" layoutX="898.0" layoutY="482.7060546875" style="-fx-font-size: 29px; -fx-font-weight: bold; -fx-fill: Black;" text="No Recipes" />

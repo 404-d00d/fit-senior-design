@@ -1054,17 +1054,31 @@ public class CommunityRecipesController {
 
    private VBox createRecipeCard(Recipe recipe) {
       try {
-          FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
-          VBox recipeCard = loader.load();
-          RecipeCardController controller = loader.getController();
+         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
+         VBox recipeCard = loader.load();
+         RecipeCardController controller = loader.getController();
 
          // **Load Image from S3**
          String imageUrl = S3_BASE_URL + recipe.getName().replace(" ", "%20") + ".jpg"; // URL encode spaces
          Image image = new Image(imageUrl, true);
           
-          // Pass "community" as the viewType to set up the community-specific context menu.
-          controller.setRecipeData(recipe, image, this,"community");
-          return recipeCard;
+         // Pass "community" as the viewType to set up the community-specific context menu.
+         controller.setRecipeData(recipe, image, this,"community");
+
+         // Determine outline color based on completeness:
+         List<String> inventory = getUserInventory();
+         String[] ingredients = recipe.getIngredients();
+
+         int matchCount = 0;
+         for (String ingredient : ingredients) {
+            if (inventory.contains(ingredient.toLowerCase())) {
+               matchCount++;
+            }
+         }
+
+         
+
+         return recipeCard;
       } catch (Exception e) {
           e.printStackTrace();
           return new VBox(new Label("Error loading recipe card"));

@@ -1,27 +1,27 @@
 {
-  "2025-03-26": [
+  "2025-03-27": [
     {
       "cookTime": {
-        "date": "2025-03-26",
-        "duration": 15,
-        "hour": 18,
-        "name": "Easy Chicken Tacos",
-        "mealType": "Dinner",
-        "id": 2,
+        "date": "2025-03-27",
+        "duration": 140.0,
+        "hour": 18.0,
+        "name": "Guinness beef stew",
+        "mealType": "Lunch",
+        "id": 2.0,
         "isMealMade": false,
-        "mealGroupId": "4d1e426a-64e8-47c1-9e2a-07ce8320c378",
-        "recipeID": 0
+        "mealGroupId": "35e21445-416b-4d36-84c0-e04723860cab",
+        "recipeID": 1.0
       },
       "prepTime": {
-        "date": "2025-03-26",
-        "duration": 15,
-        "hour": 9,
-        "name": "Easy Chicken Tacos",
-        "mealType": "Dinner",
-        "id": 1,
+        "date": "2025-03-27",
+        "duration": 20.0,
+        "hour": 9.0,
+        "name": "Guinness beef stew",
+        "mealType": "Lunch",
+        "id": 1.0,
         "isMealMade": false,
-        "mealGroupId": "4d1e426a-64e8-47c1-9e2a-07ce8320c378",
-        "recipeID": 0
+        "mealGroupId": "35e21445-416b-4d36-84c0-e04723860cab",
+        "recipeID": 1.0
       }
     }
   ]

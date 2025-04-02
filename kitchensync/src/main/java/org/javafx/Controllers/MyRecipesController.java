@@ -1428,7 +1428,7 @@ public class MyRecipesController {
 
    private Button createCollectionButton(String collectionName) {
       Button button = new Button(collectionName);
-      button.setStyle("-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-size: 20px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
+      button.setStyle("-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-size: 18px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
       button.setPrefWidth(120); // Set button width
       button.setPrefHeight(40); // Set button height
 
@@ -1437,9 +1437,19 @@ public class MyRecipesController {
          updateButtonStyles(button);
       });
 
-      button.setOnMouseEntered(event -> button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-weight: bold;"));
-      button.setOnMouseExited(event -> button.setStyle("-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-weight: bold;"));
-  
+      button.setOnMouseEntered(event -> {
+         if (!collectionName.equals(currentCollection)) {
+            button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px; -fx-border-radius: 50; -fx-background-radius: 50;");
+         }
+      });
+
+      button.setOnMouseExited(event -> {
+         if (collectionName.equals(currentCollection)) {
+            button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 18px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
+         } else {
+            button.setStyle("-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-size: 18px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
+         }
+      });
 
       // Add delete option for non-default collections
       if (!collectionName.equals("All Recipes") && !collectionName.equals("Favorites")) {
@@ -1450,6 +1460,11 @@ public class MyRecipesController {
          button.setOnContextMenuRequested(e -> contextMenu.show(button, e.getScreenX(), e.getScreenY()));
       }
 
+      // Apply selected style if it's the current collection
+      if (collectionName.equals(currentCollection)) {
+         button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 18px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
+      }
+
       return button;
    }
 
@@ -1458,9 +1473,9 @@ public class MyRecipesController {
           if (node instanceof Button) {
               Button button = (Button) node;
               if (button == activeButton) {
-                  button.setStyle("-fx-border-color: orange; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 25;");
+                  button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 18px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
               } else {
-                  button.setStyle("-fx-border-color: transparent; -fx-background-color: darkgrey; -fx-background-radius: 50; -fx-border-radius: 50; -fx-border-width: 4; -fx-font-size: 25;");
+                  button.setStyle("-fx-background-color: #3C3C3C; -fx-text-fill: white; -fx-font-size: 18px; -fx-border-radius: 50; -fx-background-radius: 50; -fx-font-weight: bold;");
               }
           }
       }

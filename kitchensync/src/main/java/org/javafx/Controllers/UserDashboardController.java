@@ -1,23 +1,40 @@
 package org.javafx.Controllers;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.javafx.Main.Main;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
+import java.lang.reflect.Type;
 
 public class UserDashboardController {
 
@@ -30,11 +47,13 @@ public class UserDashboardController {
 
    @FXML private AnchorPane tutorialOverlay;
 
-   @FXML private Text tutorialText;
+   @FXML private Text tutorialText, noMealsTXT;
 
    @FXML private Button nextTutorialButton, skipTutorialButton;
 
    @FXML private Rectangle highlightBox;
+
+   @FXML private HBox mealPlans;
 
    private int tutorialStep = 0;
    private final String[] tutorialMessages = {
@@ -74,6 +93,7 @@ public class UserDashboardController {
 
       // Initialize AutoCompleteTextField
       setupCustomAutoComplete(searchBar, basePane);
+      loadUpcomingMealsPreview();
 
       // Add search functionality
       searchBar.setOnKeyPressed(event -> {
@@ -357,4 +377,113 @@ public class UserDashboardController {
       // Reset style when mouse exits
       button.setStyle("-fx-background-color: transparent; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 25;");
    }
+
+   private void loadUpcomingMealsPreview() {
+      mealPlans.getChildren().clear();
+
+      try (FileReader reader = new FileReader("mealPlans.json")) {
+         Gson gson = new GsonBuilder()
+               .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+               .create();
+
+         Type type = new TypeToken<Map<LocalDate, List<Map<String, Object>>>>() {}.getType();
+         Map<LocalDate, List<Map<String, Object>>> mealPlanMap = gson.fromJson(reader, type);
+
+         List<Map<String, Object>> cookBlocks = new ArrayList<>();
+
+         for (Map.Entry<LocalDate, List<Map<String, Object>>> entry : mealPlanMap.entrySet()) {
+               for (Map<String, Object> meal : entry.getValue()) {
+                  if (meal.containsKey("cookTime")) {
+                     Map<String, Object> cookBlock = (Map<String, Object>) meal.get("cookTime");
+                     cookBlocks.add(cookBlock);
+                  }
+               }
+         }
+
+         // Sort by date then meal type order
+         cookBlocks.sort((a, b) -> {
+               LocalDate dateA = LocalDate.parse((String) a.get("date"));
+               LocalDate dateB = LocalDate.parse((String) b.get("date"));
+
+               int dateCompare = dateA.compareTo(dateB);
+               if (dateCompare != 0) return dateCompare;
+
+               // Order: Breakfast < Lunch < Dinner < Snack
+               List<String> order = List.of("Breakfast", "Lunch", "Dinner", "Snack");
+               return Integer.compare(order.indexOf(a.get("mealType")), order.indexOf(b.get("mealType")));
+         });
+
+         // Limit to first 7 meals
+         cookBlocks = new ArrayList<>(cookBlocks.stream().limit(7).collect(Collectors.toList()));
+
+         if (cookBlocks.size() > 0) {
+            noMealsTXT.setVisible(false);
+         }
+
+         for (Map<String, Object> block : cookBlocks) {
+               String name = (String) block.get("name");
+               String mealType = (String) block.get("mealType");
+               String date = (String) block.get("date");
+               int recipeID = ((Number) block.get("recipeID")).intValue();
+
+               VBox previewCard = createMealPreviewCard(name, mealType, date, recipeID);
+               mealPlans.getChildren().add(previewCard);
+         }
+
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+
+   private VBox createMealPreviewCard(String name, String type, String date, int recipeID) {
+      VBox card = new VBox();
+      card.setSpacing(10);
+      card.setPrefSize(200, 300);
+      card.setMaxSize(200, 300);
+      card.setMinSize(200, 300);
+      card.setStyle(
+          "-fx-background-color: #2A2A2A;" +
+          "-fx-border-radius: 10;" +
+          "-fx-background-radius: 10;"
+      );
+  
+      // Recipe image section
+      ImageView imageView = new ImageView();
+      imageView.setFitWidth(180); // Slightly smaller than card width
+      imageView.setFitHeight(180);
+      imageView.setPreserveRatio(false);
+  
+      File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + name + ".png");
+      if (imageFile.exists()) {
+          Image img = new Image(imageFile.toURI().toString());
+          imageView.setImage(img);
+      }
+  
+      VBox imageContainer = new VBox(imageView);
+      imageContainer.setStyle("-fx-alignment: center;");
+      imageContainer.setPrefHeight(200);
+      imageContainer.setMaxWidth(200);
+  
+      // Name label
+      Label nameLabel = new Label(name);
+      nameLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 18px;");
+      nameLabel.setWrapText(true);
+      nameLabel.setPrefWidth(180);
+  
+      // Meta label (type + date)
+      Label metaLabel = new Label(type + " — " + LocalDate.parse(date).format(DateTimeFormatter.ofPattern("MMM d")));
+      metaLabel.setStyle("-fx-text-fill: #FF7F11; -fx-font-size: 18px; -fx-font-weight: bold;");
+      metaLabel.setWrapText(true);
+      metaLabel.setPrefWidth(180);
+  
+      VBox textContainer = new VBox(nameLabel, metaLabel);
+      textContainer.setSpacing(5);
+      textContainer.setPrefHeight(100);
+      textContainer.setStyle("-fx-alignment: center-left; -fx-padding: 5 10 0 10;");
+  
+      card.getChildren().addAll(imageContainer, textContainer);
+      return card;
+  }
+  
+
 }

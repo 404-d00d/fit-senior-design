@@ -870,14 +870,14 @@ public class MyRecipesController {
          recipeDetailsImages.setImage(null);
       }
 
-      localRatingStars.setText("Local Reivew: " + getStarsString(recipe.getLocalRating()));
-      communityRatingStars.setText("Community Reivew: " + getStarsString(recipe.getCommunityRating()));
+      localRatingStars.setText("Local Review: " + getStarsString(recipe.getLocalRating()));
+      communityRatingStars.setText("Community Review: " + getStarsString(recipe.getCommunityRating()));
       recipeNotesArea.setText(recipe.getRecipeNotes());
 
       // Review Page Info
 
-      localRatingStarsReviews.setText("Local Reivew: " + getStarsString(recipe.getLocalRating()));
-      communityRatingStarsReview.setText("Community Reivew: " + getStarsString(recipe.getCommunityRating()));
+      localRatingStarsReviews.setText("Local Review: " + getStarsString(recipe.getLocalRating()));
+      communityRatingStarsReview.setText("Community Review: " + getStarsString(recipe.getCommunityRating()));
 
       recipeReviewName.setText(name);
 

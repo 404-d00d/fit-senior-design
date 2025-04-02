@@ -28,6 +28,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -37,6 +40,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 
 // ==============================================================================
@@ -89,6 +94,12 @@ public class MealPlannerController {
     private Map<Integer, VBox> recipeWidgets = new HashMap<>();
     private ArrayList<Item> ingredientInventory = new ArrayList<Item>(); //ingredient interface 
 
+    // Selected filters for recipes
+    private Set<String> selectedIngredients = new HashSet<>();
+    private Set<String> selectedTags = new HashSet<>();
+    private Set<String> availableIngredients = new HashSet<>();
+    private Set<String> availableTags = new HashSet<>();
+
     private static final String RECIPES_FILE_PATH = "recipes.json";
 
     private Recipe selectedRecipe;
@@ -104,16 +115,13 @@ public class MealPlannerController {
     @FXML
     private void initialize() {
 
-        // Load Users Item Inventory from JSON
-        loadIngredientInventory();
+        loadIngredientInventory(); // Load Users Item Inventory from JSON
+        loadMealPlansFromJson(); // Load meal plans from JSON
+        loadRecipes(); // Load Users Recipes from JSON
+        populateFilterOptions(); // Ensure filters get populated
+        setupMultiSelectFilters(); // Set up Filter Buttons
 
-        // Load meal plans from JSON
-        loadMealPlansFromJson();
-
-        // Load Users Recipes from JSON
-        loadRecipes();
-
-
+        sortBy.getItems().addAll("A-Z", "Z-A", "Complexity", "Prep Time", "Cook Time");
 
         menuButton.setOnAction(event -> toggleMenuPane());
         
@@ -162,8 +170,11 @@ public class MealPlannerController {
         addMealButton.setOnAction(event -> openAddMealDialog());
         closeButton.setOnAction(event -> closeMealDetails());
         closeRecipeButton.setOnAction(event -> closeRecipeCookingPane());
-
         addMealToPlan.setOnAction(event -> addMeal());
+        
+        // Attach event listeners for filtering
+        resetFilters.setOnAction(event -> clearAllFilters());
+        sortBy.setOnAction(event -> filterRecipes());
     }
 
     // =============================================
@@ -1617,6 +1628,7 @@ public class MealPlannerController {
             mealTypeFromPlan = mealTypeFromPlan.substring(0, 1).toUpperCase() + mealTypeFromPlan.substring(1).toLowerCase();
             mealSlot.setValue(mealTypeFromPlan);
         }
+
     
     }
     
@@ -1731,7 +1743,222 @@ public class MealPlannerController {
         }
         return null; // If not found
     }
+
+    private String capitalizeWords(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        
+        String[] words = input.split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        
+        for (String word : words) {
+            if (word.length() > 0) {
+                // Capitalize the first letter, lowercase the rest
+                sb.append(Character.toUpperCase(word.charAt(0)))
+                  .append(word.substring(1).toLowerCase())
+                  .append(" ");
+            }
+        }
+        
+        // Trim any trailing space
+        return sb.toString().trim();
+    }
     
+    // =======================================================
+    // Recipe Filters: 
+    // Handles reicpe filtering options
+    // =======================================================
+
+    private void populateFilterOptions() {
+        Set<String> ingredientSet = new HashSet<>();
+        Set<String> tagSet = new HashSet<>();
+        Set<String> categorySet = new HashSet<>();
+  
+        // Collect unique ingredients and tags from existing recipes
+        for (Recipe recipe : recipeList) {
+           for (String ingredient : recipe.getIngredients()) {
+              ingredientSet.add(ingredient.split(":")[0].trim()); // Extract ingredient name
+           }
+           tagSet.addAll(Arrays.asList(recipe.getTags()));
+           categorySet.add(capitalizeWords(recipe.getCategory()));
+        }
+  
+        // Ensure default options exist if the user has no recipes
+        if (ingredientSet.isEmpty()) {
+           ingredientSet.addAll(Arrays.asList("Flour", "Sugar", "Salt", "Butter", "Eggs", "Milk"));
+        }
+        if (tagSet.isEmpty()) {
+           tagSet.addAll(Arrays.asList("Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Spicy", "Quick Meal"));
+        }
+        if (categorySet.isEmpty()) {
+           categorySet.addAll(Arrays.asList("Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Other"));
+        }
+   
+  
+        // Set up available options
+        availableIngredients = ingredientSet;
+        availableTags = tagSet;
+  
+        // Populate the category filter with options
+        mealType.getItems().clear();
+        mealType.getItems().add("All Categories"); // Default option
+        mealType.getItems().addAll(categorySet);
+        mealType.setValue("All Categories"); // Set the default selection
+  
+        selectedIngredients.clear();
+        selectedTags.clear();
+    }
+
+    @FXML
+    private void clearAllFilters() {
+       selectedIngredients.clear();
+       selectedTags.clear();
+       mealType.setValue("All Categories"); // Reset to default
+       sortBy.setValue("A-Z");
+       filterRecipes(); // Refresh recipe list
+    }
+
+    private void setupMultiSelectFilters() {
+        ingredientFilter.setOnAction(event -> {
+            selectedIngredients = showMultiSelectDialog("Select Ingredients", availableIngredients, selectedIngredients);
+            filterRecipes();
+        });
+    
+        tagsFilter.setOnAction(event -> {
+            selectedTags = showMultiSelectDialog("Select Tags", availableTags, selectedTags);
+            filterRecipes();
+        });
+    
+        resetFilters.setOnAction(event -> clearAllFilters());
+        mealType.setOnAction(event -> filterRecipes());
+    }
+
+    private void filterRecipes() {
+
+        // 1) First, figure out what was chosen in the ComboBoxes
+        String selectedCategory = mealType.getValue();
+        String selectedSort = sortBy.getValue();
+        
+        boolean filterByCategory = !selectedCategory.equals("All Categories");
+    
+        // 2) Start with all recipes
+        List<Recipe> matchingRecipes = new ArrayList<>(recipeList);
+    
+        // 3) Filter by category, ingredients, tags
+        matchingRecipes.removeIf(recipe -> {
+            // Category
+            boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
+    
+            // Ingredients
+            boolean matchesIngredients = selectedIngredients.isEmpty()
+                || Arrays.stream(recipe.getIngredients())
+                         .anyMatch(ingredient -> selectedIngredients.contains(ingredient.split(":")[0].trim()));
+    
+            // Tags
+            boolean matchesTags = selectedTags.isEmpty()
+                || Arrays.stream(recipe.getTags())
+                         .anyMatch(selectedTags::contains);
+            
+            return !(matchesCategory && matchesIngredients && matchesTags);
+        });
+    
+        // 4) Sort the filtered list based on selectedSort
+        if (selectedSort != null) {
+            switch (selectedSort) {
+                case "A-Z":
+                    matchingRecipes.sort((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()));
+                    break;
+                case "Z-A":
+                    matchingRecipes.sort((r1, r2) -> r2.getName().compareToIgnoreCase(r1.getName()));
+                    break;
+                case "Complexity":
+                    matchingRecipes.sort(Comparator.comparingInt(Recipe::getComplexity));
+                    break;
+                case "Prep Time":
+                    matchingRecipes.sort(Comparator.comparingInt(Recipe::getPrepTime));
+                    break;
+                case "Cook Time":
+                    matchingRecipes.sort(Comparator.comparingInt(Recipe::getCookTime));
+                    break;
+                default:
+                    // do nothing or handle gracefully
+                    break;
+            }
+        }
+    
+        // 5) Clear and rebuild the recipeFlowPane with the final filtered & sorted list
+        recipeFlowPane.getChildren().clear();
+
+        System.out.println(matchingRecipes);
+    
+        Set<VBox> added = new HashSet<>();
+        for (Recipe recipe : matchingRecipes) {
+            VBox card = recipeWidgets.get(recipe.getID());
+            if (card != null && added.add(card)) {
+                
+                recipeFlowPane.getChildren().add(card);
+            }
+        }
+    }
+    
+
+    private Set<String> showMultiSelectDialog(String title, Set<String> availableOptions, Set<String> selectedOptions) {
+        Stage dialogStage = new Stage();
+        dialogStage.initModality(Modality.APPLICATION_MODAL);
+        dialogStage.setTitle(title);
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        // Search Bar
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search...");
+
+        // ListView with checkboxes
+        ListView<CheckBox> listView = new ListView<>();
+        ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
+
+        // Populate checkboxes
+        for (String option : availableOptions) {
+            CheckBox checkBox = new CheckBox(option);
+            checkBox.setSelected(selectedOptions.contains(option));
+            checkBoxes.add(checkBox);
+        }
+
+        listView.setItems(checkBoxes);
+
+        // Search functionality
+        searchField.textProperty().addListener((obs, oldText, newText) -> {
+            listView.setItems(checkBoxes.filtered(cb -> cb.getText().toLowerCase().contains(newText.toLowerCase())));
+        });
+
+        // Buttons
+        Button applyButton = new Button("Apply");
+        Button cancelButton = new Button("Cancel");
+
+        applyButton.setOnAction(event -> {
+            selectedOptions.clear();
+            for (CheckBox checkBox : checkBoxes) {
+                if (checkBox.isSelected()) {
+                    selectedOptions.add(checkBox.getText());
+                }
+            }
+            dialogStage.close();
+        });
+
+        cancelButton.setOnAction(event -> dialogStage.close());
+
+        HBox buttonBox = new HBox(10, applyButton, cancelButton);
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
+
+        vbox.getChildren().addAll(searchField, listView, buttonBox);
+        Scene scene = new Scene(vbox, 300, 400);
+        dialogStage.setScene(scene);
+        dialogStage.showAndWait();
+
+        return selectedOptions;
+   }
 
     // =======================================================
     // Visual Enhancements: 

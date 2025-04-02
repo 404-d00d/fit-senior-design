@@ -1,1 +1,28 @@
-{}
+{
+  "2025-03-26": [
+    {
+      "cookTime": {
+        "date": "2025-03-26",
+        "duration": 15,
+        "hour": 18,
+        "name": "Easy Chicken Tacos",
+        "mealType": "Dinner",
+        "id": 2,
+        "isMealMade": false,
+        "mealGroupId": "4d1e426a-64e8-47c1-9e2a-07ce8320c378",
+        "recipeID": 0
+      },
+      "prepTime": {
+        "date": "2025-03-26",
+        "duration": 15,
+        "hour": 9,
+        "name": "Easy Chicken Tacos",
+        "mealType": "Dinner",
+        "id": 1,
+        "isMealMade": false,
+        "mealGroupId": "4d1e426a-64e8-47c1-9e2a-07ce8320c378",
+        "recipeID": 0
+      }
+    }
+  ]
+}

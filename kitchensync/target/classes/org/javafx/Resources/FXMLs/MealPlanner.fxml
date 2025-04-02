@@ -218,7 +218,7 @@
                <children>
                   <ComboBox fx:id="mealReadiness" prefHeight="36.0" prefWidth="202.0" promptText="Ready To Cook" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
 
-                  <ComboBox fx:id="mealType" prefHeight="36.0" prefWidth="150.0" promptText="Category" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
+                  <ComboBox fx:id="mealType" prefHeight="44.0" prefWidth="200.0" promptText=" Meal Type" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
 
                   <ComboBox fx:id="sortBy" prefHeight="36.0" prefWidth="150.0" promptText="Sort By" style="-fx-background-radius: 50; -fx-text-fill: white; -fx-font-weight: bold;" />
 

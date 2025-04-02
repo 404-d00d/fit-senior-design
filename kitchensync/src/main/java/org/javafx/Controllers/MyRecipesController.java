@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ import org.javafx.Recipe.Recipe;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -1178,7 +1176,7 @@ public class MyRecipesController {
             ingredientSet.add(ingredient.split(":")[0].trim()); // Extract ingredient name
          }
          tagSet.addAll(Arrays.asList(recipe.getTags()));
-         categorySet.add(recipe.getCategory());
+         categorySet.add(capitalizeWords(recipe.getCategory()));
       }
 
       // Ensure default options exist if the user has no recipes
@@ -1856,6 +1854,27 @@ public class MyRecipesController {
       reviewStage.setScene(scene);
       reviewStage.showAndWait();
   }
+
+   private String capitalizeWords(String input) {
+      if (input == null || input.isEmpty()) {
+         return input;
+      }
+      
+      String[] words = input.split("\\s+");
+      StringBuilder sb = new StringBuilder();
+      
+      for (String word : words) {
+         if (word.length() > 0) {
+            // Capitalize the first letter, lowercase the rest
+            sb.append(Character.toUpperCase(word.charAt(0)))
+               .append(word.substring(1).toLowerCase())
+               .append(" ");
+         }
+      }
+      
+      // Trim any trailing space
+      return sb.toString().trim();
+   }
    
 }
 

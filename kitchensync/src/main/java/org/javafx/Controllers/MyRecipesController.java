@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1286,31 +1287,72 @@ public class MyRecipesController {
    }
   
    private void filterRecipes() {
-      String selectedCategory = categoryFilter.getValue();
 
-      // Handle the case where the category is null (default to "All Categories")
-      if (selectedCategory == null) {
-         selectedCategory = "All Categories"; 
-      }
+        // 1) First, figure out what was chosen in the ComboBoxes
+        String selectedCategory = categoryFilter.getValue();
+        String selectedSort = sortBy.getValue();
+        
+        boolean filterByCategory = !selectedCategory.equals("All Categories");
+    
+        // 2) Start with all recipes
+        List<Recipe> matchingRecipes = new ArrayList<>(recipeList);
+    
+        // 3) Filter by category, ingredients, tags
+        matchingRecipes.removeIf(recipe -> {
+            // Category
+            boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
+    
+            // Ingredients
+            boolean matchesIngredients = selectedIngredients.isEmpty()
+                || Arrays.stream(recipe.getIngredients())
+                         .anyMatch(ingredient -> selectedIngredients.contains(ingredient.split(":")[0].trim()));
+    
+            // Tags
+            boolean matchesTags = selectedTags.isEmpty()
+                || Arrays.stream(recipe.getTags())
+                         .anyMatch(selectedTags::contains);
+            
+            return !(matchesCategory && matchesIngredients && matchesTags);
+        });
+    
+        // 4) Sort the filtered list based on selectedSort
+        if (selectedSort != null) {
+            switch (selectedSort) {
+                case "A-Z":
+                    matchingRecipes.sort((r1, r2) -> r1.getName().compareToIgnoreCase(r2.getName()));
+                    break;
+                case "Z-A":
+                    matchingRecipes.sort((r1, r2) -> r2.getName().compareToIgnoreCase(r1.getName()));
+                    break;
+                case "Complexity":
+                    matchingRecipes.sort(Comparator.comparingInt(Recipe::getComplexity));
+                    break;
+                case "Prep Time":
+                    matchingRecipes.sort(Comparator.comparingInt(Recipe::getPrepTime));
+                    break;
+                case "Cook Time":
+                    matchingRecipes.sort(Comparator.comparingInt(Recipe::getCookTime));
+                    break;
+                default:
+                    // do nothing or handle gracefully
+                    break;
+            }
+        }
+    
+        // 5) Clear and rebuild the recipeFlowPane with the final filtered & sorted list
+        recipeFlowPane.getChildren().clear();
 
-      boolean filterByCategory = !selectedCategory.equals("All Categories");
-  
-      recipeFlowPane.getChildren().clear();
-  
-      for (Recipe recipe : recipeList) {
-          boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
-          boolean matchesIngredients = selectedIngredients.isEmpty() || 
-              Arrays.stream(recipe.getIngredients()) // Convert array to stream
-                  .anyMatch(ingredient -> selectedIngredients.contains(ingredient.split(":")[0].trim()));
-          boolean matchesTags = selectedTags.isEmpty() || 
-              Arrays.stream(recipe.getTags()) // Convert array to stream
-                  .anyMatch(selectedTags::contains);
-  
-          if (matchesCategory && matchesIngredients && matchesTags) {
-              recipeFlowPane.getChildren().add(recipeWidgets.get(recipe.getID()));
-          }
-      }
-   }
+        System.out.println(matchingRecipes);
+    
+        Set<VBox> added = new HashSet<>();
+        for (Recipe recipe : matchingRecipes) {
+            VBox card = recipeWidgets.get(recipe.getID());
+            if (card != null && added.add(card)) {
+                
+                recipeFlowPane.getChildren().add(card);
+            }
+        }
+    }
   
    private void filterRecipesBySearch(String query) {
       recipeFlowPane.getChildren().clear(); // Clear current displayed recipes

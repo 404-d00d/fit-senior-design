@@ -15,9 +15,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -32,8 +34,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -57,6 +63,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -93,8 +100,7 @@ public class CommunityRecipesController {
    private DynamoDbClient database;
    private S3Client s3Client;
    private AwsBasicCredentials awsCreds ;
-
-   private List<Map<String, AttributeValue>> recipes;
+   
    private List<VBox> recipeCards = new ArrayList<>();
 
    @FXML private Text noRecipesTXT;
@@ -135,8 +141,19 @@ public class CommunityRecipesController {
    private List<String> preparationSteps = new ArrayList<>();
    private ObservableList<Recipe> recipeList = FXCollections.observableArrayList();
 
+   // Selected filters for recipes
+   private Set<String> selectedIngredients = new HashSet<>();
+   private Set<String> selectedTags = new HashSet<>();
+   private Set<String> availableIngredients = new HashSet<>();
+   private Set<String> availableTags = new HashSet<>();
+   private Map<Integer, VBox> recipeWidgets = new HashMap<>();
+
    private static final String S3_BUCKET_NAME = "kitchensyncimages";
    private static final String S3_BASE_URL = "https://" + S3_BUCKET_NAME + ".s3.amazonaws.com/";
+
+   private List<Recipe> communityRecipes = new ArrayList<>();
+   private List<Recipe> filteredRecipes = new ArrayList<>();
+   private final Map<String, VBox> recipeCardMap = new HashMap<>();
 
    private void initializeDatabaseAndS3() {
       try {
@@ -165,13 +182,22 @@ public class CommunityRecipesController {
 
       initializeDatabaseAndS3();
       loadCommunityRecipes();
+
+      applyFiltersAndSort();
+      buildRecipeCards();
+
       configureSortBy();
       configureFilters();
       configureDropdowns();
       configureEquipmentTable();
       configureIngredientTable();
+      populateFilterOptions(); // Ensure filters get populated
+      setupMultiSelectFilters(); // Set up Filter Buttons
 
-      searchBar.textProperty().addListener((obs, oldText, newText) -> filterRecipesBySearch(newText));
+      searchBar.textProperty().addListener((obs, oldText, newText) -> {
+         applyFiltersAndSort();
+         buildRecipeCards();
+      });
 
       setupUIEventHandlers();
 
@@ -719,17 +745,27 @@ public class CommunityRecipesController {
       .sorted()
       .collect(Collectors.toList());
 
-      int newId = 1;
+      int newId = 0;  // Start looking for the smallest ID at 0
 
       for (int id : existingIds) {
-         if (id == newId) {
-             newId++; // Move to the next available number
+         if (id < newId) {
+            // This existingId is less than the candidate — ignore and keep going
+            // because maybe we find a match later or we never do.
+         } else if (id == newId) {
+            // The candidate ID is in use; move to the next integer
+            newId++;
          } else {
-             break; // Found a gap, use this ID
+            // id > newId → there's a gap
+            // newId is already the first free ID
+            break;
          }
       }
 
+      // 'newId' is now guaranteed to be the smallest unused positive ID
+      System.out.println("Next free ID is " + newId);
+
       recipe.setID(newId);
+      System.out.println(recipe.getID());
 
       recipeList.add(recipe);
 
@@ -746,9 +782,9 @@ public class CommunityRecipesController {
       if (image.getUrl() != null) {
          try (InputStream in = URI.create(image.getUrl()).toURL().openStream()) {
             Files.copy(in, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("Image successfully saved to: " + destinationFile.getAbsolutePath());
+            //System.out.println("Image successfully saved to: " + destinationFile.getAbsolutePath());
          } catch (Exception e) {
-            System.err.println("Failed to download image from URL: " + image.getUrl());
+            //System.err.println("Failed to download image from URL: " + image.getUrl());
             e.printStackTrace();
          }
       } else {
@@ -813,14 +849,10 @@ public class CommunityRecipesController {
    }
 
    private void loadCommunityRecipes() {
-      recipes = fetchCommunityRecipes();
-      buildRecipeCards(recipes);
+      List<Map<String, AttributeValue>> rawItems = fetchCommunityRecipes();
+      this.communityRecipes = convertToRecipeList(rawItems);
   
-      if (recipes.isEmpty()) {
-          noRecipesTXT.setVisible(true);
-      } else {
-          noRecipesTXT.setVisible(false);
-      }
+      noRecipesTXT.setVisible(communityRecipes.isEmpty());
    }
 
    private void configureDropdowns() {
@@ -832,77 +864,25 @@ public class CommunityRecipesController {
       categoryDropDown.setOnAction(e -> filterRecipes());
    }
 
-   private void buildRecipeCards(List<Map<String, AttributeValue>> items) {
+   /**
+    * Builds (or rebuilds) the FlowPane UI from the filteredRecipes list.
+    */
+   private void buildRecipeCards() {
       recipeFlowPane.getChildren().clear();
-      recipeCards.clear();
+      recipeCardMap.clear();
 
-      for (Map<String, AttributeValue> item : items) {
-
-         AttributeValue nameAttr = item.get("name");
-         AttributeValue descAttr = item.get("description");
-
-         // Skip items with missing essential attributes
-         if (nameAttr == null || descAttr == null) {
-               continue;
-         }
-
-         String recipeName = nameAttr.s();
-         String description = descAttr.s();
-
-         try {
-               FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/javafx/Resources/FXMLs/RecipeCard.fxml"));
-               VBox recipeCard = loader.load();
-               RecipeCardController controller = loader.getController();
-
-               // Create a Recipe object with the necessary details
-               Recipe recipe = new Recipe(
-                  -1, // Dummy ID, as it's from community
-                  recipeName,
-                  item.getOrDefault("category", AttributeValue.builder().s("Uncategorized").build()).s(),
-                  "Community",
-                  description,
-                  Integer.parseInt(item.getOrDefault("prepTime", AttributeValue.builder().n("0").build()).n()),
-                  Integer.parseInt(item.getOrDefault("passiveTime", AttributeValue.builder().n("0").build()).n()),
-                  Integer.parseInt(item.getOrDefault("cookTime", AttributeValue.builder().n("0").build()).n()),
-                  1, // Default complexity
-                  Integer.parseInt(item.getOrDefault("servings", AttributeValue.builder().n("1").build()).n()),
-                  item.containsKey("tags") ? item.get("tags").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-                  item.containsKey("ingredients") ? item.get("ingredients").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-                  item.containsKey("equipment") ? item.get("equipment").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-                  item.containsKey("steps") ? item.get("steps").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{}
-               );
-               
-               // **Construct S3 Image URL**
-               String imageUrl = S3_BASE_URL + recipeName.replace(" ", "%20") + ".jpg"; // URL encode spaces
-               Image image = new Image(imageUrl, true);
-
-               // Set data on the card
-               controller.setRecipeData(recipe, image, this, "community");
-
-               // Add to UI
-               recipeFlowPane.getChildren().add(recipeCard);
-               recipeCards.add(recipeCard);
-
-               applyHoverEffect(recipeCard, recipe);
-
-               // Recipe Card Style to match theme but seems a bit too much
-               /*
-               recipeCard.setStyle(
-                  "-fx-background-color: #444444; " +
-                  "-fx-border-color: #FF7F11; " +
-                  "-fx-border-radius: 10; " +
-                  "-fx-padding: 10; " +
-                  "-fx-background-radius: 10;"
-               );
-               */
-
-         } catch (Exception e) {
-               e.printStackTrace();
-         }
+      if (filteredRecipes.isEmpty()) {
+         noRecipesTXT.setVisible(true);
+         return;
       }
+      noRecipesTXT.setVisible(false);
 
-      // Show or hide 'noRecipesTXT' based on recipe availability
-      noRecipesTXT.setVisible(recipeCards.isEmpty());
+      for (Recipe r : filteredRecipes) {
+         VBox card = createRecipeCard(r);
+         // If you prefer a different key, store by ID or a compound key:
+         recipeCardMap.put(r.getName(), card);
+         recipeFlowPane.getChildren().add(card);
+      }
    }
 
    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
@@ -949,61 +929,8 @@ public class CommunityRecipesController {
   }
   
    private void sortRecipes() {
-      if (recipes == null || recipes.isEmpty()) return;
-
-      String criteria = sortBy.getValue();
-      Comparator<Map<String, AttributeValue>> comparator;
-
-      switch (criteria) {
-         case "A-Z":
-            comparator = Comparator.comparing(item -> item.get("name").s());
-            break;
-         case "Z-A":
-            comparator = Comparator.comparing(item -> item.get("name").s(), Comparator.reverseOrder());
-            break;
-         case "Prep Time":
-            comparator = Comparator.comparingInt(item -> Integer.parseInt(item.get("prepTime").n()));
-            break;
-         case "Cook Time":
-            comparator = Comparator.comparingInt(item -> Integer.parseInt(item.get("cookTime").n()));
-            break;
-         default:
-            return;
-      }
-
-      // Create a new modifiable list from the original unmodifiable list
-      List<Map<String, AttributeValue>> modifiableRecipes = new ArrayList<>(recipes);
-      modifiableRecipes.sort(comparator);
-
-      buildRecipeCards(modifiableRecipes);
-   }
-
-   private void filterRecipes() {
-      String categoryFilter = categoryDropDown.getValue();
-  
-      List<Map<String, AttributeValue>> filtered = recipes.stream()
-          .filter(item -> categoryFilter == null || 
-              item.containsKey("category") && item.get("category").s().equals(categoryFilter)
-          )
-          .collect(Collectors.toList());
-  
-      buildRecipeCards(filtered);
-  }
-
-   private void filterRecipesBySearch(String query) {
-      if (query.isEmpty()) {
-         buildRecipeCards(recipes);
-         return;
-      }
-
-      String lowerCaseQuery = query.toLowerCase();
-      List<Map<String, AttributeValue>> filtered = recipes.stream()
-         .filter(item -> item.get("name").s().toLowerCase().contains(lowerCaseQuery)
-            || item.get("description").s().toLowerCase().contains(lowerCaseQuery)
-            || item.get("tags").l().stream().anyMatch(tag -> tag.s().toLowerCase().contains(lowerCaseQuery)))
-         .collect(Collectors.toList());
-
-      buildRecipeCards(filtered);
+      applyFiltersAndSort();
+      buildRecipeCards();
    }
 
    private List<String> getUserInventory() {
@@ -1076,7 +1003,7 @@ public class CommunityRecipesController {
             }
          }
 
-         
+         applyHoverEffect(recipeCard, recipe);
 
          return recipeCard;
       } catch (Exception e) {
@@ -1087,7 +1014,7 @@ public class CommunityRecipesController {
 
    private void updateSuggestedRecipes() {
       List<String> userInventory = getUserInventory();
-      List<Recipe> allRecipes = convertToRecipeList(recipes);  // This should fetch all available recipes
+      List<Recipe> allRecipes = communityRecipes;  // This should fetch all available recipes
       List<Recipe> suggestedRecipes = getSuggestedRecipes(userInventory, allRecipes);
       
       // Clear the HBox and add each recipe card
@@ -1241,5 +1168,209 @@ public class CommunityRecipesController {
       }
       return allRecipes;
   }
+
+   private String capitalizeWords(String input) {
+      if (input == null || input.isEmpty()) {
+         return input;
+      }
+      
+      String[] words = input.split("\\s+");
+      StringBuilder sb = new StringBuilder();
+      
+      for (String word : words) {
+         if (word.length() > 0) {
+            // Capitalize the first letter, lowercase the rest
+            sb.append(Character.toUpperCase(word.charAt(0)))
+               .append(word.substring(1).toLowerCase())
+               .append(" ");
+         }
+      }
+      
+      // Trim any trailing space
+      return sb.toString().trim();
+   }
+
+  // =======================================================
+   // Recipe Filters: 
+   // Handles reicpe filtering options
+   // =======================================================
+
+   private void populateFilterOptions() {
+      Set<String> ingredientSet = new HashSet<>();
+      Set<String> tagSet = new HashSet<>();
+      Set<String> categorySet = new HashSet<>();
+
+      // Collect unique ingredients and tags from existing recipes
+      for (Recipe recipe : recipeList) {
+         for (String ingredient : recipe.getIngredients()) {
+            ingredientSet.add(ingredient.split(":")[0].trim()); // Extract ingredient name
+         }
+         tagSet.addAll(Arrays.asList(recipe.getTags()));
+         categorySet.add(capitalizeWords(recipe.getCategory()));
+      }
+
+      // Ensure default options exist if the user has no recipes
+      if (ingredientSet.isEmpty()) {
+         ingredientSet.addAll(Arrays.asList("Flour", "Sugar", "Salt", "Butter", "Eggs", "Milk"));
+      }
+      if (tagSet.isEmpty()) {
+         tagSet.addAll(Arrays.asList("Vegetarian", "Vegan", "Gluten-Free", "Dairy-Free", "Spicy", "Quick Meal"));
+      }
+      if (categorySet.isEmpty()) {
+         categorySet.addAll(Arrays.asList("Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Other"));
+      }
+
+
+      // Set up available options
+      availableIngredients = ingredientSet;
+      availableTags = tagSet;
+
+      // Populate the category filter with options
+      categoryDropDown.getItems().clear();
+      categoryDropDown.getItems().add("All Categories"); // Default option
+      categoryDropDown.getItems().addAll(categorySet);
+      categoryDropDown.setValue("All Categories"); // Set the default selection
+
+      selectedIngredients.clear();
+      selectedTags.clear();
+   }
+
+   @FXML
+   private void clearAllFilters() {
+      selectedIngredients.clear();
+      selectedTags.clear();
+      categoryDropDown.setValue("All Categories"); // Reset to default
+      sortBy.setValue("A-Z");
+      filterRecipes(); // Refresh recipe list
+   }
+
+   private Set<String> showMultiSelectDialog(String title, Set<String> availableOptions, Set<String> selectedOptions) {
+      Stage dialogStage = new Stage();
+      dialogStage.initModality(Modality.APPLICATION_MODAL);
+      dialogStage.setTitle(title);
+
+      VBox vbox = new VBox(10);
+      vbox.setPadding(new Insets(10));
+
+      // Search Bar
+      TextField searchField = new TextField();
+      searchField.setPromptText("Search...");
+
+      // ListView with checkboxes
+      ListView<CheckBox> listView = new ListView<>();
+      ObservableList<CheckBox> checkBoxes = FXCollections.observableArrayList();
+
+      // Populate checkboxes
+      for (String option : availableOptions) {
+         CheckBox checkBox = new CheckBox(option);
+         checkBox.setSelected(selectedOptions.contains(option));
+         checkBoxes.add(checkBox);
+      }
+
+      listView.setItems(checkBoxes);
+
+      // Search functionality
+      searchField.textProperty().addListener((obs, oldText, newText) -> {
+         listView.setItems(checkBoxes.filtered(cb -> cb.getText().toLowerCase().contains(newText.toLowerCase())));
+      });
+
+      // Buttons
+      Button applyButton = new Button("Apply");
+      Button cancelButton = new Button("Cancel");
+
+      applyButton.setOnAction(event -> {
+         selectedOptions.clear();
+         for (CheckBox checkBox : checkBoxes) {
+               if (checkBox.isSelected()) {
+                  selectedOptions.add(checkBox.getText());
+               }
+         }
+         dialogStage.close();
+      });
+
+      cancelButton.setOnAction(event -> dialogStage.close());
+
+      HBox buttonBox = new HBox(10, applyButton, cancelButton);
+      buttonBox.setAlignment(Pos.CENTER_RIGHT);
+
+      vbox.getChildren().addAll(searchField, listView, buttonBox);
+      Scene scene = new Scene(vbox, 300, 400);
+      dialogStage.setScene(scene);
+      dialogStage.showAndWait();
+
+      return selectedOptions;
+   }
+
+   private void filterRecipes() {
+      applyFiltersAndSort();
+      buildRecipeCards();
+   }
+
+   private void setupMultiSelectFilters() {
+      ingredientFilter.setOnAction(event -> {
+         selectedIngredients = showMultiSelectDialog("Select Ingredients", availableIngredients, selectedIngredients);
+         filterRecipes();
+      });
+   
+      tagsFilter.setOnAction(event -> {
+         selectedTags = showMultiSelectDialog("Select Tags", availableTags, selectedTags);
+         filterRecipes();
+      });
+   
+      resetFilters.setOnAction(event -> clearAllFilters());
+      categoryDropDown.setOnAction(event -> filterRecipes());
+   }
+
+   /** 
+    * Filters and sorts all community recipes in memory. 
+    * The final result is stored in filteredRecipes, 
+    * which can then be used by buildRecipeCards() to update the UI.
+    */
+   private void applyFiltersAndSort() {
+      // 1) copy the full list
+      List<Recipe> result = new ArrayList<>(communityRecipes);
+
+      // 2) Category filter
+      String selectedCat = categoryDropDown.getValue();
+      if (selectedCat != null && !selectedCat.equalsIgnoreCase("All Categories")) {
+         result.removeIf(r -> !r.getCategory().equalsIgnoreCase(selectedCat));
+      }
+
+      // 3) Search filter
+      String query = searchBar.getText() == null ? "" : searchBar.getText().trim().toLowerCase();
+      if (!query.isEmpty()) {
+         result.removeIf(r -> {
+            // example: search in name, description, tags
+            if (r.getName().toLowerCase().contains(query)) return false;
+            if (r.getDescription().toLowerCase().contains(query)) return false;
+            for (String tag : r.getTags()) {
+                  if (tag.toLowerCase().contains(query)) return false;
+            }
+            return true;
+         });
+      }
+
+      // 4) Sorting
+      String sort = sortBy.getValue();
+      if (sort != null) {
+         switch (sort) {
+            case "A-Z":
+                  result.sort(Comparator.comparing(r -> r.getName().toLowerCase()));
+                  break;
+            case "Z-A":
+                  result.sort((r1, r2) -> r2.getName().compareToIgnoreCase(r1.getName()));
+                  break;
+            case "Prep Time":
+                  result.sort(Comparator.comparingInt(Recipe::getPrepTime));
+                  break;
+            case "Cook Time":
+                  result.sort(Comparator.comparingInt(Recipe::getCookTime));
+                  break;
+            // add complexity / other sorts as needed
+         }
+      }
+
+      this.filteredRecipes = result;
+   }
 
 }

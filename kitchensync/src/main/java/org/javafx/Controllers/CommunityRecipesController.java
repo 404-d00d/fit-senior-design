@@ -100,7 +100,7 @@ public class CommunityRecipesController {
    private DynamoDbClient database;
    private S3Client s3Client;
    private AwsBasicCredentials awsCreds ;
-   
+
    private List<VBox> recipeCards = new ArrayList<>();
 
    @FXML private Text noRecipesTXT;
@@ -154,6 +154,8 @@ public class CommunityRecipesController {
    private List<Recipe> communityRecipes = new ArrayList<>();
    private List<Recipe> filteredRecipes = new ArrayList<>();
    private final Map<String, VBox> recipeCardMap = new HashMap<>();
+
+   private Recipe recipeBeingEdited = null;
 
    private void initializeDatabaseAndS3() {
       try {
@@ -604,6 +606,9 @@ public class CommunityRecipesController {
          return;
       }
 
+      //Change to get the UsersID
+      String userId = "testUserID123";  // e.g. "alice123"
+
       String recipeName = UploadRecipeName.getText();
       int prepTime = Integer.parseInt(recipeETAPrep.getText());
       int cookTime = Integer.parseInt(recipeETA.getText());
@@ -612,8 +617,12 @@ public class CommunityRecipesController {
       String description = recipeDescription.getText();
 
       Map<String, AttributeValue> recipeItem = new HashMap<>();
-      String uniqueId = UUID.randomUUID().toString();
-      recipeItem.put("Recipe", AttributeValue.builder().s(uniqueId).build());
+
+      String recipeDBID = UUID.randomUUID().toString();
+
+      
+      recipeItem.put("Recipe", AttributeValue.builder().s(recipeDBID).build());
+      recipeItem.put("UserId",    AttributeValue.builder().s(userId).build());
       recipeItem.put("name", AttributeValue.builder().s(recipeName).build());
       recipeItem.put("prepTime", AttributeValue.builder().n(String.valueOf(prepTime)).build());
       recipeItem.put("cookTime", AttributeValue.builder().n(String.valueOf(cookTime)).build());
@@ -653,8 +662,9 @@ public class CommunityRecipesController {
                .build());
 
          // Upload Image to S3
+         // add multi image functions
          if (selectedImageFile != null) {
-               String s3Key = recipeName + ".jpg";
+               String s3Key = userId + "/" + recipeDBID + ".jpg";
                s3Client.putObject(PutObjectRequest.builder()
                   .bucket("kitchensyncimages")
                   .key(s3Key)
@@ -1003,12 +1013,210 @@ public class CommunityRecipesController {
             }
          }
 
+         // Only show Edit/Delete if this user owns the recipe
+         //String currentUser = Main.getCurrentUserID(); // or "testUserID123"
+         String currentUser = "testUserID123";
+
+         if (recipe.getUserID() != null && recipe.getUserID().equals(currentUser)) {
+            ContextMenu cm = new ContextMenu();
+
+            MenuItem editItem = new MenuItem("Edit");
+            editItem.setOnAction(e -> {
+                openEditRecipeForm(recipe);
+            });
+
+            MenuItem deleteItem = new MenuItem("Delete");
+            deleteItem.setOnAction(e -> {
+                deleteRecipeFromDBAndS3(recipe);
+            });
+
+            cm.getItems().addAll(editItem, deleteItem);
+
+            // Attach context menu to the entire card
+            recipeCard.setOnContextMenuRequested(evt -> {
+                cm.show(recipeCard, evt.getScreenX(), evt.getScreenY());
+            });
+         }
+
          applyHoverEffect(recipeCard, recipe);
 
          return recipeCard;
       } catch (Exception e) {
           e.printStackTrace();
           return new VBox(new Label("Error loading recipe card"));
+      }
+  }
+
+   private void openEditRecipeForm(Recipe recipe) {
+
+      // replace "testUserID123" with like main.getCurrentUserID() or somthing
+
+      if (!recipe.getUserID().equals("testUserID123")) {
+         System.out.println("Cannot edit. You are not the owner.");
+         return;
+      }
+
+      // Keep track of the recipe we are editing
+      this.recipeBeingEdited = recipe;
+      
+      uploadPane.setVisible(false);
+      addRecipePaneP1.setVisible(true);
+
+      // Fill the fields with the existing recipe info
+      UploadRecipeName.setText(recipe.getName());
+      recipeCategory.setValue(recipe.getCategory());
+      recipeYield.setText(String.valueOf(recipe.getServings()));
+      recipeETAPrep.setText(String.valueOf(recipe.getPrepTime()));
+      recipeETAPassive.setText(String.valueOf(recipe.getPassiveTime()));
+      recipeETA.setText(String.valueOf(recipe.getCookTime()));
+      recipeDescription.setText(recipe.getDescription());
+
+      // 1) Steps
+      preparationSteps.clear();
+      preparationSteps.addAll(Arrays.asList(recipe.getSteps()));
+      currentStep = 0;
+      updateStepView(); // or however you show the steps in your text field
+
+      // 2) Ingredients
+      ingredients.clear();
+      ingredientEntries.clear();
+      for (String ing : recipe.getIngredients()) {
+         ingredientEntries.add(ing);
+         String[] parts = ing.split(":");
+         if (parts.length == 2) {
+            String name = parts[0].trim();
+            String amountUnit = parts[1].trim();
+            String[] amountUnitParts = amountUnit.split(" ", 2);
+            String amount = (amountUnitParts.length >= 1) ? amountUnitParts[0].trim() : "";
+            String unit   = (amountUnitParts.length == 2) ? amountUnitParts[1].trim() : "";
+            ingredients.add(new Ingredient(name, amount, unit));
+         } else {
+            ingredients.add(new Ingredient(ing, "", ""));
+         }
+      }
+
+      // 3) Equipment
+      equipment.clear();
+      equipment.addAll(Arrays.asList(recipe.getEquipment()));
+
+      // 4) Tags
+      tags.clear();
+      tags.addAll(Arrays.asList(recipe.getTags()));
+      updateTagView();
+
+      selectedImageFile = null;
+      imagePreview.setImage(null);
+
+   }
+
+   private void updateRecipe() {
+
+      // Check ownership
+      if (!recipeBeingEdited.getUserID().equals("testUserID123")) {
+          System.out.println("Cannot edit. You are not the owner.");
+          return;
+      }
+   
+      // Validate the inputs
+      if (!validateInputs()) {
+         System.out.println("Please fill in all required fields for update.");
+         return;
+      }
+
+      // Read updated data from UI
+      String newName       = UploadRecipeName.getText();
+      String newCategory   = recipeCategory.getValue();
+      int newServings      = Integer.parseInt(recipeYield.getText());
+      int newPrepTime      = Integer.parseInt(recipeETAPrep.getText());
+      int newPassiveTime   = Integer.parseInt(recipeETAPassive.getText());
+      int newCookTime      = Integer.parseInt(recipeETA.getText());
+      String newDesc       = recipeDescription.getText();
+      
+   
+      // Update the recipe object in memory
+      recipeBeingEdited.setName(newName);
+      recipeBeingEdited.setPrepTime(newPrepTime);
+
+   
+      // Build the item to PUT in DynamoDB
+      Map<String, AttributeValue> updatedItem = new HashMap<>();
+      updatedItem.put("Recipe", AttributeValue.builder().s(recipeBeingEdited.getRecipeDBId()).build());
+      updatedItem.put("UserId", AttributeValue.builder().s(recipeBeingEdited.getUserID()).build());
+      updatedItem.put("name",   AttributeValue.builder().s(newName).build());
+      updatedItem.put("prepTime", AttributeValue.builder().n(String.valueOf(newPrepTime)).build());
+      
+   
+      try {
+          database.putItem(PutItemRequest.builder()
+                .tableName("Recipes")
+                .item(updatedItem)
+                .build());
+   
+          // If the user changed the image
+          if (selectedImageFile != null) {
+              String s3Key = recipeBeingEdited.getUserID() + "/" + recipeBeingEdited.getRecipeDBId() + ".jpg";
+              s3Client.putObject(PutObjectRequest.builder()
+                      .bucket(S3_BUCKET_NAME)
+                      .key(s3Key)
+                      .build(),
+                      RequestBody.fromFile(selectedImageFile));
+          }
+   
+          System.out.println("Recipe updated successfully!");
+   
+          // Clear the local reference
+          recipeBeingEdited = null;
+          selectedImageFile = null;
+   
+          // Reload community recipes to reflect changes
+          loadCommunityRecipes();
+          buildRecipeCards();
+   
+          // Close the form
+          addRecipePaneP2.setVisible(false);
+          myRecipesPane.setVisible(true);
+   
+      } catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("Error updating recipe.");
+      }
+   }
+   
+   private void deleteRecipeFromDBAndS3(Recipe recipe) {
+      // 1) Check ownership
+      String currentUser = "testUserID123";
+      if (!recipe.getUserID().equals(currentUser)) {
+          System.out.println("You do not own this recipe. Can't delete.");
+          return;
+      }
+  
+      try {
+          // 2) Delete from DynamoDB
+          Map<String, AttributeValue> key = new HashMap<>();
+          key.put("Recipe", AttributeValue.builder().s(recipe.getRecipeDBId()).build());
+          key.put("UserId", AttributeValue.builder().s(recipe.getUserID()).build());
+  
+          database.deleteItem(builder -> builder
+              .tableName("Recipes")
+              .key(key)
+          );
+          System.out.println("Deleted recipe from DynamoDB.");
+  
+          // 3) Delete from S3
+          String s3Key = recipe.getUserID() + "/" + recipe.getRecipeDBId() + ".jpg";
+          s3Client.deleteObject(builder -> builder
+              .bucket(S3_BUCKET_NAME)
+              .key(s3Key)
+          );
+          System.out.println("Deleted image from S3.");
+  
+          // 4) Refresh UI
+          loadCommunityRecipes();
+          buildRecipeCards();
+  
+      } catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("Error deleting recipe from DB or S3.");
       }
   }
 
@@ -1141,30 +1349,38 @@ public class CommunityRecipesController {
    private List<Recipe> convertToRecipeList(List<Map<String, AttributeValue>> items) {
       List<Recipe> allRecipes = new ArrayList<>();
       for (Map<String, AttributeValue> item : items) {
-          // Check for essential fields before converting
-          if (item.get("name") == null || item.get("description") == null) {
-              continue;
-          }
-          String recipeName = item.get("name").s();
-          String description = item.get("description").s();
+
+         // Check for essential fields before converting
+         if (item.get("name") == null || item.get("description") == null) {
+            continue;
+         }
+         
+         String userId    = item.containsKey("UserId")   ? item.get("UserId").s()   : null;
+         String recipeDBID  = item.containsKey("Recipe") ? item.get("Recipe").s() : null;
+         String recipeName = item.get("name").s();
+         String description = item.get("description").s();
           
-          Recipe recipe = new Recipe(
-              -1,  // Dummy ID for community recipes
-              recipeName,
-              item.getOrDefault("category", AttributeValue.builder().s("Uncategorized").build()).s(),
-              "Community",  // Indicate the source
-              description,
-              Integer.parseInt(item.getOrDefault("prepTime", AttributeValue.builder().n("0").build()).n()),
-              Integer.parseInt(item.getOrDefault("passiveTime", AttributeValue.builder().n("0").build()).n()),
-              Integer.parseInt(item.getOrDefault("cookTime", AttributeValue.builder().n("0").build()).n()),
-              1,  // Default complexity
-              Integer.parseInt(item.getOrDefault("servings", AttributeValue.builder().n("1").build()).n()),
-              item.containsKey("tags") ? item.get("tags").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-              item.containsKey("ingredients") ? item.get("ingredients").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-              item.containsKey("equipment") ? item.get("equipment").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-              item.containsKey("steps") ? item.get("steps").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{}
-          );
-          allRecipes.add(recipe);
+         Recipe recipe = new Recipe(
+            -1,  // Dummy ID for community recipes
+            recipeName,
+            item.getOrDefault("category", AttributeValue.builder().s("Uncategorized").build()).s(),
+            "Community",  // Indicate the source
+            description,
+            Integer.parseInt(item.getOrDefault("prepTime", AttributeValue.builder().n("0").build()).n()),
+            Integer.parseInt(item.getOrDefault("passiveTime", AttributeValue.builder().n("0").build()).n()),
+            Integer.parseInt(item.getOrDefault("cookTime", AttributeValue.builder().n("0").build()).n()),
+            1,  // Default complexity
+            Integer.parseInt(item.getOrDefault("servings", AttributeValue.builder().n("1").build()).n()),
+            item.containsKey("tags") ? item.get("tags").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
+            item.containsKey("ingredients") ? item.get("ingredients").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
+            item.containsKey("equipment") ? item.get("equipment").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
+            item.containsKey("steps") ? item.get("steps").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{}
+         );
+
+         recipe.setUserID(userId);
+         recipe.setRecipeDBId(recipeDBID);
+
+         allRecipes.add(recipe);
       }
       return allRecipes;
   }

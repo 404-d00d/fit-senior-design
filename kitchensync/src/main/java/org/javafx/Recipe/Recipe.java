@@ -20,6 +20,8 @@ public class Recipe {
     private String recipeNotes;
     private String[] suggestedIngredients;
     private int randIngredientID;
+    private String userId;    // The ID of the user who owns this recipe
+    private String recipeDBId; // e.g. primary key in DynamoDB (UUID) for that user
 
     public Recipe(int id, String name, String category, String collection, String description, int prepTime, int passiveTime, int cookTime, int complexity, int servings, 
                   String[] tags, String[] ingredients, String[] specialEquipment, String[] steps) {
@@ -44,6 +46,9 @@ public class Recipe {
 
         this.randIngredientID = 0;
         this.suggestedIngredients = null;
+
+        this.userId = null;
+        this.recipeDBId = null;
 
     }
 
@@ -104,6 +109,12 @@ public class Recipe {
 
     public int getRandIngredientID() { return randIngredientID; }
     public void setRandIngredientID(int randIngredientID) { this.randIngredientID = randIngredientID; }
+
+    public String getUserID() { return userId; }
+    public void setUserID(String userId) { this.userId = userId; }
+    
+    public String getRecipeDBId() { return recipeDBId; }
+    public void setRecipeDBId(String recipeDBId) { this.recipeDBId = recipeDBId; }
 
     @Override
     public String toString() {

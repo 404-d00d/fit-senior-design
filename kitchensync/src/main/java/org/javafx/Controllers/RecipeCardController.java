@@ -10,8 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
 
 public class RecipeCardController {
 
@@ -83,7 +83,24 @@ public class RecipeCardController {
          });
          
          contextMenu.getItems().addAll(reviewsAndFeedback, saveRecipeItem);
+
+         // ───────────────────────────────────────────────────
+         // Check if current user is owner => add Edit & Delete
+         // ───────────────────────────────────────────────────
+         String currentUserId = "testUserID123";  // e.g. "testUserID123" or Main.getCurrentUserID(); when we add this
+         if (recipe.getUserID() != null && recipe.getUserID().equals(currentUserId)) {
+            MenuItem editCommunityMenuItem = new MenuItem("Edit");
+            editCommunityMenuItem.setOnAction(e -> communityRecipesController.openEditRecipeForm(recipe));
+
+            MenuItem deleteCommunityItem = new MenuItem("Delete");
+            deleteCommunityItem.setOnAction(e -> communityRecipesController.deleteRecipeFromDBAndS3(recipe));
+
+            contextMenu.getItems().addAll(editCommunityMenuItem, deleteCommunityItem);
+         }
+
+
       } else if ("mealPlanner".equals(viewType)) {
+
 
       } else {
          // Default: MyRecipes context menu items
@@ -102,22 +119,30 @@ public class RecipeCardController {
          addToFavoritesItem.setOnAction(e -> myRecipesController.addRecipeToFavorites(recipe));
          removeFromCollectionItem.setOnAction(e -> myRecipesController.removeFromCurrentCollection(recipe));
       }
+
+      recipeCardPane.setOnContextMenuRequested(evt -> {
+         contextMenu.show(recipeCardPane, evt.getScreenX(), evt.getScreenY());
+     });
       
       // Set up mouse-click behavior.
       recipeCardPane.setOnMouseClicked(event -> {
-         if (event.getButton() == MouseButton.SECONDARY) {
-            contextMenu.show(recipeCardPane, event.getScreenX(), event.getScreenY());
-         } else if (event.getButton() == MouseButton.PRIMARY) {
-            // In the myRecipes view, call the controller's method.
-            if ("myrecipes".equals(viewType)) {
-               myRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
-            } else if ("community".equals(viewType)) {
-               communityRecipesController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
-            } else if ("mealPlanner".equals(viewType)) {
-               mealPlannerController.showRecipeDetails(recipeId, recipeName.getText(), recipeImage.getImage(), recipe);
-            } 
+         if (event.getButton() == MouseButton.PRIMARY) {
+             // e.g. show details
+             if ("myrecipes".equals(viewType)) {
+                 myRecipesController.showRecipeDetails(
+                     recipeId, recipeName.getText(), recipeImage.getImage(), recipe
+                 );
+             } else if ("community".equals(viewType)) {
+                 communityRecipesController.showRecipeDetails(
+                     recipeId, recipeName.getText(), recipeImage.getImage(), recipe
+                 );
+             } else if ("mealPlanner".equals(viewType)) {
+                 mealPlannerController.showRecipeDetails(
+                     recipeId, recipeName.getText(), recipeImage.getImage(), recipe
+                 );
+             }
          }
-      });
+     });
    }
 
    private void RecipeReviewsAndFeedBack() {

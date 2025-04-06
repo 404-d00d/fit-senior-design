@@ -327,7 +327,13 @@ public class CommunityRecipesController {
       addTagButton.setOnAction(event -> addTag());
       addIngredientButton.setOnAction(event -> addIngredient());
       imageSelectButton.setOnAction(event -> selectImage());
-      uploadButton.setOnAction(event -> uploadRecipe());
+      uploadButton.setOnAction(event -> {
+         if (recipeBeingEdited != null) {
+             updateRecipe();  // If we’re in "edit mode", call update
+         } else {
+             uploadRecipe();  // If "edit mode" is not set, create a new recipe
+         }
+     });     
       addStepButton.setOnAction(event -> addStep());
       prevStepButton.setOnAction(event -> navigateStep(-1));
       nextStepButton.setOnAction(event -> navigateStep(1));
@@ -1013,31 +1019,6 @@ public class CommunityRecipesController {
             }
          }
 
-         // Only show Edit/Delete if this user owns the recipe
-         //String currentUser = Main.getCurrentUserID(); // or "testUserID123"
-         String currentUser = "testUserID123";
-
-         if (recipe.getUserID() != null && recipe.getUserID().equals(currentUser)) {
-            ContextMenu cm = new ContextMenu();
-
-            MenuItem editItem = new MenuItem("Edit");
-            editItem.setOnAction(e -> {
-                openEditRecipeForm(recipe);
-            });
-
-            MenuItem deleteItem = new MenuItem("Delete");
-            deleteItem.setOnAction(e -> {
-                deleteRecipeFromDBAndS3(recipe);
-            });
-
-            cm.getItems().addAll(editItem, deleteItem);
-
-            // Attach context menu to the entire card
-            recipeCard.setOnContextMenuRequested(evt -> {
-                cm.show(recipeCard, evt.getScreenX(), evt.getScreenY());
-            });
-         }
-
          applyHoverEffect(recipeCard, recipe);
 
          return recipeCard;
@@ -1047,7 +1028,7 @@ public class CommunityRecipesController {
       }
   }
 
-   private void openEditRecipeForm(Recipe recipe) {
+   public void openEditRecipeForm(Recipe recipe) {
 
       // replace "testUserID123" with like main.getCurrentUserID() or somthing
 
@@ -1059,7 +1040,7 @@ public class CommunityRecipesController {
       // Keep track of the recipe we are editing
       this.recipeBeingEdited = recipe;
       
-      uploadPane.setVisible(false);
+      myRecipesPane.setVisible(false);
       addRecipePaneP1.setVisible(true);
 
       // Fill the fields with the existing recipe info
@@ -1131,12 +1112,6 @@ public class CommunityRecipesController {
       int newPassiveTime   = Integer.parseInt(recipeETAPassive.getText());
       int newCookTime      = Integer.parseInt(recipeETA.getText());
       String newDesc       = recipeDescription.getText();
-      
-   
-      // Update the recipe object in memory
-      recipeBeingEdited.setName(newName);
-      recipeBeingEdited.setPrepTime(newPrepTime);
-
    
       // Build the item to PUT in DynamoDB
       Map<String, AttributeValue> updatedItem = new HashMap<>();
@@ -1144,7 +1119,35 @@ public class CommunityRecipesController {
       updatedItem.put("UserId", AttributeValue.builder().s(recipeBeingEdited.getUserID()).build());
       updatedItem.put("name",   AttributeValue.builder().s(newName).build());
       updatedItem.put("prepTime", AttributeValue.builder().n(String.valueOf(newPrepTime)).build());
-      
+      updatedItem.put("cookTime", AttributeValue.builder().n(String.valueOf(newCookTime)).build());
+      updatedItem.put("passiveTime", AttributeValue.builder().n(String.valueOf(newPassiveTime)).build());
+      updatedItem.put("servings", AttributeValue.builder().n(String.valueOf(newServings)).build());
+      updatedItem.put("description", AttributeValue.builder().s(newDesc).build());
+
+      updatedItem.put("ingredients", AttributeValue.builder()
+         .l(ingredientEntries.stream()
+            .map(val -> AttributeValue.builder().s(val).build())
+            .collect(Collectors.toList()))
+         .build());
+
+      updatedItem.put("steps", AttributeValue.builder()
+         .l(preparationSteps.stream()
+            .map(step -> AttributeValue.builder().s(step).build())
+            .collect(Collectors.toList()))
+         .build());
+
+      updatedItem.put("tags", AttributeValue.builder()
+         .l(tags.stream()
+            .map(tag -> AttributeValue.builder().s(tag).build())
+            .collect(Collectors.toList()))
+         .build());
+
+      updatedItem.put("equipment", AttributeValue.builder()
+         .l(equipment.stream()
+            .map(eq -> AttributeValue.builder().s(eq).build())
+            .collect(Collectors.toList()))
+         .build());
+
    
       try {
           database.putItem(PutItemRequest.builder()
@@ -1182,7 +1185,7 @@ public class CommunityRecipesController {
       }
    }
    
-   private void deleteRecipeFromDBAndS3(Recipe recipe) {
+   public void deleteRecipeFromDBAndS3(Recipe recipe) {
       // 1) Check ownership
       String currentUser = "testUserID123";
       if (!recipe.getUserID().equals(currentUser)) {
@@ -1194,7 +1197,7 @@ public class CommunityRecipesController {
           // 2) Delete from DynamoDB
           Map<String, AttributeValue> key = new HashMap<>();
           key.put("Recipe", AttributeValue.builder().s(recipe.getRecipeDBId()).build());
-          key.put("UserId", AttributeValue.builder().s(recipe.getUserID()).build());
+
   
           database.deleteItem(builder -> builder
               .tableName("Recipes")

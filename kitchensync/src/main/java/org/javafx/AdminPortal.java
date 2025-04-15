@@ -14,31 +14,66 @@ import software.amazon.awssdk.services.dynamodb.model.ScanResponse;
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
+import software.amazon.awssdk.services.iam.IamClient;
+import software.amazon.awssdk.services.iam.model.ListUsersResponse;
+import software.amazon.awssdk.services.iam.model.User;
+import software.amazon.awssdk.services.iam.model.IamException;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 public class AdminPortal {
 
-    public static void main(String[] args) {
-        // Hardcoded AWS credentials (ONLY FOR TESTING)
-        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(
-            "AKIAS6J7QGOOS2VSJQNP",
-            "RpYmWXTZAk4k33zL/tQYUDP/x+L7403SYAjwSx9Y"
-        );
+    private static void deleteRecipe(DynamoDbClient dynamoClient, String tableName, String recipeId) {
+        System.out.println("\n=== Delete Recipe ===");
+        try {
+            Map<String, AttributeValue> keyToDelete = Map.of(
+                "id", AttributeValue.builder().s(recipeId).build()
+            );
+    
+            dynamoClient.deleteItem(builder -> builder
+                .tableName(tableName)
+                .key(keyToDelete)
+            );
+    
+            System.out.println("Recipe with ID '" + recipeId + "' deleted successfully.");
+    
+        } catch (DynamoDbException e) {
+            System.err.println("Error deleting recipe: " + e.getMessage());
+        }
+    }
+    
 
-        // Create S3 and DynamoDB clients with credentials
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the accessKeyId: ");
+        String userID = scanner.nextLine().trim();
+        System.out.print("Enter the secretAccessKey: ");
+        String userKey = scanner.nextLine().trim();
+
+        // Hardcoded AWS credentials (ONLY FOR TESTING)
+        AwsBasicCredentials awsCreds = AwsBasicCredentials.create( userID, userKey);
+
+        // Create S3, DynamoDB, and IAM clients with credentials
         S3Client s3Client = S3Client.builder()
-                .region(Region.US_EAST_1)  // Change region if needed
+                .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
                 .build();
 
         DynamoDbClient dynamoClient = DynamoDbClient.builder()
-                .region(Region.US_EAST_1)  // Same region as your DynamoDB table
+                .region(Region.US_EAST_1)
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
                 .build();
 
-        Scanner scanner = new Scanner(System.in);
+        IamClient iamClient = IamClient.builder()
+                .region(Region.AWS_GLOBAL)  // IAM uses AWS_GLOBAL region
+                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                .build();
+
+        
         boolean running = true;
 
         while (running) {
@@ -46,7 +81,9 @@ public class AdminPortal {
             System.out.println("=== ADMIN MENU ===");
             System.out.println("1) List S3 buckets");
             System.out.println("2) List DynamoDB items");
-            System.out.println("3) Exit");
+            System.out.println("3) List IAM Users");
+            System.out.println("4) Delete a Recipe from DynamoDB");
+            System.out.println("5) Exit");
             System.out.print("Enter your choice: ");
 
             String choice = scanner.nextLine().trim();
@@ -61,6 +98,16 @@ public class AdminPortal {
                     listDynamoDbItems(dynamoClient, tableName);
                     break;
                 case "3":
+                    listIamUsers(iamClient);
+                    break;
+                case "4":
+                    System.out.print("Enter DynamoDB table name: ");
+                    String deleteTable = scanner.nextLine().trim();
+                    System.out.print("Enter Recipe ID to delete: ");
+                    String recipeId = scanner.nextLine().trim();
+                    deleteRecipe(dynamoClient, deleteTable, recipeId);
+                    break;
+                case "5":
                     running = false;
                     System.out.println("Exiting Admin Portal...");
                     break;
@@ -72,6 +119,7 @@ public class AdminPortal {
         scanner.close();
         s3Client.close();
         dynamoClient.close();
+        iamClient.close();
     }
 
     private static void listS3Buckets(S3Client s3Client) {
@@ -103,6 +151,20 @@ public class AdminPortal {
             }
         } catch (DynamoDbException e) {
             System.err.println("Error scanning DynamoDB table: " + e.getMessage());
+        }
+    }
+
+    private static void listIamUsers(IamClient iamClient) {
+        System.out.println("\n=== IAM Users ===");
+        try {
+            ListUsersResponse response = iamClient.listUsers();
+            for (User user : response.users()) {
+                System.out.println("Username: " + user.userName() +
+                                   " | User ID: " + user.userId() +
+                                   " | ARN: " + user.arn());
+            }
+        } catch (IamException e) {
+            System.err.println("Error listing IAM users: " + e.getMessage());
         }
     }
 }

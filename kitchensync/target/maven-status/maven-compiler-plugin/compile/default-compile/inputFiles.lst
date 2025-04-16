@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\IngredientSuggestionAndSubstitutions.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\module-info.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Recipe\Recipe.java
@@ -27,3 +28,34 @@ C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserSettingsController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\LoginPageController.java
 C:\Users\cnede\Desktop\ProjectImport\fit-senior-design\kitchensync\src\main\java\org\javafx\Item\Item.java
+=======
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\AdminPortal.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\MacroCalculator.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\RecipeCardController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\IngredientCardController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\IngredientSuggestionAndSubstitutions.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\module-info.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\IngredientCell.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\MyListsController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\BarcodeUploadController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\InventoryDashboardController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\SignUpPageController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\SecondaryController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\LocalDateAdapter.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\LoginPageController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\MyRecipesController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Recipe\Recipe.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserProfileController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Item\Item.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserSettingsController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\CommunityRecipesController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\App.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Main\Main.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserDashboardController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\PrimaryController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\RecipeReviewController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\SubstitutionOption.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserInboxController.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\UserPreferences.java
+C:\Users\raddi\Documents\GitHub\fit-senior-design\kitchensync\src\main\java\org\javafx\Controllers\MealPlannerController.java
+>>>>>>> 012663bf92fee68aabd06f2740274e217c530859

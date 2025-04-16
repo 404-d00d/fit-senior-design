@@ -27,6 +27,7 @@ org\javafx\Controllers\IngredientCardController.class
 org\javafx\Controllers\MyRecipesController$2.class
 org\javafx\Controllers\MyListsController.class
 org\javafx\Recipe\Recipe.class
+org\javafx\AdminPortal.class
 org\javafx\Controllers\MyListsController$1.class
 org\javafx\Controllers\UserDashboardController$2.class
 org\javafx\Controllers\InventoryDashboardController$1.class

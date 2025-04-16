@@ -654,7 +654,7 @@ public class CommunityRecipesController {
          // Upload Image to S3
          // add multi image functions
          if (selectedImageFile != null) {
-               String s3Key = userId + "/" + recipeDBID + ".jpg";
+               String s3Key = userId + "-" + recipeDBID + ".jpg";
                s3Client.putObject(PutObjectRequest.builder()
                   .bucket("kitchensyncimages")
                   .key(s3Key)
@@ -988,7 +988,7 @@ public class CommunityRecipesController {
          RecipeCardController controller = loader.getController();
 
          // **Load Image from S3**
-         String imageUrl = S3_BASE_URL + recipe.getName().replace(" ", "%20") + ".jpg"; // URL encode spaces
+         String imageUrl = S3_BASE_URL + recipe.getUserID() + "-" + recipe.getRecipeDBId() + ".jpg";
          Image image = new Image(imageUrl, true);
           
          // Pass "community" as the viewType to set up the community-specific context menu.
@@ -1223,7 +1223,7 @@ public class CommunityRecipesController {
       recipeNameTXT.setText(name);
 
       // **Load Image from S3**
-      String imageUrl = S3_BASE_URL + name.replace(" ", "%20") + ".jpg";
+      String imageUrl = S3_BASE_URL + recipe.getUserID() + "-" + recipe.getRecipeDBId() + ".jpg";
       recipeDetailsImages.setImage(new Image(imageUrl, true));
 
       recipeServingsTXT.setText("Servings: " + recipe.getServings());

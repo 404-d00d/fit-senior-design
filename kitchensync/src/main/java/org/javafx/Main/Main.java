@@ -180,7 +180,7 @@ public class Main extends Application {
         scale.yProperty().bind(scale.xProperty()); // Maintain uniform scaling
         */
 
-        scale.yProperty().bind(primaryStage.heightProperty().divide(originalHeight));
+        scale.yProperty().bind(primaryStage.heightProperty().divide(originalHeight+30));
     
         // Create a Scene with the Group
         Scene scene = new Scene(group, originalWidth, originalHeight);

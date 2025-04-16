@@ -6,6 +6,7 @@ org\javafx\App.class
 org\javafx\PrimaryController.class
 org\javafx\Controllers\MacroCalculator$1.class
 org\javafx\Controllers\MacroCalculator.class
+org\javafx\Controllers\MyRecipesController$3.class
 org\javafx\Controllers\Ingredient.class
 org\javafx\Controllers\InventoryDashboardController$3.class
 org\javafx\Controllers\SignUpPageController.class

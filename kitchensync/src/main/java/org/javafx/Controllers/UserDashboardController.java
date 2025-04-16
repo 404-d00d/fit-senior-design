@@ -3,6 +3,7 @@ package org.javafx.Controllers;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import com.google.gson.reflect.TypeToken;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -34,7 +34,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
-import java.lang.reflect.Type;
 
 public class UserDashboardController {
 
@@ -371,7 +370,8 @@ public class UserDashboardController {
       // Change style when mouse enters
       button.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; -fx-background-radius: 25;");
    }
-
+   
+   //w
    private void handleMouseExited(MouseEvent event) {
       Button button = (Button) event.getSource();
       // Reset style when mouse exits
@@ -390,6 +390,10 @@ public class UserDashboardController {
          Map<LocalDate, List<Map<String, Object>>> mealPlanMap = gson.fromJson(reader, type);
 
          List<Map<String, Object>> cookBlocks = new ArrayList<>();
+
+         if (mealPlanMap == null || mealPlanMap.isEmpty()) {
+            return; // or optionally show a "no meals planned" UI message
+        }
 
          for (Map.Entry<LocalDate, List<Map<String, Object>>> entry : mealPlanMap.entrySet()) {
                for (Map<String, Object> meal : entry.getValue()) {

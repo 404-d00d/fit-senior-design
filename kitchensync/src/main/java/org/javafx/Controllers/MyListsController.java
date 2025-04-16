@@ -96,7 +96,7 @@ public class MyListsController {
 
       myListsView.setCellFactory(param -> new IngredientCell());
 
-      productUnit.getItems().addAll("kg", "g", "l", "ml", "oz", "lbs");
+      productUnit.getItems().addAll("g", "kg", "ml", "l", "tsp", "tbsp", "cup", "oz", "lb", "pinch", "dash");
 
       menuButton.setOnAction(event -> {
          try {

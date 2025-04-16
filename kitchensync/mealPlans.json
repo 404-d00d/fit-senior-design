@@ -1,113 +1,164 @@
 {
-  "2025-03-27": [
+  "2025-04-19": [
     {
       "cookTime": {
-        "date": "2025-03-27",
-        "duration": 140.0,
-        "hour": 18.0,
-        "name": "Guinness beef stew",
-        "mealType": "Lunch",
-        "id": 2.0,
+        "date": "2025-04-19",
+        "duration": 50,
+        "hour": 18,
+        "name": "Skillet Pork Chops with Potatoes and Onion",
+        "mealType": "Dinner",
+        "id": 8,
         "isMealMade": false,
-        "mealGroupId": "35e21445-416b-4d36-84c0-e04723860cab",
-        "recipeID": 1.0
+        "mealGroupId": "67b4b8ab-adac-4c20-88fd-cfd5d27bee1c",
+        "recipeID": 5
       },
       "prepTime": {
-        "date": "2025-03-27",
-        "duration": 20.0,
-        "hour": 9.0,
-        "name": "Guinness beef stew",
-        "mealType": "Lunch",
-        "id": 1.0,
+        "date": "2025-04-19",
+        "duration": 20,
+        "hour": 14,
+        "name": "Skillet Pork Chops with Potatoes and Onion",
+        "mealType": "Dinner",
+        "id": 7,
         "isMealMade": false,
-        "mealGroupId": "35e21445-416b-4d36-84c0-e04723860cab",
-        "recipeID": 1.0
+        "mealGroupId": "67b4b8ab-adac-4c20-88fd-cfd5d27bee1c",
+        "recipeID": 5
+      }
+    }
+  ],
+  "2025-04-18": [
+    {
+      "cookTime": {
+        "date": "2025-04-18",
+        "duration": 20,
+        "hour": 18,
+        "name": "Hot Spinach and Artichoke Dip",
+        "mealType": "Lunch",
+        "id": 3,
+        "isMealMade": false,
+        "mealGroupId": "d88b84eb-e41f-414a-b233-3c517521c648",
+        "recipeID": 4
+      },
+      "passiveTime": {
+        "date": "2025-04-18",
+        "duration": 5,
+        "hour": 15,
+        "name": "Hot Spinach and Artichoke Dip",
+        "mealType": "Lunch",
+        "id": 2,
+        "isMealMade": false,
+        "mealGroupId": "d88b84eb-e41f-414a-b233-3c517521c648",
+        "recipeID": 4
+      },
+      "prepTime": {
+        "date": "2025-04-18",
+        "duration": 20,
+        "hour": 13,
+        "name": "Hot Spinach and Artichoke Dip",
+        "mealType": "Lunch",
+        "id": 1,
+        "isMealMade": false,
+        "mealGroupId": "d88b84eb-e41f-414a-b233-3c517521c648",
+        "recipeID": 4
+      }
+    }
+  ],
+  "2025-04-20": [
+    {
+      "cookTime": {
+        "date": "2025-04-20",
+        "duration": 140,
+        "hour": 18,
+        "name": "Guinness beef stew",
+        "mealType": "Dinner",
+        "id": 10,
+        "isMealMade": false,
+        "mealGroupId": "d3eeb520-4987-49e3-b090-4558d4fab96a",
+        "recipeID": 1
+      },
+      "prepTime": {
+        "date": "2025-04-20",
+        "duration": 20,
+        "hour": 16,
+        "name": "Guinness beef stew",
+        "mealType": "Dinner",
+        "id": 9,
+        "isMealMade": false,
+        "mealGroupId": "d3eeb520-4987-49e3-b090-4558d4fab96a",
+        "recipeID": 1
+      }
+    }
+  ],
+  "2025-04-17": [
+    {
+      "cookTime": {
+        "date": "2025-04-17",
+        "duration": 65,
+        "hour": 19,
+        "name": "American Goulash",
+        "mealType": "Dinner",
+        "id": 6,
+        "isMealMade": false,
+        "mealGroupId": "3ba1e19f-140f-4a3e-aa07-7e02b1ff69dc",
+        "recipeID": 7
+      },
+      "passiveTime": {
+        "date": "2025-04-17",
+        "duration": 5,
+        "hour": 18,
+        "name": "American Goulash",
+        "mealType": "Dinner",
+        "id": 5,
+        "isMealMade": false,
+        "mealGroupId": "3ba1e19f-140f-4a3e-aa07-7e02b1ff69dc",
+        "recipeID": 7
+      },
+      "prepTime": {
+        "date": "2025-04-17",
+        "duration": 15,
+        "hour": 15,
+        "name": "American Goulash",
+        "mealType": "Dinner",
+        "id": 4,
+        "isMealMade": false,
+        "mealGroupId": "3ba1e19f-140f-4a3e-aa07-7e02b1ff69dc",
+        "recipeID": 7
       }
     }
   ],
   "2025-04-16": [
     {
       "cookTime": {
-<<<<<<< HEAD
         "date": "2025-04-16",
-        "duration": 35,
-        "hour": 19,
-        "name": "Chicken and Gnocchi Soup",
-=======
-        "date": "2025-04-07",
-        "duration": 15.0,
+        "duration": 35.0,
         "hour": 18.0,
-        "name": "Easy Chicken Tacos",
-        "mealType": "Dinner",
-        "id": 4.0,
-        "isMealMade": false,
-        "mealGroupId": "52100469-7957-4c53-8bac-a65b0a892f75",
-        "recipeID": 0.0
-      },
-      "prepTime": {
-        "date": "2025-04-07",
-        "duration": 15.0,
-        "hour": 9.0,
-        "name": "Easy Chicken Tacos",
+        "name": "Chicken and Gnocchi Soup",
         "mealType": "Dinner",
         "id": 3.0,
         "isMealMade": false,
-        "mealGroupId": "52100469-7957-4c53-8bac-a65b0a892f75",
-        "recipeID": 0.0
-      }
-    }
-  ],
-  "2025-04-15": [
-    {
-      "cookTime": {
-        "date": "2025-04-14",
-        "duration": 15,
-        "hour": 18,
-        "name": "Easy Chicken Tacos",
-        "mealType": "Dinner",
-        "id": 2,
-        "isMealMade": false,
-        "mealGroupId": "f6bcfb8c-38c6-4de7-81f9-94f266807169",
-        "recipeID": 0
-      },
-      "prepTime": {
-        "date": "2025-04-15",
-        "duration": 15,
-        "hour": 6,
-        "name": "Easy Chicken Tacos",
->>>>>>> 247c48963dcf1f0bc056abf49355bdad95007a58
-        "mealType": "Dinner",
-        "id": 1,
-        "isMealMade": false,
-<<<<<<< HEAD
-        "mealGroupId": "4ce78a65-74d5-4c34-a38b-4251742de5d1",
-        "recipeID": 2
+        "mealGroupId": "f8662707-46fe-41cb-92e5-8afdd7cdb090",
+        "recipeID": 2.0
       },
       "passiveTime": {
         "date": "2025-04-16",
-        "duration": 15,
-        "hour": 18,
+        "duration": 15.0,
+        "hour": 16,
         "name": "Chicken and Gnocchi Soup",
         "mealType": "Dinner",
-        "id": 2,
+        "id": 2.0,
         "isMealMade": false,
-        "mealGroupId": "4ce78a65-74d5-4c34-a38b-4251742de5d1",
-        "recipeID": 2
+        "mealGroupId": "f8662707-46fe-41cb-92e5-8afdd7cdb090",
+        "recipeID": 2.0
       },
       "prepTime": {
         "date": "2025-04-16",
-        "duration": 15,
-        "hour": 17,
+        "duration": 15.0,
+        "hour": 13,
         "name": "Chicken and Gnocchi Soup",
         "mealType": "Dinner",
-        "id": 1,
+        "id": 1.0,
         "isMealMade": false,
-        "mealGroupId": "4ce78a65-74d5-4c34-a38b-4251742de5d1",
-        "recipeID": 2
-=======
-        "mealGroupId": "f6bcfb8c-38c6-4de7-81f9-94f266807169",
-        "recipeID": 0
->>>>>>> 247c48963dcf1f0bc056abf49355bdad95007a58
+        "mealGroupId": "f8662707-46fe-41cb-92e5-8afdd7cdb090",
+        "recipeID": 2.0
       }
     }
   ]

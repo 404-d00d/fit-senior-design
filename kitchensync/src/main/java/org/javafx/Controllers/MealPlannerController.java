@@ -349,7 +349,8 @@ public class MealPlannerController {
         // Set up 25 rows for 24 hours and one row for the day label
         for (int i = 0; i < 25; i++) {
             RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setPercentHeight(100.0 / 25);
+            rowConstraints.setPrefHeight(Region.USE_COMPUTED_SIZE); // Let it calculate needed height
+            rowConstraints.setVgrow(Priority.ALWAYS);  // Allow the row to grow if space available
             weekView.getRowConstraints().add(rowConstraints);
         }
     
@@ -452,19 +453,34 @@ public class MealPlannerController {
                     dayBox.getChildren().add(dayNumber);
                     dayBox.setStyle("-fx-border-color: white; -fx-padding: 5px;");
     
-                    // Display meals
                     int mealCount = 0;
                     for (Map<String, Object> mealData : mealsForDay) {
-                        if (mealCount < 3) { // Limit to 3 meals per day
-                            String mealName = (String) mealData.get("name");
-                            Label mealLabel = new Label(mealName);
-                            mealLabel.setStyle("-fx-font-size: 12px;");
-                            dayBox.getChildren().add(mealLabel);
-                            mealCount++;
+                        if (mealCount < 3) {
+                            String mealName = null;
+                            for (String timeKey : List.of("cookTime", "prepTime", "passiveTime")) {
+                                if (mealData.containsKey(timeKey)) {
+                                    Map<String, Object> block = (Map<String, Object>) mealData.get(timeKey);
+                                    if (block != null && block.get("name") != null) {
+                                        mealName = (String) block.get("name");
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (mealName != null && !mealName.isBlank()) {
+                                Label mealLabel = new Label(mealName);
+                                mealLabel.setWrapText(true);  // ⬅️ add this for long titles
+                                mealLabel.setMaxWidth(Double.MAX_VALUE);
+                                mealLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;");
+                                VBox.setVgrow(mealLabel, Priority.ALWAYS); // optional for better layout
+                                dayBox.getChildren().add(mealLabel);
+                                mealCount++;
+                            }
                         } else {
                             break;
                         }
                     }
+
     
                     if (mealCount > 3) {
                         Label moreLabel = new Label("+" + (mealCount - 3) + " more");
@@ -776,7 +792,10 @@ public class MealPlannerController {
             String blockId = String.join("|", mealName, timePartKey, blockDate, String.valueOf(hour), mealGroupId);
             
     
-            Label block = new Label(mealName + " (" + timePartKey + ": " + duration + " mins)");
+            Label block = new Label(mealName + "\n(" + timePartKey + ": " + duration + " mins)");
+            block.setWrapText(true);
+            block.setMinHeight(Region.USE_PREF_SIZE);
+            block.setPrefHeight(Region.USE_COMPUTED_SIZE);
 
             switch (timePartKey) {
                 case "prepTime":
@@ -795,6 +814,7 @@ public class MealPlannerController {
             block.setId(blockId); // Assign the ID to the block
     
             GridPane.setConstraints(block, dayColumn, currentRow);
+
             GridPane.setRowSpan(block, (int) Math.ceil(duration / 60.0));
             targetView.getChildren().add(block);
     

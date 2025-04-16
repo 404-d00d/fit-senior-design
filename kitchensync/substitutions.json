@@ -1,0 +1,1388 @@
+{
+   "all-purpose flour": [
+     {
+       "ingredientName": "half bread flour + half cake flour",
+       "context": "baking",
+       "notes": "For 1 cup AP flour, combine 1/2 cup bread flour and 1/2 cup cake flour."
+     },
+     {
+       "ingredientName": "cake flour (DIY)",
+       "context": "baking",
+       "notes": "For 1 cup AP flour, remove 2 Tbsp and replace with 2 Tbsp cornstarch."
+     },
+     {
+       "ingredientName": "self-rising flour (DIY)",
+       "context": "baking",
+       "notes": "For 1 cup AP flour, add 1 1/2 tsp baking powder + 1/2 tsp salt."
+     }
+   ],
+ 
+   "allspice": [
+     {
+       "ingredientName": "cinnamon + ginger + cloves",
+       "context": "spice",
+       "notes": "For 1 tsp allspice, use 1/2 tsp cinnamon, 1/4 tsp ginger, 1/4 tsp cloves."
+     },
+     {
+       "ingredientName": "cinnamon + clove + nutmeg",
+       "context": "spice",
+       "notes": "Alternatively, 3/4 tsp cinnamon, pinch of ground cloves, pinch of grated nutmeg."
+     }
+   ],
+ 
+   "apple cider vinegar": [
+     {
+       "ingredientName": "lemon juice",
+       "context": "general",
+       "notes": "Use equal amounts. Good for dressings and baking."
+     },
+     {
+       "ingredientName": "unseasoned rice vinegar",
+       "context": "general",
+       "notes": "Use equal amounts; mild acidity."
+     },
+     {
+       "ingredientName": "white wine vinegar",
+       "context": "general",
+       "notes": "Use equal amounts."
+     }
+   ],
+ 
+   "baking mix": [
+     {
+       "ingredientName": "pancake mix",
+       "context": "baking",
+       "notes": "Use 1 cup pancake mix for 1 cup baking mix."
+     }
+   ],
+ 
+   "baking powder": [
+     {
+       "ingredientName": "baking soda + cream of tartar",
+       "context": "baking",
+       "notes": "For 1 tsp baking powder, use 1/4 tsp baking soda + 1/2 tsp cream of tartar."
+     },
+     {
+       "ingredientName": "baking soda + buttermilk",
+       "context": "baking",
+       "notes": "For 1 tsp baking powder, use 1/4 tsp baking soda + 1/2 cup buttermilk (reduce other liquid by 1/2 cup)."
+     },
+     {
+       "ingredientName": "double-acting (DIY)",
+       "context": "baking",
+       "notes": "For 1 tsp, combine 1/2 tsp cream of tartar + 1/4 tsp baking soda. Sometimes a bit of cornstarch is added."
+     }
+   ],
+ 
+   "baking soda": [
+     {
+       "ingredientName": "baking powder",
+       "context": "baking",
+       "notes": "For 1 tsp baking soda, use ~3 or 4 tsp baking powder. May affect taste/texture."
+     },
+     {
+       "ingredientName": "potassium bicarbonate + salt",
+       "context": "baking",
+       "notes": "For 1 tsp baking soda, use 1 tsp potassium bicarbonate + 1/3 tsp salt."
+     }
+   ],
+ 
+   "balsamic vinegar": [
+     {
+       "ingredientName": "white wine vinegar + sweetener",
+       "context": "general",
+       "notes": "For 1 Tbsp balsamic vinegar, use 1 Tbsp white wine vinegar + 1/2 tsp sugar, brown sugar or honey."
+     }
+   ],
+ 
+   "basil": [
+     {
+       "ingredientName": "tarragon, oregano, or thyme",
+       "context": "herbs",
+       "notes": "Use about 1 tsp dried for 1 Tbsp fresh. Adjust to taste."
+     },
+     {
+       "ingredientName": "cilantro or parsley",
+       "context": "herbs",
+       "notes": "If using fresh, swap at a 1:1 ratio, though flavor will differ significantly."
+     }
+   ],
+ 
+   "beer": [
+     {
+       "ingredientName": "nonalcoholic beer",
+       "context": "cooking",
+       "notes": "Use equal amounts in batters or stews."
+     },
+     {
+       "ingredientName": "chicken broth",
+       "context": "savory cooking",
+       "notes": "Use equal amounts; flavor changes, but adds savory note."
+     }
+   ],
+ 
+   "bread crumbs": [
+     {
+       "ingredientName": "cracker crumbs",
+       "context": "general",
+       "notes": "Use 1 cup cracker crumbs for 1 cup bread crumbs."
+     },
+     {
+       "ingredientName": "matzo meal",
+       "context": "general",
+       "notes": "Use 1 cup for 1 cup bread crumbs."
+     },
+     {
+       "ingredientName": "ground oats",
+       "context": "general",
+       "notes": "Use 1 cup for 1 cup bread crumbs."
+     },
+     {
+       "ingredientName": "crushed pretzels or potato chips",
+       "context": "general",
+       "notes": "Adds a saltier taste and crunchy texture."
+     }
+   ],
+ 
+   "brown sugar": [
+     {
+       "ingredientName": "white sugar + molasses",
+       "context": "baking",
+       "notes": "For 1 cup brown sugar, use 1 cup white sugar + 1/4 cup molasses; reduce other liquid ~1/4 cup."
+     },
+     {
+       "ingredientName": "white sugar",
+       "context": "baking",
+       "notes": "Use equal amount, though flavor is lighter."
+     },
+     {
+       "ingredientName": "confectioners' sugar",
+       "context": "baking",
+       "notes": "Use ~1 1/4 cups for 1 cup brown sugar, but texture may differ."
+     },
+     {
+       "ingredientName": "turbinado or muscovado sugar",
+       "context": "baking",
+       "notes": "Similar to brown sugar, though flavor/texture can vary slightly."
+     }
+   ],
+ 
+   "butter": [
+     {
+       "ingredientName": "applesauce",
+       "context": "baking",
+       "notes": "Use about half the amount as butter. Adds moisture; best in sweet baked goods."
+     },
+     {
+       "ingredientName": "avocado (mashed)",
+       "context": "baking",
+       "notes": "Similar texture; slight green color. Works best in cakes, brownies."
+     },
+     {
+       "ingredientName": "mashed banana",
+       "context": "baking",
+       "notes": "Adds moisture and flavor. Good for quick breads, muffins."
+     },
+     {
+       "ingredientName": "coconut oil",
+       "context": "baking",
+       "notes": "Use equal amount; has a slight coconut flavor. Dairy-free."
+     },
+     {
+       "ingredientName": "vegetable oil or margarine",
+       "context": "general",
+       "notes": "Use equal amount. For salted recipes, adjust salt if margarine is salted."
+     },
+     {
+       "ingredientName": "yogurt or sour cream",
+       "context": "baking",
+       "notes": "Use equal amount for a creamy texture; may alter flavor slightly."
+     },
+     {
+       "ingredientName": "shortening + salt",
+       "context": "baking",
+       "notes": "For 1 cup butter, use 1 cup shortening + 1/2 tsp salt (if butter was salted)."
+     },
+     {
+       "ingredientName": "ghee",
+       "context": "general",
+       "notes": "Use equal amount; clarified butter with a higher smoke point."
+     },
+     {
+       "ingredientName": "7/8 cup vegetable oil + 1/2 tsp salt",
+       "context": "baking",
+       "notes": "Approx. replacement for 1 cup butter. Check taste for salt content."
+     }
+   ],
+ 
+   "buttermilk": [
+     {
+       "ingredientName": "milk + vinegar or lemon juice",
+       "context": "baking",
+       "notes": "For 1 cup buttermilk, add 1 Tbsp vinegar/lemon juice to milk, let stand 5 min."
+     },
+     {
+       "ingredientName": "yogurt",
+       "context": "baking",
+       "notes": "Use equal amount. Thins texture if needed with a little water."
+     },
+     {
+       "ingredientName": "sour cream",
+       "context": "baking",
+       "notes": "Use equal amount, possibly thin with water to match consistency."
+     },
+     {
+       "ingredientName": "kefir",
+       "context": "baking",
+       "notes": "Use equal amount; tangy flavor similar to buttermilk."
+     }
+   ],
+ 
+   "cake flour": [
+     {
+       "ingredientName": "all-purpose flour + cornstarch",
+       "context": "baking",
+       "notes": "For 1 cup cake flour, measure 1 cup AP flour, remove 2 Tbsp and replace with 2 Tbsp cornstarch."
+     }
+   ],
+ 
+   "cardamom": [
+     {
+       "ingredientName": "cinnamon",
+       "context": "spice",
+       "notes": "Use equal amount or slightly less; flavor differs but is warm and sweet."
+     },
+     {
+       "ingredientName": "cloves (half amount)",
+       "context": "spice",
+       "notes": "Gives a pungent note similar to cardamom."
+     }
+   ],
+ 
+   "cayenne pepper": [
+     {
+       "ingredientName": "crushed red pepper flakes",
+       "context": "spice",
+       "notes": "Use about double the amount of flakes for the same heat level."
+     }
+   ],
+ 
+   "cheddar cheese": [
+     {
+       "ingredientName": "Colby cheddar",
+       "context": "general",
+       "notes": "Use equal amount; flavor is similar."
+     },
+     {
+       "ingredientName": "Monterey Jack",
+       "context": "general",
+       "notes": "Milder flavor, melts similarly."
+     },
+     {
+       "ingredientName": "fontina or mozzarella",
+       "context": "general",
+       "notes": "Melts well; flavor will be milder/sweeter."
+     }
+   ],
+ 
+   "chevre (goat cheese)": [
+     {
+       "ingredientName": "cream cheese",
+       "context": "general",
+       "notes": "Use equal amount; flavor is less tangy."
+     },
+     {
+       "ingredientName": "mascarpone + yogurt",
+       "context": "general",
+       "notes": "Loosen mascarpone with a little yogurt to mimic goat cheese consistency."
+     }
+   ],
+ 
+   "chervil": [
+     {
+       "ingredientName": "fresh parsley",
+       "context": "herbs",
+       "notes": "Use equal amount. Flavor is somewhat similar but less delicate."
+     }
+   ],
+ 
+   "chicken base": [
+     {
+       "ingredientName": "1 cup broth or stock",
+       "context": "savory",
+       "notes": "Replace 1 Tbsp base with 1 cup homemade or canned broth; reduce other liquid by 1 cup."
+     }
+   ],
+ 
+   "chicken broth": [
+     {
+       "ingredientName": "vegetable broth",
+       "context": "savory",
+       "notes": "Use 1:1, keeps a lighter flavor."
+     },
+     {
+       "ingredientName": "water + soy sauce or bouillon cube",
+       "context": "savory",
+       "notes": "Use 1 cup water plus 1 bouillon cube or 1 Tbsp soy sauce."
+     },
+     {
+       "ingredientName": "beef broth",
+       "context": "savory",
+       "notes": "Use 1:1; flavor will be deeper."
+     }
+   ],
+ 
+   "chili powder": [
+     {
+       "ingredientName": "paprika + cumin + garlic/onion powder",
+       "context": "spice",
+       "notes": "For 1 Tbsp chili powder, combine 1 tsp paprika, 1 tsp cumin, 1/2 tsp onion powder, 1/2 tsp garlic powder."
+     }
+   ],
+ 
+   "cilantro": [
+     {
+       "ingredientName": "parsley",
+       "context": "herbs",
+       "notes": "Use fresh 1:1, though flavor differs. Sometimes combined with basil."
+     },
+     {
+       "ingredientName": "basil",
+       "context": "herbs",
+       "notes": "Use fresh 1:1 for a sweet, aromatic twist."
+     }
+   ],
+ 
+   "coconut oil": [
+     {
+       "ingredientName": "unsalted butter",
+       "context": "baking or cooking",
+       "notes": "Use equal amount; flavor changes from coconut to buttery."
+     },
+     {
+       "ingredientName": "avocado oil or olive oil",
+       "context": "cooking",
+       "notes": "Use equal amount; less flavor in final dish."
+     },
+     {
+       "ingredientName": "ghee",
+       "context": "high-heat cooking",
+       "notes": "Equal amount, high smoke point."
+     }
+   ],
+ 
+   "condensed cream of mushroom soup": [
+     {
+       "ingredientName": "cream of celery soup",
+       "context": "savory cooking",
+       "notes": "Use equal amount. Flavor changes slightly."
+     },
+     {
+       "ingredientName": "cream of chicken soup",
+       "context": "savory cooking",
+       "notes": "Use equal amount, not vegetarian-friendly."
+     },
+     {
+       "ingredientName": "golden mushroom soup",
+       "context": "savory cooking",
+       "notes": "Use equal amount."
+     }
+   ],
+ 
+   "corn starch": [
+     {
+       "ingredientName": "arrowroot powder",
+       "context": "general thickening",
+       "notes": "Use 1:1 for sauces, gravies, or custards."
+     },
+     {
+       "ingredientName": "potato starch or rice flour",
+       "context": "general thickening",
+       "notes": "Use ~2 tsp for every 1 Tbsp cornstarch."
+     },
+     {
+       "ingredientName": "all-purpose flour",
+       "context": "breading/frying",
+       "notes": "Use ~3 Tbsp flour for 1 Tbsp cornstarch."
+     }
+   ],
+ 
+   "corn syrup": [
+     {
+       "ingredientName": "white sugar + water",
+       "context": "candy or baking",
+       "notes": "For 1 cup corn syrup, dissolve 1 cup sugar in 1/4 cup hot water."
+     },
+     {
+       "ingredientName": "honey, agave, or maple syrup",
+       "context": "general baking",
+       "notes": "Use equal amount; flavor changes slightly."
+     }
+   ],
+ 
+   "cream (half-and-half, light, heavy)": [
+     {
+       "ingredientName": "milk + butter",
+       "context": "half-and-half",
+       "notes": "For 1 cup half-and-half, use ~7/8 cup milk + 1 Tbsp melted butter."
+     },
+     {
+       "ingredientName": "evaporated milk",
+       "context": "heavy/light cream",
+       "notes": "Use equal amount for cooking/baking. Not ideal for whipping."
+     },
+     {
+       "ingredientName": "milk + cornstarch",
+       "context": "light cream",
+       "notes": "For 1 cup light cream, use 3/4 cup milk + 3 Tbsp melted butter, or thicken with cornstarch."
+     },
+     {
+       "ingredientName": "coconut cream or coconut milk",
+       "context": "dairy-free",
+       "notes": "Use equal amount for soups or sauces; flavor changes."
+     }
+   ],
+ 
+   "cream cheese": [
+     {
+       "ingredientName": "Neufchatel",
+       "context": "general",
+       "notes": "Slightly lower fat; use equal amount."
+     },
+     {
+       "ingredientName": "pureed cottage cheese or ricotta + pinch of salt",
+       "context": "general",
+       "notes": "Blend until smooth; may curdle when heated."
+     }
+   ],
+ 
+   "cream of tartar": [
+     {
+       "ingredientName": "lemon juice or vinegar",
+       "context": "baking",
+       "notes": "For 1 tsp cream of tartar, use 2 tsp lemon juice or vinegar (may affect liquid balance)."
+     }
+   ],
+ 
+   "creme fraiche": [
+     {
+       "ingredientName": "sour cream",
+       "context": "general",
+       "notes": "Use equal amount. Flavor slightly tangier."
+     },
+     {
+       "ingredientName": "heavy cream + plain yogurt",
+       "context": "DIY",
+       "notes": "Combine 1 cup heavy cream + 1 Tbsp plain yogurt; let stand at room temp 6 hrs."
+     },
+     {
+       "ingredientName": "Greek yogurt",
+       "context": "general",
+       "notes": "Use equal amount; thicker texture, tangier flavor."
+     }
+   ],
+ 
+   "dijon mustard": [
+     {
+       "ingredientName": "spicy brown mustard",
+       "context": "general",
+       "notes": "Use equal amount."
+     },
+     {
+       "ingredientName": "stone-ground mustard",
+       "context": "general",
+       "notes": "Similar texture and flavor."
+     },
+     {
+       "ingredientName": "DIY mix (dry mustard + vinegar + sugar)",
+       "context": "general",
+       "notes": "For ~2 Tbsp Dijon, combine 1 Tbsp dry mustard, 1 Tbsp mayo, 1 tsp vinegar, pinch sugar."
+     }
+   ],
+ 
+   "egg": [
+     {
+       "ingredientName": "mashed banana",
+       "context": "baking",
+       "notes": "Use ~50g (1/4 cup) for 1 egg. Adds sweetness and moisture."
+     },
+     {
+       "ingredientName": "applesauce",
+       "context": "baking",
+       "notes": "Use ~3 Tbsp for 1 egg. Good binder in sweet recipes."
+     },
+     {
+       "ingredientName": "canned pumpkin puree",
+       "context": "baking",
+       "notes": "Use ~3 Tbsp for 1 egg. Adds moisture and slight flavor."
+     },
+     {
+       "ingredientName": "chia seeds or flaxseed meal",
+       "context": "baking",
+       "notes": "1 Tbsp seeds + 3 Tbsp water = 1 egg. Let sit to gel."
+     },
+     {
+       "ingredientName": "3 Tbsp aquafaba",
+       "context": "baking",
+       "notes": "Liquid from canned chickpeas; whips similarly for meringues."
+     },
+     {
+       "ingredientName": "1/4 cup silken tofu pureed",
+       "context": "baking",
+       "notes": "Neutral flavor; good binder."
+     },
+     {
+       "ingredientName": "3 Tbsp vegetable oil + 1 Tbsp water",
+       "context": "quick breads",
+       "notes": "Acts as an egg replacement in muffins or pancakes."
+     }
+   ],
+ 
+   "egg whites": [
+     {
+       "ingredientName": "aquafaba",
+       "context": "meringue/baking",
+       "notes": "Use ~2 Tbsp per egg white. Whips to foam; good for meringues."
+     }
+   ],
+ 
+   "evaporated milk": [
+     {
+       "ingredientName": "light cream",
+       "context": "baking or cooking",
+       "notes": "Use equal amount."
+     },
+     {
+       "ingredientName": "milk or half-and-half",
+       "context": "general",
+       "notes": "Flavor is slightly different; adjust for sweetness/fat."
+     },
+     {
+       "ingredientName": "mixed powdered milk + water",
+       "context": "emergency",
+       "notes": "Use to achieve a thicker consistency."
+     }
+   ],
+ 
+   "fats for baking": [
+     {
+       "ingredientName": "applesauce or fruit puree",
+       "context": "baking",
+       "notes": "Use 1:1 for oil or butter; final texture moister, may be denser."
+     }
+   ],
+ 
+   "fish sauce": [
+     {
+       "ingredientName": "soy sauce",
+       "context": "savory",
+       "notes": "Use less if salt content is high; lacks the pungent fishy note."
+     },
+     {
+       "ingredientName": "Worcestershire sauce",
+       "context": "savory",
+       "notes": "Similar umami, though flavor differs."
+     }
+   ],
+ 
+   "flour (bread)": [
+     {
+       "ingredientName": "all-purpose flour + wheat gluten",
+       "context": "baking",
+       "notes": "For 1 cup bread flour, use 1 cup AP flour + 1 tsp vital wheat gluten."
+     }
+   ],
+ 
+   "flour (cake)": [
+     {
+       "ingredientName": "all-purpose flour - 2 Tbsp + 2 Tbsp cornstarch",
+       "context": "baking",
+       "notes": "Essentially the same as the main 'cake flour' substitution."
+     }
+   ],
+ 
+   "flour (self-rising)": [
+     {
+       "ingredientName": "all-purpose flour + baking powder + salt",
+       "context": "baking",
+       "notes": "For 1 cup self-rising, combine 1 cup AP flour + 1.5 tsp baking powder + 0.5 tsp salt."
+     }
+   ],
+ 
+   "garam masala": [
+     {
+       "ingredientName": "cumin + allspice/pumpkin pie spice",
+       "context": "spice",
+       "notes": "For ~1 tsp, use 3/4 tsp cumin + 1/4 tsp allspice or pie spice."
+     }
+   ],
+ 
+   "gelatin": [
+     {
+       "ingredientName": "agar agar",
+       "context": "gelling",
+       "notes": "For 1 Tbsp gelatin, use ~1 Tbsp agar agar (may need slight adjustments)."
+     }
+   ],
+ 
+   "ginger (fresh)": [
+     {
+       "ingredientName": "ground dried ginger",
+       "context": "spice",
+       "notes": "Use ~1/2 tsp ground per 1 Tbsp minced fresh."
+     }
+   ],
+ 
+   "ginger (dry)": [
+     {
+       "ingredientName": "fresh ginger (minced)",
+       "context": "spice",
+       "notes": "Use about 2 tsp fresh for 1 tsp dried."
+     }
+   ],
+ 
+   "green onion": [
+     {
+       "ingredientName": "chopped onion or shallots",
+       "context": "savory",
+       "notes": "Use 1:1 volume; flavor is stronger."
+     },
+     {
+       "ingredientName": "leeks",
+       "context": "savory",
+       "notes": "Use 1:1 volume for a milder onion flavor."
+     }
+   ],
+ 
+   "herbs (fresh)": [
+     {
+       "ingredientName": "dried herbs",
+       "context": "general",
+       "notes": "Use ~1 tsp dried for 1 Tbsp fresh (3:1 ratio)."
+     }
+   ],
+ 
+   "honey": [
+     {
+       "ingredientName": "maple syrup",
+       "context": "sweetener",
+       "notes": "Use equal amount; flavor changes slightly."
+     },
+     {
+       "ingredientName": "light corn syrup",
+       "context": "baking",
+       "notes": "Use equal amount. Less complex flavor."
+     },
+     {
+       "ingredientName": "sugar + water",
+       "context": "baking",
+       "notes": "For 1 cup honey, use ~1 1/4 cup sugar + 1/3 cup water; adjust recipe liquids."
+     }
+   ],
+ 
+   "hot pepper sauce (e.g. Tabasco)": [
+     {
+       "ingredientName": "cayenne pepper + vinegar",
+       "context": "spice",
+       "notes": "For 1 tsp sauce, use ~3/4 tsp cayenne + 1 tsp vinegar."
+     }
+   ],
+ 
+   "lard": [
+     {
+       "ingredientName": "shortening",
+       "context": "baking/frying",
+       "notes": "Use 1:1. Slightly different texture in baked goods."
+     },
+     {
+       "ingredientName": "vegetable oil",
+       "context": "baking/frying",
+       "notes": "Use ~7/8 cup oil for 1 cup lard."
+     },
+     {
+       "ingredientName": "butter",
+       "context": "baking",
+       "notes": "1 cup lard ≈ 1 cup butter, but final product may be richer."
+     }
+   ],
+ 
+   "lemon grass": [
+     {
+       "ingredientName": "lemon zest",
+       "context": "southeast asian cooking",
+       "notes": "Use ~1 Tbsp zest for 2 stalks lemongrass. Flavor is less herbal."
+     }
+   ],
+ 
+   "lemon juice": [
+     {
+       "ingredientName": "lime juice",
+       "context": "citrus swap",
+       "notes": "Use equal amount, flavor changes slightly."
+     },
+     {
+       "ingredientName": "white wine vinegar",
+       "context": "acidic swap",
+       "notes": "Use 1:1 in dressings or marinades; flavor differs."
+     }
+   ],
+ 
+   "lemon zest": [
+     {
+       "ingredientName": "lemon extract",
+       "context": "baking",
+       "notes": "For 1 tsp zest, use ~1/2 tsp extract."
+     },
+     {
+       "ingredientName": "extra lemon juice",
+       "context": "baking/cooking",
+       "notes": "For 1 tsp zest, use 2 tsp juice; reduce other liquids slightly."
+     }
+   ],
+ 
+   "lime juice": [
+     {
+       "ingredientName": "lemon juice",
+       "context": "citrus swap",
+       "notes": "Use 1:1."
+     },
+     {
+       "ingredientName": "white wine vinegar",
+       "context": "acidic swap",
+       "notes": "Use 1:1. Adjust flavor to taste."
+     }
+   ],
+ 
+   "macadamia nuts": [
+     {
+       "ingredientName": "almonds",
+       "context": "baking or snack",
+       "notes": "Use equal amount, different flavor/texture but still crunchy."
+     },
+     {
+       "ingredientName": "hazelnuts",
+       "context": "baking",
+       "notes": "Similar nutty richness."
+     }
+   ],
+ 
+   "mace": [
+     {
+       "ingredientName": "nutmeg",
+       "context": "spice",
+       "notes": "Use equal amount; very similar flavor (mace is from nutmeg husk)."
+     }
+   ],
+ 
+   "margarine": [
+     {
+       "ingredientName": "shortening + salt",
+       "context": "baking",
+       "notes": "For 1 cup margarine, use 1 cup shortening + 1/2 tsp salt if recipe needs salted butter taste."
+     },
+     {
+       "ingredientName": "butter",
+       "context": "baking/cooking",
+       "notes": "Use equal amount. Flavor is richer."
+     },
+     {
+       "ingredientName": "vegetable oil + salt",
+       "context": "baking",
+       "notes": "7/8 cup oil + 1/2 tsp salt for 1 cup margarine."
+     }
+   ],
+ 
+   "marjoram": [
+     {
+       "ingredientName": "oregano",
+       "context": "herbs",
+       "notes": "Use about half the amount if dried oregano; flavor is stronger."
+     },
+     {
+       "ingredientName": "basil or thyme",
+       "context": "herbs",
+       "notes": "Similar mild sweetness; adjust to taste."
+     }
+   ],
+ 
+   "marsala wine": [
+     {
+       "ingredientName": "Madeira, port, or sherry",
+       "context": "cooking",
+       "notes": "Use equal amount. Flavor differs but close in sweetness."
+     },
+     {
+       "ingredientName": "white wine + brandy",
+       "context": "cooking",
+       "notes": "Splash of brandy with white wine for depth."
+     }
+   ],
+ 
+   "milk": [
+     {
+       "ingredientName": "almond, soy, oat, or coconut milk",
+       "context": "dairy-free",
+       "notes": "Use equal amount. Flavor changes slightly."
+     },
+     {
+       "ingredientName": "water or broth",
+       "context": "cooking",
+       "notes": "For some savory dishes. May affect richness."
+     },
+     {
+       "ingredientName": "evaporated milk + water",
+       "context": "baking",
+       "notes": "Combine to approximate regular milk consistency."
+     },
+     {
+       "ingredientName": "yogurt or sour cream (thinned)",
+       "context": "baking/cooking",
+       "notes": "Use equal volume, but thin with water to reach milk-like consistency."
+     }
+   ],
+ 
+   "mint (fresh)": [
+     {
+       "ingredientName": "dried mint leaves",
+       "context": "herbs",
+       "notes": "Use about 1 Tbsp fresh = 1 tsp dried."
+     }
+   ],
+ 
+   "molasses": [
+     {
+       "ingredientName": "honey or maple syrup",
+       "context": "baking",
+       "notes": "Use equal amount; flavor will be lighter."
+     },
+     {
+       "ingredientName": "brown sugar + hot water",
+       "context": "baking",
+       "notes": "For 1 cup molasses, use ~3/4 cup brown sugar + 1/4 cup hot water."
+     }
+   ],
+ 
+   "mustard (prepared)": [
+     {
+       "ingredientName": "DIY from dry mustard",
+       "context": "general",
+       "notes": "For 1 Tbsp prepared, combine 1 Tbsp dry mustard, 1 tsp water, 1 tsp vinegar, 1 tsp sugar."
+     }
+   ],
+ 
+   "nutmeg": [
+     {
+       "ingredientName": "mace",
+       "context": "spice",
+       "notes": "Use equal amount; nearly identical in flavor."
+     },
+     {
+       "ingredientName": "allspice or pumpkin pie spice",
+       "context": "spice",
+       "notes": "Use half the amount if strong flavors are undesirable."
+     }
+   ],
+ 
+   "onion": [
+     {
+       "ingredientName": "green onions or shallots",
+       "context": "savory",
+       "notes": "Use ~1 cup green onion/shallots for 1 cup chopped onion."
+     },
+     {
+       "ingredientName": "leeks",
+       "context": "savory",
+       "notes": "Use 1:1 volume, milder flavor."
+     },
+     {
+       "ingredientName": "dried minced onion or onion powder",
+       "context": "savory",
+       "notes": "For 1 cup fresh onion, ~1/4 cup dried or 1/4 the volume onion powder."
+     }
+   ],
+ 
+   "orange juice": [
+     {
+       "ingredientName": "other citrus juice",
+       "context": "baking/cooking",
+       "notes": "Use equal amount (e.g., lemon/lime juice), flavor changes."
+     }
+   ],
+ 
+   "orange zest": [
+     {
+       "ingredientName": "orange extract",
+       "context": "baking",
+       "notes": "For 1 Tbsp zest, use ~1/2 tsp extract."
+     },
+     {
+       "ingredientName": "lemon juice",
+       "context": "baking",
+       "notes": "Use 1 tsp juice for 1 Tbsp zest; different flavor but still citrus."
+     }
+   ],
+ 
+   "oyster sauce": [
+     {
+       "ingredientName": "soy sauce",
+       "context": "savory",
+       "notes": "Use equal amount. Less thick, add a bit of cornstarch if needed."
+     },
+     {
+       "ingredientName": "hoisin sauce",
+       "context": "savory",
+       "notes": "Sweeter, but has a similar thick consistency."
+     }
+   ],
+ 
+   "paprika": [
+     {
+       "ingredientName": "chili powder",
+       "context": "spice",
+       "notes": "Use equal or slightly more if you want extra heat."
+     }
+   ],
+ 
+   "parmesan cheese": [
+     {
+       "ingredientName": "Asiago cheese",
+       "context": "general",
+       "notes": "Use equal amount, flavor somewhat sharper."
+     },
+     {
+       "ingredientName": "Romano cheese",
+       "context": "general",
+       "notes": "Use equal amount, saltier flavor."
+     },
+     {
+       "ingredientName": "Pecorino Romano",
+       "context": "general",
+       "notes": "Similar to Parmesan but sharper. Use equal amount."
+     }
+   ],
+ 
+   "parsley": [
+     {
+       "ingredientName": "chervil",
+       "context": "herbs",
+       "notes": "Use equal amount fresh. Lighter, more anise flavor."
+     },
+     {
+       "ingredientName": "basil or cilantro",
+       "context": "herbs",
+       "notes": "Different flavor profiles, but can stand in for freshness."
+     }
+   ],
+ 
+   "peanut butter": [
+     {
+       "ingredientName": "sunflower butter",
+       "context": "general",
+       "notes": "Use equal amount; allergen-friendly for peanut-free households."
+     },
+     {
+       "ingredientName": "almond butter or other nut butters",
+       "context": "general",
+       "notes": "Flavor varies; use equal amount."
+     }
+   ],
+ 
+   "red wine vinegar": [
+     {
+       "ingredientName": "apple cider vinegar",
+       "context": "general",
+       "notes": "Use equal amount; slightly sweeter."
+     },
+     {
+       "ingredientName": "white wine vinegar",
+       "context": "general",
+       "notes": "Use equal amount; flavor is milder."
+     },
+     {
+       "ingredientName": "distilled white vinegar",
+       "context": "general",
+       "notes": "Stronger acidity, use slightly less if worried about harsh flavor."
+     }
+   ],
+ 
+   "rice vinegar": [
+     {
+       "ingredientName": "apple cider vinegar + small amount sugar",
+       "context": "general",
+       "notes": "For 1 Tbsp rice vinegar, use 1 Tbsp cider vinegar + 1/2 tsp sugar."
+     },
+     {
+       "ingredientName": "white wine vinegar + pinch sugar",
+       "context": "general",
+       "notes": "Similar mild acidity."
+     }
+   ],
+ 
+   "rosemary": [
+     {
+       "ingredientName": "thyme",
+       "context": "herbs",
+       "notes": "Use about equal or slightly more thyme. Flavor differs but still earthy."
+     }
+   ],
+ 
+   "rum": [
+     {
+       "ingredientName": "rum extract + water",
+       "context": "baking",
+       "notes": "For 1 Tbsp rum, use ~1/2 tsp extract + enough water to make 1 Tbsp."
+     }
+   ],
+ 
+   "saffron": [
+     {
+       "ingredientName": "turmeric",
+       "context": "coloring/spice",
+       "notes": "Use equal amount for color, but flavor is different."
+     }
+   ],
+ 
+   "salami": [
+     {
+       "ingredientName": "pepperoni",
+       "context": "meats",
+       "notes": "Use equal amount, flavor is spicier."
+     }
+   ],
+ 
+   "self-rising flour": [
+     {
+       "ingredientName": "all-purpose flour + baking powder + salt",
+       "context": "baking",
+       "notes": "For 1 cup, use 1 cup AP flour + 1.5 tsp baking powder + 0.5 tsp salt."
+     }
+   ],
+ 
+   "sesame oil": [
+     {
+       "ingredientName": "nut oil (e.g. peanut, walnut)",
+       "context": "flavoring",
+       "notes": "Use equal amount; flavor differs but also nutty."
+     },
+     {
+       "ingredientName": "infused neutral oil",
+       "context": "flavoring",
+       "notes": "Toast sesame seeds in neutral oil, strain. Approximate flavor."
+     }
+   ],
+ 
+   "shallots": [
+     {
+       "ingredientName": "onion",
+       "context": "savory",
+       "notes": "Use equal volume. Flavor is harsher."
+     },
+     {
+       "ingredientName": "leeks or green onions",
+       "context": "savory",
+       "notes": "Use equal volume, milder or more delicate."
+     }
+   ],
+ 
+   "shortening": [
+     {
+       "ingredientName": "butter or margarine",
+       "context": "baking",
+       "notes": "Use equal amount; adjust salt if needed."
+     },
+     {
+       "ingredientName": "coconut oil",
+       "context": "baking",
+       "notes": "Use equal amount; solid at room temp, similar to shortening."
+     }
+   ],
+ 
+   "sour cream": [
+     {
+       "ingredientName": "plain yogurt or Greek yogurt",
+       "context": "baking/dips",
+       "notes": "Use equal amount. Flavor slightly tangier."
+     },
+     {
+       "ingredientName": "1 Tbsp lemon juice or vinegar + cream",
+       "context": "DIY",
+       "notes": "For 1 cup sour cream, combine cream + acid; may need to thicken."
+     },
+     {
+       "ingredientName": "buttermilk + butter",
+       "context": "baking",
+       "notes": "3/4 cup buttermilk + 1/3 cup butter for 1 cup sour cream."
+     }
+   ],
+ 
+   "sour milk": [
+     {
+       "ingredientName": "milk + vinegar/lemon juice",
+       "context": "baking",
+       "notes": "For 1 cup, stir 1 Tbsp acid into enough milk to make 1 cup, let stand 5 min."
+     }
+   ],
+ 
+   "soy sauce": [
+     {
+       "ingredientName": "Worcestershire sauce + water",
+       "context": "general",
+       "notes": "For ~1/2 cup soy sauce, use 1/4 cup Worcestershire + 1 Tbsp water."
+     },
+     {
+       "ingredientName": "coconut aminos or tamari",
+       "context": "gluten-free or soy-free",
+       "notes": "Use equal amount; check saltiness."
+     }
+   ],
+ 
+   "stock (beef or chicken)": [
+     {
+       "ingredientName": "bouillon cube + water",
+       "context": "savory",
+       "notes": "Use 1 cube per cup of water."
+     },
+     {
+       "ingredientName": "vegetable broth",
+       "context": "savory",
+       "notes": "Use equal amount; lighter flavor."
+     }
+   ],
+ 
+   "sugar (white)": [
+     {
+       "ingredientName": "brown sugar",
+       "context": "baking",
+       "notes": "Use equal amount; adds moisture and a slight molasses flavor."
+     },
+     {
+       "ingredientName": "confectioners' sugar",
+       "context": "baking",
+       "notes": "Use ~1 1/4 cups powdered for 1 cup sugar; may affect texture."
+     },
+     {
+       "ingredientName": "honey or maple syrup",
+       "context": "baking",
+       "notes": "Use ~3/4 cup for 1 cup sugar; reduce other liquids slightly."
+     },
+     {
+       "ingredientName": "corn syrup",
+       "context": "baking",
+       "notes": "Use ~3/4 cup for 1 cup sugar; adjust liquid accordingly."
+     }
+   ],
+ 
+   "sweetened condensed milk": [
+     {
+       "ingredientName": "DIY (sugar, water, dry milk)",
+       "context": "baking",
+       "notes": "For a 14 oz can, combine ~3/4 cup sugar + 1/2 cup water + 1 1/8 cups dry milk; simmer until thick."
+     }
+   ],
+ 
+   "table salt": [
+     {
+       "ingredientName": "kosher salt",
+       "context": "general",
+       "notes": "For 1/2 tsp table salt, use ~3/4 tsp kosher salt."
+     }
+   ],
+ 
+   "tarragon": [
+     {
+       "ingredientName": "chervil",
+       "context": "herbs",
+       "notes": "Use equal amount fresh; flavor is somewhat similar (mild licorice)."
+     },
+     {
+       "ingredientName": "basil (double amount)",
+       "context": "herbs",
+       "notes": "Use ~2x fresh basil for the same herbal intensity."
+     }
+   ],
+ 
+   "thyme": [
+     {
+       "ingredientName": "basil, marjoram, or oregano",
+       "context": "herbs",
+       "notes": "Use equal or slightly more; adjust to taste. Flavor differences are subtle but distinct."
+     },
+     {
+       "ingredientName": "rosemary (chopped finely)",
+       "context": "herbs",
+       "notes": "Use less, as rosemary is stronger."
+     }
+   ],
+ 
+   "tomato paste": [
+     {
+       "ingredientName": "simmered tomato sauce or pureed tomatoes",
+       "context": "cooking",
+       "notes": "Cook down until thick to concentrate flavor."
+     },
+     {
+       "ingredientName": "equal parts tomato paste + water",
+       "context": "if you need thinner sauce",
+       "notes": "Inverse substitution if you’re out of sauce but have paste."
+     }
+   ],
+ 
+   "tomato sauce": [
+     {
+       "ingredientName": "tomato puree",
+       "context": "cooking",
+       "notes": "Use equal amount; slightly thicker."
+     },
+     {
+       "ingredientName": "canned tomatoes (pureed)",
+       "context": "cooking",
+       "notes": "Use equal amount; flavor is fresh but may need seasoning."
+     }
+   ],
+ 
+   "vanilla extract": [
+     {
+       "ingredientName": "maple syrup",
+       "context": "baking",
+       "notes": "Use equal amount; adds mild sweetness, less vanilla aroma."
+     },
+     {
+       "ingredientName": "bourbon, brandy, or rum",
+       "context": "baking",
+       "notes": "Use equal amount. Adds a boozy aroma; might not be kid-friendly."
+     }
+   ],
+ 
+   "vegetable oil": [
+     {
+       "ingredientName": "canola oil, olive oil, or avocado oil",
+       "context": "cooking/baking",
+       "notes": "Use equal amount. Flavor changes with olive oil (stronger)."
+     },
+     {
+       "ingredientName": "melted coconut oil",
+       "context": "baking",
+       "notes": "Use equal amount; slight coconut flavor, solidifies if cool."
+     },
+     {
+       "ingredientName": "ghee or clarified butter",
+       "context": "high-heat cooking",
+       "notes": "Use equal amount for frying or sautéing; different flavor."
+     }
+   ],
+ 
+   "vegetable shortening": [
+     {
+       "ingredientName": "unsalted butter",
+       "context": "baking",
+       "notes": "Use 1:1. May affect texture slightly (but butter adds flavor)."
+     },
+     {
+       "ingredientName": "coconut oil",
+       "context": "baking",
+       "notes": "Use equal amount; solid at room temp, good for crusts."
+     }
+   ],
+ 
+   "vinegar": [
+     {
+       "ingredientName": "lemon or lime juice",
+       "context": "acidic swap",
+       "notes": "Use equal amount in marinades or baking. Flavor changes slightly."
+     },
+     {
+       "ingredientName": "white wine vinegar",
+       "context": "general",
+       "notes": "Use equal amount for mild acidity."
+     }
+   ],
+ 
+   "white sugar": [
+     {
+       "ingredientName": "brown sugar",
+       "context": "baking",
+       "notes": "Use equal amount; adds mild molasses flavor."
+     },
+     {
+       "ingredientName": "honey or maple syrup",
+       "context": "baking",
+       "notes": "Use ~3/4 cup for 1 cup sugar; reduce other liquid slightly."
+     },
+     {
+       "ingredientName": "corn syrup",
+       "context": "baking",
+       "notes": "Use ~3/4 cup for 1 cup sugar; adjust liquids."
+     },
+     {
+       "ingredientName": "turbinado or demerara sugar",
+       "context": "baking",
+       "notes": "Texture is coarser; dissolve well or grind if needed."
+     }
+   ],
+ 
+   "wine (white or red)": [
+     {
+       "ingredientName": "broth or stock",
+       "context": "savory cooking",
+       "notes": "Use equal amount; flavor changes, less acidity."
+     },
+     {
+       "ingredientName": "water with lemon or vinegar",
+       "context": "savory cooking",
+       "notes": "For dryness/acidity. 1 cup water + 1 Tbsp lemon/vinegar."
+     },
+     {
+       "ingredientName": "fruit juice + vinegar",
+       "context": "savory cooking",
+       "notes": "1 cup juice with 2 tsp vinegar approximates wine sweetness/acidity."
+     }
+   ],
+ 
+   "worcestershire sauce": [
+     {
+       "ingredientName": "soy sauce + lemon juice + sugar + hot sauce",
+       "context": "savory",
+       "notes": "For 1 Tbsp, combine ~2 tsp soy sauce, 1/4 tsp lemon juice, pinch sugar, dash hot sauce."
+     }
+   ],
+ 
+   "xanthan gum": [
+     {
+       "ingredientName": "chia seeds or ground flax + hot water",
+       "context": "thickening",
+       "notes": "For 1 Tbsp xanthan gum, use 2.5 tsp hot water + 0.5 tsp chia or ground flax; let sit until thick."
+     }
+   ],
+ 
+   "yeast (active dry)": [
+     {
+       "ingredientName": "cake/compressed yeast",
+       "context": "baking",
+       "notes": "1 (.25-oz) pkg active dry ≈ 1 cake compressed yeast."
+     },
+     {
+       "ingredientName": "rapid rise yeast",
+       "context": "baking",
+       "notes": "Use equal measure (~2.25 tsp) but adjust rising times if needed."
+     }
+   ],
+ 
+   "yogurt": [
+     {
+       "ingredientName": "sour cream",
+       "context": "baking or dips",
+       "notes": "Use equal amount; slightly different tang."
+     },
+     {
+       "ingredientName": "buttermilk",
+       "context": "baking",
+       "notes": "Use equal amount; thinner consistency."
+     },
+     {
+       "ingredientName": "creme fraiche or Greek yogurt",
+       "context": "general",
+       "notes": "Similar tang and consistency. Greek yogurt is thicker."
+     }
+   ]
+ }
+ 

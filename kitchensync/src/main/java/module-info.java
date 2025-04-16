@@ -15,13 +15,14 @@ module org.javafx {
     requires software.amazon.awssdk.services.s3;
     
     requires software.amazon.awssdk.services.iam;
-   requires javafx.base;
+    requires javafx.base;
 
     opens org.javafx.Item to com.google.gson;
     opens org.javafx.Recipe to com.google.gson;
+    
 
     // Opens for reflection and FXML loading
-    opens org.javafx.Controllers to javafx.fxml;
+    opens org.javafx.Controllers to javafx.fxml, com.google.gson;
 
     // Open the Main package to javafx.graphics for JavaFX runtime access
     opens org.javafx.Main to javafx.graphics;

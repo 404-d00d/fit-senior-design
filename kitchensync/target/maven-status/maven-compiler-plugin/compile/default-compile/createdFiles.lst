@@ -15,7 +15,6 @@ org\javafx\Controllers\UserSettingsController.class
 org\javafx\Controllers\LoginPageController.class
 org\javafx\Controllers\SubstitutionOption.class
 org\javafx\Controllers\LoginPageController$1.class
-org\javafx\Recipe\Ingredient.class
 org\javafx\Controllers\BarcodeUploadController.class
 org\javafx\Controllers\InventoryDashboardController.class
 org\javafx\Controllers\RecipeCardController.class
@@ -25,6 +24,7 @@ org\javafx\Controllers\RecipeReviewController.class
 org\javafx\Controllers\UserInboxController.class
 org\javafx\Controllers\SignUpPageController$2.class
 org\javafx\Controllers\IngredientCardController.class
+org\javafx\Controllers\MyRecipesController$2.class
 org\javafx\Controllers\MyListsController.class
 org\javafx\Recipe\Recipe.class
 org\javafx\Controllers\MyListsController$1.class
@@ -34,6 +34,7 @@ org\javafx\Controllers\IngredientCell.class
 org\javafx\Controllers\MealPlannerController$2.class
 org\javafx\SecondaryController.class
 module-info.class
+org\javafx\Controllers\MyRecipesController$1.class
 org\javafx\Controllers\IngredientSuggestionAndSubstitutions.class
 org\javafx\Controllers\UserProfileController.class
 org\javafx\Controllers\CommunityRecipesController.class

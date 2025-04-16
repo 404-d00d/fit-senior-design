@@ -100,6 +100,11 @@ public class MealPlannerController {
     private Set<String> availableIngredients = new HashSet<>();
     private Set<String> availableTags = new HashSet<>();
 
+    private List<String> preparationSteps = new ArrayList<>();
+    private ObservableList<Image> recipeThumbnails = FXCollections.observableArrayList();
+    private Map<Integer, String> stepImageFileMap = new HashMap<>();
+    private Map<Integer, Image> stepImageMap = new HashMap<>();
+
     private static final String RECIPES_FILE_PATH = "recipes.json";
 
     private Recipe selectedRecipe;
@@ -175,6 +180,9 @@ public class MealPlannerController {
         // Attach event listeners for filtering
         resetFilters.setOnAction(event -> clearAllFilters());
         sortBy.setOnAction(event -> filterRecipes());
+
+        prevStep.setOnAction(event -> detailsSteps(-1));
+        nextStep.setOnAction(event -> detailsSteps(1));
     }
 
     // =============================================
@@ -192,6 +200,40 @@ public class MealPlannerController {
         myListsButton.setOnAction(event -> navigateToScreen("MyLists"));
         userDashboardButton.setOnAction(event -> navigateToScreen("UserDashboard"));
     }
+
+    // Navigate between steps
+    private void detailsSteps(int direction) {
+        // Save the current step text before navigating
+        if (displayStep >= 0 && displayStep < preparationSteps.size()) {
+        preparationSteps.set(displayStep, stepArea.getText().trim());
+        }
+
+        // Calculate new step index
+        int newStep = displayStep + direction;
+        if (newStep >= 0 && newStep < preparationSteps.size()) {
+        displayStep = newStep;
+        updateDetailsStepView();
+        }
+    }
+
+    // Update TextArea and stepIndex label to display the current step
+    private void updateDetailsStepView() {
+        if (preparationSteps.isEmpty()) {
+        stepArea.setText("");
+        stepOfTXT.setText("Step 1 of 1");
+        recipeImages.setImage(recipeThumbnails.get(0));
+        } else {
+        stepArea.setText(preparationSteps.get(displayStep));
+        stepOfTXT.setText("Step " + (displayStep + 1) + " of " + preparationSteps.size());
+
+        if (stepImageMap.containsKey(displayStep)) {
+            recipeImages.setImage(stepImageMap.get(displayStep));
+        } else if (stepImageMap.containsKey(0)) {
+            recipeImages.setImage(stepImageMap.get(0)); // fallback to main image
+        }
+        }
+    }
+
 
     private void navigateToScreen(String screen) {
         try {
@@ -931,15 +973,16 @@ public class MealPlannerController {
 
         // Populate ingredient list with checkboxes
         ingredientsArea.getItems().clear();
-        for (String ingredient : recipe.getIngredients()) {
-            ingredientsArea.getItems().add("⬜ " + ingredient);
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            ingredientsArea.getItems().add("⬜ " + ingredient.getName());
         }
+        
         recipeImages.setImage(image);
 
-        ObservableList<String> preparationSteps = FXCollections.observableArrayList(recipe.getSteps());
+        preparationSteps = new ArrayList<>(recipe.getSteps());
 
-        stepOfTXT.setText("Step " + 1 + " of " + preparationSteps.size());
-        stepArea.setText(preparationSteps.get(0));
+        stepOfTXT.setText("Step 1 of " + preparationSteps.size());
+        stepArea.setText(preparationSteps.isEmpty() ? "" : preparationSteps.get(0));
 
     }
 
@@ -955,12 +998,9 @@ public class MealPlannerController {
                     Recipe recipe = getRecipeByName(mealName);
                     System.out.println(recipe);
                     if (recipe != null) {
-                        // Fetch an image (assuming path is stored in the recipe)
-                        //Image mealImage = new Image("file:" + recipe.getImagePath());
-    
-                        // Open recipe details with extracted info
-                        System.out.println("show details");
-                        showRecipeDetails(mealName, null, recipe);
+                        File imageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
+                        Image image = imageFile.exists() ? new Image(imageFile.toURI().toString()) : null;
+                        showRecipeDetails(mealName, image, recipe);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1046,11 +1086,10 @@ public class MealPlannerController {
             Recipe recipe = getRecipeByName(mealName);
 
             if (recipe != null) {
-                for (String ingredient : recipe.getIngredients()) {
-                    Ingredient parsedIngredient = parseIngredient(ingredient);
+                for (Ingredient ingredient : recipe.getIngredients()) {
                     Map<String, Object> ingredientData = new HashMap<>();
-                    ingredientData.put("name", parsedIngredient.getName());
-                    ingredientData.put("amount", parseAmount(parsedIngredient.getAmount()));
+                    ingredientData.put("name", ingredient.getName());
+                    ingredientData.put("amount", parseAmount(ingredient.getAmount()));
                     ingredients.add(ingredientData);
                 }
             }
@@ -1129,8 +1168,7 @@ public class MealPlannerController {
     
                 System.out.println("Loaded Recipe: " + recipe.getName());
     
-                for (String ingredient : recipe.getIngredients()) {
-                    Ingredient parsedIngredient = parseIngredient(ingredient);
+                for (Ingredient parsedIngredient : recipe.getIngredients()) {
                     boolean foundInInventory = false;
     
                     for (Item inventoryItem : ingredientInventory) {
@@ -1596,10 +1634,7 @@ public class MealPlannerController {
         amountList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAmount() + " " + data.getValue().getUnit()));
         
         ingredients.clear();
-        for (String ingredientString : recipe.getIngredients()) {
-            Ingredient parsed = parseIngredient(ingredientString);
-            ingredients.add(parsed);
-        }
+        ingredients.addAll(recipe.getIngredients());
         
         ingredientTable.setItems(ingredients);
         ingredientTable.setEditable(false);
@@ -1777,10 +1812,12 @@ public class MealPlannerController {
   
         // Collect unique ingredients and tags from existing recipes
         for (Recipe recipe : recipeList) {
-           for (String ingredient : recipe.getIngredients()) {
-              ingredientSet.add(ingredient.split(":")[0].trim()); // Extract ingredient name
-           }
-           tagSet.addAll(Arrays.asList(recipe.getTags()));
+            for (Ingredient ingredient : recipe.getIngredients()) {
+                ingredientSet.add(ingredient.getName());
+            }
+            
+            tagSet.addAll(recipe.getTags());
+
            categorySet.add(capitalizeWords(recipe.getCategory()));
         }
   
@@ -1852,13 +1889,14 @@ public class MealPlannerController {
     
             // Ingredients
             boolean matchesIngredients = selectedIngredients.isEmpty()
-                || Arrays.stream(recipe.getIngredients())
-                         .anyMatch(ingredient -> selectedIngredients.contains(ingredient.split(":")[0].trim()));
+            || recipe.getIngredients().stream()
+            .anyMatch(ingredient -> selectedIngredients.contains(ingredient.getName()));
+   
     
             // Tags
             boolean matchesTags = selectedTags.isEmpty()
-                || Arrays.stream(recipe.getTags())
-                         .anyMatch(selectedTags::contains);
+            || recipe.getTags().stream().anyMatch(selectedTags::contains);
+        
             
             return !(matchesCategory && matchesIngredients && matchesTags);
         });

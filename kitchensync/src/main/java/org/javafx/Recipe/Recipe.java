@@ -1,5 +1,9 @@
 package org.javafx.Recipe;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.javafx.Controllers.Ingredient;
+
 public class Recipe {
     private int id;
     private String name;
@@ -11,20 +15,23 @@ public class Recipe {
     private int passiveTime;
     private int cookTime;
     private int complexity;
-    private String[] tags;
-    private String[] specialEquipment;
-    private String[] ingredients;
-    private String[] steps;
+    
+    private List<String> tags;
+    private List<String> specialEquipment;
+    private List<Ingredient> ingredients; 
+    private List<String> steps;
+
     private int localRating;
     private int communityRating;
     private String recipeNotes;
-    private String[] suggestedIngredients;
+    private List<String> suggestedIngredients;
     private int randIngredientID;
+
     private String userId;    // The ID of the user who owns this recipe
     private String recipeDBId; // e.g. primary key in DynamoDB (UUID) for that user
 
     public Recipe(int id, String name, String category, String collection, String description, int prepTime, int passiveTime, int cookTime, int complexity, int servings, 
-                  String[] tags, String[] ingredients, String[] specialEquipment, String[] steps) {
+                    List<String> tags, ArrayList<Ingredient> ingredients, List<String> specialEquipment, List<String> steps) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -52,7 +59,7 @@ public class Recipe {
 
     }
 
-    // Getters and setters for all fields
+	 // Getters and setters for all fields
     public int getID() { return id; }
     public void setID(int id) { this.id = id; }
 
@@ -83,17 +90,17 @@ public class Recipe {
     public int getServings() { return servings; }
     public void setServings(int servings) { this.servings = servings; }
 
-    public String[] getTags() { return tags; }
-    public void setTags(String[] tags) { this.tags = tags; }
+    public List<String> getTags() { return tags; }
+    public void setTags(List<String> tags) { this.tags = tags; }
 
-    public String[] getIngredients() { return ingredients; }
-    public void setIngredients(String[] ingredients) { this.ingredients = ingredients; }
+    public List<Ingredient> getIngredients() { return ingredients; }
+    public void setIngredients(List<Ingredient> ingredients) { this.ingredients = ingredients; }
 
-    public String[] getEquipment() { return specialEquipment; }
-    public void setEquipment(String[] equipment) { this.specialEquipment = equipment; }
+    public List<String> getEquipment() { return specialEquipment; }
+    public void setEquipment(List<String> equipment) { this.specialEquipment = equipment; }
 
-    public String[] getSteps() { return steps; }
-    public void setSteps(String[] steps) { this.steps = steps; }
+    public List<String> getSteps() { return steps; }
+    public void setSteps(List<String> steps) { this.steps = steps; }
 
     public int getLocalRating() { return localRating; }
     public void setLocalRating(int localRating) { this.localRating = localRating; }
@@ -104,8 +111,8 @@ public class Recipe {
     public String getRecipeNotes() { return recipeNotes; }
     public void setRecipeNotes(String recipeNotes) { this.recipeNotes = recipeNotes; }
 
-    public String[] getSuggestedIngredients() { return suggestedIngredients; }
-    public void setSuggestedIngredients(String[] suggestedIngredients) { this.suggestedIngredients = suggestedIngredients; }
+    public List<String> getSuggestedIngredients() { return suggestedIngredients; }
+    public void setSuggestedIngredients(List<String> suggestedIngredients) { this.suggestedIngredients = suggestedIngredients; }
 
     public int getRandIngredientID() { return randIngredientID; }
     public void setRandIngredientID(int randIngredientID) { this.randIngredientID = randIngredientID; }
@@ -121,22 +128,3 @@ public class Recipe {
         return this.name;
     }
 }
-
-
-
-// Custom classes to manage ingredients
-class Ingredient {
-    private String name;
-    private String amount;
-    private String unit;
- 
-    public Ingredient(String name, String amount, String unit) {
-       this.name = name;
-       this.amount = amount;
-       this.unit = unit;
-    }
- 
-    public String getName() { return name; }
-    public String getAmount() { return amount; }
-    public String getUnit() { return unit; }
- }

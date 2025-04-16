@@ -19,17 +19,61 @@
       "Cast Iron Skillet"
     ],
     "ingredients": [
-      "Chili Powder: 2 tsp",
-      "Ground Cumin: 1 tsp",
-      "Dired Oregano: 1/2 tsp",
-      "Salt: To Taste tsp",
-      "boneless, skinless chicken thighs: 1 1/2 lb",
-      "canola oil: 1 tbsp",
-      "mini flour tortillas, warmed: 12 g",
-      "pico de gallo, homemade or store-bought: 1 cup",
-      "avocado, halved, peeled, seeded and diced: 1 kg",
-      "chopped fresh cilantro leaves: 1 cup",
-      "lime, cut into wedges: 1 kg"
+      {
+        "name": "Chili Powder",
+        "amount": "2",
+        "unit": "tsp"
+      },
+      {
+        "name": "Ground Cumin",
+        "amount": "1",
+        "unit": "tsp"
+      },
+      {
+        "name": "Dired Oregano",
+        "amount": "1/2",
+        "unit": "tsp"
+      },
+      {
+        "name": "Salt",
+        "amount": "To",
+        "unit": "Taste tsp"
+      },
+      {
+        "name": "boneless, skinless chicken thighs",
+        "amount": "1",
+        "unit": "1/2 lb"
+      },
+      {
+        "name": "canola oil",
+        "amount": "1",
+        "unit": "tbsp"
+      },
+      {
+        "name": "mini flour tortillas, warmed",
+        "amount": "12",
+        "unit": "g"
+      },
+      {
+        "name": "pico de gallo, homemade or store-bought",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "avocado, halved, peeled, seeded and diced",
+        "amount": "1",
+        "unit": "kg"
+      },
+      {
+        "name": "chopped fresh cilantro leaves",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "lime, cut into wedges",
+        "amount": "1",
+        "unit": "kg"
+      }
     ],
     "steps": [
       "In a small bowl, combine chili powder, cumin, paprika, oregano, garlic powder, 1 teaspoon salt and 1/2 teaspoon pepper.",
@@ -40,6 +84,7 @@
     "localRating": 0,
     "communityRating": 0,
     "recipeNotes": "things",
+    "suggestedIngredients": [],
     "randIngredientID": 0
   },
   {
@@ -63,21 +108,81 @@
       "Dutch Oven"
     ],
     "ingredients": [
-      "beef chuck, cut into 2-inch chunks: 2 lb",
-      "Salt: 1 dash",
-      "Olive Oil: 2 tbsp",
-      "medium sweet onion, diced: 1 kg",
-      "large carrots, peeled and diced: 3 kg",
-      "celery, diced: 3 kg",
-      "garlic, minced: 3 tsp",
-      "all-purpose flour: 2 tbsp",
-      "tomato paste: 3 tbsp",
-      "Guinness Draught beer: 14.9 oz",
-      "beef stock: 2 cup",
-      "Worcestershire sauce: 1 tbsp",
-      "fresh thyme: 4 g",
-      "bay leaves: 2 g",
-      "chopped fresh parsley leaves: 2 tbsp"
+      {
+        "name": "beef chuck, cut into 2-inch chunks",
+        "amount": "2",
+        "unit": "lb"
+      },
+      {
+        "name": "Salt",
+        "amount": "1",
+        "unit": "dash"
+      },
+      {
+        "name": "Olive Oil",
+        "amount": "2",
+        "unit": "tbsp"
+      },
+      {
+        "name": "medium sweet onion, diced",
+        "amount": "1",
+        "unit": "kg"
+      },
+      {
+        "name": "large carrots, peeled and diced",
+        "amount": "3",
+        "unit": "kg"
+      },
+      {
+        "name": "celery, diced",
+        "amount": "3",
+        "unit": "kg"
+      },
+      {
+        "name": "garlic, minced",
+        "amount": "3",
+        "unit": "tsp"
+      },
+      {
+        "name": "all-purpose flour",
+        "amount": "2",
+        "unit": "tbsp"
+      },
+      {
+        "name": "tomato paste",
+        "amount": "3",
+        "unit": "tbsp"
+      },
+      {
+        "name": "Guinness Draught beer",
+        "amount": "14.9",
+        "unit": "oz"
+      },
+      {
+        "name": "beef stock",
+        "amount": "2",
+        "unit": "cup"
+      },
+      {
+        "name": "Worcestershire sauce",
+        "amount": "1",
+        "unit": "tbsp"
+      },
+      {
+        "name": "fresh thyme",
+        "amount": "4",
+        "unit": "g"
+      },
+      {
+        "name": "bay leaves",
+        "amount": "2",
+        "unit": "g"
+      },
+      {
+        "name": "chopped fresh parsley leaves",
+        "amount": "2",
+        "unit": "tbsp"
+      }
     ],
     "steps": [
       "Heat olive oil in a large stockpot or Dutch oven over medium high heat. Working in batches, add beef to the stockpot and cook, stirring occasionally, until evenly browned, about 6-8 minutes; set aside.",
@@ -113,24 +218,96 @@
       "Dutch Oven"
     ],
     "ingredients": [
-      "bacon, diced: 4 kg",
-      "unsalted butter: 3 tbsp",
-      "sweet onion, diced: 1 kg",
-      "carrots, peeled and sliced: 3 kg",
-      "celery, diced: 2 kg",
-      "garlic, minced: 3 tsp",
-      "Italian seasoning: 2 tsp",
-      "all-purpose flour: 1/4 cup",
-      "dry white wine: 1/3 cup",
-      "chicken stock: 4 cup",
-      "bay leaf: 1 g",
-      "Kosher salt and freshly ground black pepper, to taste: 1 dash",
-      "leftover shredded rotisserie chicken: 3 cup",
-      "gnocchi: 9 oz",
-      "chopped baby spinach: 3 cup",
-      "heavy cream: 1/4 cup",
-      "red wine vinegar: 2 tbsp",
-      "chopped fresh parsley leaves: 2 tbsp"
+      {
+        "name": "bacon, diced",
+        "amount": "4",
+        "unit": "kg"
+      },
+      {
+        "name": "unsalted butter",
+        "amount": "3",
+        "unit": "tbsp"
+      },
+      {
+        "name": "sweet onion, diced",
+        "amount": "1",
+        "unit": "kg"
+      },
+      {
+        "name": "carrots, peeled and sliced",
+        "amount": "3",
+        "unit": "kg"
+      },
+      {
+        "name": "celery, diced",
+        "amount": "2",
+        "unit": "kg"
+      },
+      {
+        "name": "garlic, minced",
+        "amount": "3",
+        "unit": "tsp"
+      },
+      {
+        "name": "Italian seasoning",
+        "amount": "2",
+        "unit": "tsp"
+      },
+      {
+        "name": "all-purpose flour",
+        "amount": "1/4",
+        "unit": "cup"
+      },
+      {
+        "name": "dry white wine",
+        "amount": "1/3",
+        "unit": "cup"
+      },
+      {
+        "name": "chicken stock",
+        "amount": "4",
+        "unit": "cup"
+      },
+      {
+        "name": "bay leaf",
+        "amount": "1",
+        "unit": "g"
+      },
+      {
+        "name": "Kosher salt and freshly ground black pepper, to taste",
+        "amount": "1",
+        "unit": "dash"
+      },
+      {
+        "name": "leftover shredded rotisserie chicken",
+        "amount": "3",
+        "unit": "cup"
+      },
+      {
+        "name": "gnocchi",
+        "amount": "9",
+        "unit": "oz"
+      },
+      {
+        "name": "chopped baby spinach",
+        "amount": "3",
+        "unit": "cup"
+      },
+      {
+        "name": "heavy cream",
+        "amount": "1/4",
+        "unit": "cup"
+      },
+      {
+        "name": "red wine vinegar",
+        "amount": "2",
+        "unit": "tbsp"
+      },
+      {
+        "name": "chopped fresh parsley leaves",
+        "amount": "2",
+        "unit": "tbsp"
+      }
     ],
     "steps": [
       "Heat a large stockpot or Dutch oven over medium hight heat. Add bacon and cook until brown and crispy, about 6-8 minutes. Transfer to a paper towel-lined plate; drain excess fat, reserving 1 tablespoon in the stockpot, and set aside.",
@@ -144,6 +321,7 @@
     ],
     "localRating": 0,
     "communityRating": 0,
+    "suggestedIngredients": [],
     "randIngredientID": 0
   },
   {
@@ -166,16 +344,56 @@
       "Dutch Oven"
     ],
     "ingredients": [
-      "vegetable oil: 1 cup",
-      "hot dogs, halved: 12 kg",
-      "cornstarch: 1/4 cup",
-      "all-purpose flour: 1/2 cup",
-      "yellow cornmeal: 1/2 cup",
-      "sugar: 2 tbsp",
-      "baking powder: 2 tsp",
-      "Kosher salt and freshly ground black pepper, to taste: 1 pinch",
-      "milk: 1/2 cup",
-      "Egg: 1 kg"
+      {
+        "name": "vegetable oil",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "hot dogs, halved",
+        "amount": "12",
+        "unit": "kg"
+      },
+      {
+        "name": "cornstarch",
+        "amount": "1/4",
+        "unit": "cup"
+      },
+      {
+        "name": "all-purpose flour",
+        "amount": "1/2",
+        "unit": "cup"
+      },
+      {
+        "name": "yellow cornmeal",
+        "amount": "1/2",
+        "unit": "cup"
+      },
+      {
+        "name": "sugar",
+        "amount": "2",
+        "unit": "tbsp"
+      },
+      {
+        "name": "baking powder",
+        "amount": "2",
+        "unit": "tsp"
+      },
+      {
+        "name": "Kosher salt and freshly ground black pepper, to taste",
+        "amount": "1",
+        "unit": "pinch"
+      },
+      {
+        "name": "milk",
+        "amount": "1/2",
+        "unit": "cup"
+      },
+      {
+        "name": "Egg",
+        "amount": "1",
+        "unit": "kg"
+      }
     ],
     "steps": [
       "Heat vegetable oil in a large Dutch oven or skillet over medium high heat.",
@@ -187,6 +405,7 @@
     ],
     "localRating": 0,
     "communityRating": 0,
+    "suggestedIngredients": [],
     "randIngredientID": 0
   },
   {
@@ -210,18 +429,66 @@
       "Dutch Oven"
     ],
     "ingredients": [
-      "olive oil: 1 tbsp",
-      "medium sweet onion, diced: 1/2 kg",
-      "garlic, minced: 3 tsp",
-      "dry white wine: 1/4 cup",
-      "frozen chopped spinach, thawed and squeezed dry: 16 oz",
-      "artichoke hearts, drained and coarsely chopped: 14 oz",
-      "crushed red pepper flakes: 1/2 tsp",
-      "cream cheese, cubed: 8 oz",
-      "sour cream: 1 cup",
-      "freshly grated Parmesan: 1/2 cup",
-      "Kosher salt and freshly ground black pepper, to taste: 1 pinch",
-      "shredded mozzarella cheese: 1 1/2 cup"
+      {
+        "name": "olive oil",
+        "amount": "1",
+        "unit": "tbsp"
+      },
+      {
+        "name": "medium sweet onion, diced",
+        "amount": "1/2",
+        "unit": "kg"
+      },
+      {
+        "name": "garlic, minced",
+        "amount": "3",
+        "unit": "tsp"
+      },
+      {
+        "name": "dry white wine",
+        "amount": "1/4",
+        "unit": "cup"
+      },
+      {
+        "name": "frozen chopped spinach, thawed and squeezed dry",
+        "amount": "16",
+        "unit": "oz"
+      },
+      {
+        "name": "artichoke hearts, drained and coarsely chopped",
+        "amount": "14",
+        "unit": "oz"
+      },
+      {
+        "name": "crushed red pepper flakes",
+        "amount": "1/2",
+        "unit": "tsp"
+      },
+      {
+        "name": "cream cheese, cubed",
+        "amount": "8",
+        "unit": "oz"
+      },
+      {
+        "name": "sour cream",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "freshly grated Parmesan",
+        "amount": "1/2",
+        "unit": "cup"
+      },
+      {
+        "name": "Kosher salt and freshly ground black pepper, to taste",
+        "amount": "1",
+        "unit": "pinch"
+      },
+      {
+        "name": "shredded mozzarella cheese",
+        "amount": "1 1/2",
+        "unit": "cup"
+      }
     ],
     "steps": [
       "Heat olive oil in a large cast iron skillet over medium heat. Add onion and cook, stirring frequently, until translucent, about 2-3 minutes.",
@@ -254,17 +521,61 @@
     ],
     "specialEquipment": [],
     "ingredients": [
-      "2 tablespoons vegetable oil",
-      "4 pork chops (1/2 inch thick), trimmed",
-      "2 tablespoons all-purpose flour",
-      "1/3 cup grated Parmesan cheese",
-      "1/2 teaspoon salt",
-      "1/4 teaspoon pepper",
-      "4 Yukon Gold potatoes, thinly sliced",
-      "2 medium onions, sliced",
-      "3 cubes beef bouillon",
-      "3/4 cup hot water",
-      "1 tablespoon lemon juice"
+      {
+        "name": "vegetable oil",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "pork chops (1/2 inch thick), trimmed",
+        "amount": "4",
+        "unit": ""
+      },
+      {
+        "name": "all-purpose flour",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "grated Parmesan cheese",
+        "amount": "1/3",
+        "unit": "cup"
+      },
+      {
+        "name": "salt",
+        "amount": "1/2",
+        "unit": "teaspoon"
+      },
+      {
+        "name": "pepper",
+        "amount": "1/4",
+        "unit": "teaspoon"
+      },
+      {
+        "name": "Yukon Gold potatoes, thinly sliced",
+        "amount": "4",
+        "unit": ""
+      },
+      {
+        "name": "medium onions, sliced",
+        "amount": "2",
+        "unit": ""
+      },
+      {
+        "name": "beef bouillon",
+        "amount": "3",
+        "unit": "cubes"
+      },
+      {
+        "name": "hot water",
+        "amount": "3/4",
+        "unit": "cup"
+      },
+      {
+        "name": "lemon juice",
+        "amount": "1",
+        "unit": "tablespoon"
+      }
     ],
     "steps": [
       "Heat oil in a large skillet over medium heat. Coat the pork chops with flour, and place in the skillet. Brown about 4 minutes on each side.",
@@ -294,7 +605,11 @@
       "test item"
     ],
     "ingredients": [
-      "test ingredient: 5 dash"
+      {
+        "name": "test ingredient",
+        "amount": "5",
+        "unit": "dash"
+      }
     ],
     "steps": [
       "test step",
@@ -320,24 +635,96 @@
     ],
     "specialEquipment": [],
     "ingredients": [
-      "1 tablespoon olive oil",
-      "2 pounds ground beef ",
-      "1 large onion, diced",
-      "4 cloves garlic, minced",
-      "2 large bay leaves",
-      "2 tablespoons Hungarian paprika",
-      "2 teaspoons Italian seasoning",
-      "2 teaspoons kosher salt",
-      "1/2 teaspoon ground black pepper",
-      "1 pinch cayenne pepper, or to taste",
-      "1 quart chicken broth or water",
-      "1 (24 ounce) jar marinara sauce",
-      "1 (15 ounce) can diced tomatoes",
-      "1 cup water",
-      "2 tablespoons soy sauce",
-      "2 cups elbow macaroni",
-      "1/4 cup chopped Italian parsley",
-      "1 cup shredded white Cheddar cheese (Optional)"
+      {
+        "name": "olive oil",
+        "amount": "1",
+        "unit": "tablespoon"
+      },
+      {
+        "name": "ground beef",
+        "amount": "2",
+        "unit": "pounds"
+      },
+      {
+        "name": "large onion, diced",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "cloves garlic, minced",
+        "amount": "4",
+        "unit": ""
+      },
+      {
+        "name": "large bay leaves",
+        "amount": "2",
+        "unit": ""
+      },
+      {
+        "name": "Hungarian paprika",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "Italian seasoning",
+        "amount": "2",
+        "unit": "teaspoons"
+      },
+      {
+        "name": "kosher salt",
+        "amount": "2",
+        "unit": "teaspoons"
+      },
+      {
+        "name": "ground black pepper",
+        "amount": "1/2",
+        "unit": "teaspoon"
+      },
+      {
+        "name": "cayenne pepper, or to taste",
+        "amount": "1",
+        "unit": "pinch"
+      },
+      {
+        "name": "chicken broth or water",
+        "amount": "1",
+        "unit": "quart"
+      },
+      {
+        "name": "jar marinara sauce (24 ounce)",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "can diced tomatoes (15 ounce)",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "water",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "soy sauce",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "elbow macaroni",
+        "amount": "2",
+        "unit": "cups"
+      },
+      {
+        "name": "chopped Italian parsley",
+        "amount": "1/4",
+        "unit": "cup"
+      },
+      {
+        "name": "shredded white Cheddar cheese (Optional)",
+        "amount": "1",
+        "unit": "cup"
+      }
     ],
     "steps": [
       "Gather all ingredients.",
@@ -367,23 +754,91 @@
     ],
     "specialEquipment": [],
     "ingredients": [
-      "1/2 (8 ounce) package spaghettini",
-      "5 tablespoons olive oil, divided",
-      "8 roma (plum) tomatoes, halved and sliced",
-      "1 teaspoon garlic powder",
-      "1/2 teaspoon dried oregano",
-      "2 teaspoons dried basil",
-      "1 pinch salt",
-      "1 teaspoon ground black pepper",
-      "1.5 teaspoons white sugar",
-      "1 tablespoon ketchup",
-      "2 skinless, boneless chicken breasts, cut into thin strips",
-      "2 garlic cloves, crushed",
-      "1 green bell pepper, chopped",
-      "1 red bell pepper, chopped",
-      "1 red onion, chopped",
-      "1 cup sliced fresh mushrooms",
-      "1/4 cup grated Parmesan cheese"
+      {
+        "name": "package spaghettini (8 ounce)",
+        "amount": "1/2",
+        "unit": ""
+      },
+      {
+        "name": "olive oil, divided",
+        "amount": "5",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "roma (plum) tomatoes, halved and sliced",
+        "amount": "8",
+        "unit": ""
+      },
+      {
+        "name": "garlic powder",
+        "amount": "1",
+        "unit": "teaspoon"
+      },
+      {
+        "name": "dried oregano",
+        "amount": "1/2",
+        "unit": "teaspoon"
+      },
+      {
+        "name": "dried basil",
+        "amount": "2",
+        "unit": "teaspoons"
+      },
+      {
+        "name": "salt",
+        "amount": "1",
+        "unit": "pinch"
+      },
+      {
+        "name": "ground black pepper",
+        "amount": "1",
+        "unit": "teaspoon"
+      },
+      {
+        "name": "white sugar",
+        "amount": "1.5",
+        "unit": "teaspoons"
+      },
+      {
+        "name": "ketchup",
+        "amount": "1",
+        "unit": "tablespoon"
+      },
+      {
+        "name": "skinless, boneless chicken breasts, cut into thin strips",
+        "amount": "2",
+        "unit": ""
+      },
+      {
+        "name": "garlic cloves, crushed",
+        "amount": "2",
+        "unit": ""
+      },
+      {
+        "name": "green bell pepper, chopped",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "red bell pepper, chopped",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "red onion, chopped",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "sliced fresh mushrooms",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "grated Parmesan cheese",
+        "amount": "1/4",
+        "unit": "cup"
+      }
     ],
     "steps": [
       "Bring a large pot of water to a boil over high heat. Stir in spaghettini and return to a boil. Cook pasta until it has cooked through, but is still firm to the bite, 6 to 8 minutes. Drain well and keep warm.",
@@ -412,22 +867,86 @@
     ],
     "specialEquipment": [],
     "ingredients": [
-      "1 tablespoon unsalted butter",
-      "1 tablespoon vegetable oil",
-      "1 cup thinly sliced mushrooms",
-      "1 teaspoon salt, plus more to taste",
-      "1/2 cup diced onion",
-      "1 pound ground beef",
-      "freshly ground black pepper",
-      "1 pinch cayenne pepper",
-      "2 cloves minced garlic",
-      "1.33 tablespoons flour",
-      "2 tablespoons vodka (Optional)",
-      "2.5 cups beef broth, or as needed",
-      "1 cup water",
-      "2.5 cups egg noodles",
-      "1/2 cup sour cream, plus more for serving",
-      "2 tablespoons fresh sliced chives or green onions"
+      {
+        "name": "unsalted butter",
+        "amount": "1",
+        "unit": "tablespoon"
+      },
+      {
+        "name": "vegetable oil",
+        "amount": "1",
+        "unit": "tablespoon"
+      },
+      {
+        "name": "thinly sliced mushrooms",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "salt, plus more to taste",
+        "amount": "1",
+        "unit": "teaspoon"
+      },
+      {
+        "name": "diced onion",
+        "amount": "1/2",
+        "unit": "cup"
+      },
+      {
+        "name": "ground beef",
+        "amount": "1",
+        "unit": "pound"
+      },
+      {
+        "name": "freshly ground black pepper",
+        "amount": "",
+        "unit": ""
+      },
+      {
+        "name": "cayenne pepper",
+        "amount": "1",
+        "unit": "pinch"
+      },
+      {
+        "name": "cloves minced garlic",
+        "amount": "2",
+        "unit": ""
+      },
+      {
+        "name": "flour",
+        "amount": "1.33",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "vodka (Optional)",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "beef broth, or as needed",
+        "amount": "2.5",
+        "unit": "cups"
+      },
+      {
+        "name": "water",
+        "amount": "1",
+        "unit": "cup"
+      },
+      {
+        "name": "egg noodles",
+        "amount": "2.5",
+        "unit": "cups"
+      },
+      {
+        "name": "sour cream, plus more for serving",
+        "amount": "1/2",
+        "unit": "cup"
+      },
+      {
+        "name": "fresh sliced chives or green onions",
+        "amount": "2",
+        "unit": "tablespoons"
+      }
     ],
     "steps": [
       "Gather all ingredients.",
@@ -461,17 +980,61 @@
     ],
     "specialEquipment": [],
     "ingredients": [
-      "1 tablespoon vegetable oil, or more to taste",
-      "1 (16 ounce) package Polish sausage, or to taste, cut into 1-inch squares",
-      "1 large onion, thinly sliced",
-      "1 large green bell pepper, cut into 1-inch squares",
-      "3/4 fresh pineapple - peeled, cored, and cut into chunks",
-      "2 tablespoons cornstarch",
-      "1/2 cup pineapple juice, or more to taste",
-      "1/3 cup packed brown sugar, or to taste",
-      "2 tablespoons cider vinegar",
-      "2 tablespoons soy sauce",
-      "2 teaspoons minced garlic"
+      {
+        "name": "vegetable oil, or more to taste",
+        "amount": "1",
+        "unit": "tablespoon"
+      },
+      {
+        "name": "Polish sausage, cut into 1-inch squares",
+        "amount": "1",
+        "unit": "(16 ounce) package"
+      },
+      {
+        "name": "large onion, thinly sliced",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "large green bell pepper, cut into 1-inch squares",
+        "amount": "1",
+        "unit": ""
+      },
+      {
+        "name": "fresh pineapple - peeled, cored, and cut into chunks",
+        "amount": "3/4",
+        "unit": ""
+      },
+      {
+        "name": "cornstarch",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "pineapple juice, or more to taste",
+        "amount": "1/2",
+        "unit": "cup"
+      },
+      {
+        "name": "packed brown sugar, or to taste",
+        "amount": "1/3",
+        "unit": "cup"
+      },
+      {
+        "name": "cider vinegar",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "soy sauce",
+        "amount": "2",
+        "unit": "tablespoons"
+      },
+      {
+        "name": "minced garlic",
+        "amount": "2",
+        "unit": "teaspoons"
+      }
     ],
     "steps": [
       "Heat oil in a large skillet over medium heat. Cook and stir sausage, onion, and green bell pepper until vegetables start to become tender, about 8 minutes; add pineapple and cook, stirring occasionally, until the pineapple is hot, about 5 minutes more.",

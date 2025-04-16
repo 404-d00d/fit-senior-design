@@ -28,13 +28,58 @@
   "2025-04-16": [
     {
       "cookTime": {
+<<<<<<< HEAD
         "date": "2025-04-16",
         "duration": 35,
         "hour": 19,
         "name": "Chicken and Gnocchi Soup",
+=======
+        "date": "2025-04-07",
+        "duration": 15.0,
+        "hour": 18.0,
+        "name": "Easy Chicken Tacos",
         "mealType": "Dinner",
-        "id": 3,
+        "id": 4.0,
         "isMealMade": false,
+        "mealGroupId": "52100469-7957-4c53-8bac-a65b0a892f75",
+        "recipeID": 0.0
+      },
+      "prepTime": {
+        "date": "2025-04-07",
+        "duration": 15.0,
+        "hour": 9.0,
+        "name": "Easy Chicken Tacos",
+        "mealType": "Dinner",
+        "id": 3.0,
+        "isMealMade": false,
+        "mealGroupId": "52100469-7957-4c53-8bac-a65b0a892f75",
+        "recipeID": 0.0
+      }
+    }
+  ],
+  "2025-04-15": [
+    {
+      "cookTime": {
+        "date": "2025-04-14",
+        "duration": 15,
+        "hour": 18,
+        "name": "Easy Chicken Tacos",
+        "mealType": "Dinner",
+        "id": 2,
+        "isMealMade": false,
+        "mealGroupId": "f6bcfb8c-38c6-4de7-81f9-94f266807169",
+        "recipeID": 0
+      },
+      "prepTime": {
+        "date": "2025-04-15",
+        "duration": 15,
+        "hour": 6,
+        "name": "Easy Chicken Tacos",
+>>>>>>> 247c48963dcf1f0bc056abf49355bdad95007a58
+        "mealType": "Dinner",
+        "id": 1,
+        "isMealMade": false,
+<<<<<<< HEAD
         "mealGroupId": "4ce78a65-74d5-4c34-a38b-4251742de5d1",
         "recipeID": 2
       },
@@ -59,6 +104,10 @@
         "isMealMade": false,
         "mealGroupId": "4ce78a65-74d5-4c34-a38b-4251742de5d1",
         "recipeID": 2
+=======
+        "mealGroupId": "f6bcfb8c-38c6-4de7-81f9-94f266807169",
+        "recipeID": 0
+>>>>>>> 247c48963dcf1f0bc056abf49355bdad95007a58
       }
     }
   ]

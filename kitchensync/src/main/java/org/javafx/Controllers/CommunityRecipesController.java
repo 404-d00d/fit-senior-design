@@ -447,42 +447,26 @@ public class CommunityRecipesController {
       
       // Populate steps
       preparationSteps.clear();
-      preparationSteps.addAll(Arrays.asList(recipe.getSteps()));
+      preparationSteps = new ArrayList<>(recipe.getSteps());
       currentStep = 0;
       updateStepView();
 
       // Populate ingredients
       ingredients.clear();
       ingredientEntries.clear();
-
-      for (String ing : recipe.getIngredients()) {
-         ingredientEntries.add(ing); // Still store full string version
-
-         // Try to split into name, amount, unit
-         String[] parts = ing.split(":");
-         if (parts.length == 2) {
-            String name = parts[0].trim();
-            String amountUnit = parts[1].trim();
-
-            // Extract amount and unit
-            String[] amountUnitParts = amountUnit.split(" ", 2);
-            String amount = amountUnitParts.length >= 1 ? amountUnitParts[0].trim() : "";
-            String unit = amountUnitParts.length == 2 ? amountUnitParts[1].trim() : "";
-
-            ingredients.add(new Ingredient(name, amount, unit));
-         } else {
-            // If not parsable, fallback
-            ingredients.add(new Ingredient(ing, "", ""));
-         }
+      for (Ingredient ing : recipe.getIngredients()) {
+         // Optionally, if you need the string version:
+         ingredientEntries.add(ing.getName() + ": " + ing.getAmount() + " " + ing.getUnit());
+         ingredients.add(ing);
       }
 
       // Populate special equipment
       equipment.clear();
-      equipment.addAll(Arrays.asList(recipe.getEquipment()));
+      equipment.addAll(recipe.getEquipment());
 
       // Populate tags
       tags.clear();
-      tags.addAll(Arrays.asList(recipe.getTags()));
+      tags.addAll(recipe.getTags());
       updateTagView();
   
       // Load Image
@@ -961,24 +945,26 @@ public class CommunityRecipesController {
       List<Recipe> partialMatches = new ArrayList<>();
       
       for (Recipe recipe : allRecipes) {
-         String[] recipeIngredients = recipe.getIngredients();
+         List<Ingredient> recipeIngredients = recipe.getIngredients();
          boolean hasAllIngredients = true;
          int matchCount = 0;
          
-         for (String ingredient : recipeIngredients) {
-               if (userInventory.contains(ingredient.toLowerCase())) {  // assuming uniform casing
-                  matchCount++;
-               } else {
-                  hasAllIngredients = false;
-               }
+         for (Ingredient ing : recipeIngredients) {
+            String ingName = ing.getName();
+            if (userInventory.contains(ingName.toLowerCase())) {  
+               matchCount++;
+            } else {
+               hasAllIngredients = false;
+            }
          }
          
          if (hasAllIngredients) {
-               fullMatches.add(recipe);
+            fullMatches.add(recipe);
          } else if (matchCount > 0) {
-               partialMatches.add(recipe);
+            partialMatches.add(recipe);
          }
       }
+      
       
       // Define the minimum number of recipes you want to display
       int threshold = 5;
@@ -1010,11 +996,11 @@ public class CommunityRecipesController {
 
          // Determine outline color based on completeness:
          List<String> inventory = getUserInventory();
-         String[] ingredients = recipe.getIngredients();
+         List<Ingredient> ingredients = recipe.getIngredients();
 
          int matchCount = 0;
-         for (String ingredient : ingredients) {
-            if (inventory.contains(ingredient.toLowerCase())) {
+         for (Ingredient ing : ingredients) {
+            if (inventory.contains(ing.getName().toLowerCase())) {
                matchCount++;
             }
          }
@@ -1054,35 +1040,27 @@ public class CommunityRecipesController {
 
       // 1) Steps
       preparationSteps.clear();
-      preparationSteps.addAll(Arrays.asList(recipe.getSteps()));
+      preparationSteps.addAll(recipe.getSteps());
       currentStep = 0;
       updateStepView(); // or however you show the steps in your text field
 
       // 2) Ingredients
       ingredients.clear();
       ingredientEntries.clear();
-      for (String ing : recipe.getIngredients()) {
-         ingredientEntries.add(ing);
-         String[] parts = ing.split(":");
-         if (parts.length == 2) {
-            String name = parts[0].trim();
-            String amountUnit = parts[1].trim();
-            String[] amountUnitParts = amountUnit.split(" ", 2);
-            String amount = (amountUnitParts.length >= 1) ? amountUnitParts[0].trim() : "";
-            String unit   = (amountUnitParts.length == 2) ? amountUnitParts[1].trim() : "";
-            ingredients.add(new Ingredient(name, amount, unit));
-         } else {
-            ingredients.add(new Ingredient(ing, "", ""));
-         }
+      for (Ingredient ing : recipe.getIngredients()) {
+         // Build a string representation if needed for DynamoDB or display
+         String ingString = ing.getName() + ": " + ing.getAmount() + " " + ing.getUnit();
+         ingredientEntries.add(ingString);
+         ingredients.add(ing);
       }
 
       // 3) Equipment
       equipment.clear();
-      equipment.addAll(Arrays.asList(recipe.getEquipment()));
+      equipment.addAll(recipe.getEquipment());
 
       // 4) Tags
       tags.clear();
-      tags.addAll(Arrays.asList(recipe.getTags()));
+      tags.addAll(recipe.getTags());
       updateTagView();
 
       selectedImageFile = null;
@@ -1260,7 +1238,10 @@ public class CommunityRecipesController {
 
       recipeDetailDescription.setText(recipe.getDescription());
 
-      recipeIngredients.setItems(FXCollections.observableArrayList(recipe.getIngredients()));
+      List<String> ingredientStrings = recipe.getIngredients().stream()
+      .map(ing -> ing.getName() + ": " + ing.getAmount() + " " + ing.getUnit())
+      .collect(Collectors.toList());
+      recipeIngredients.setItems(FXCollections.observableArrayList(ingredientStrings));
       specialEquipmentTXTArea.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
       recipeTagFlowPane.getChildren().clear();
 
@@ -1363,22 +1344,61 @@ public class CommunityRecipesController {
          String recipeName = item.get("name").s();
          String description = item.get("description").s();
           
+         // For tags, equipment, and steps, collect into lists:
+         List<String> tagsList = item.containsKey("tags")
+            ? item.get("tags").l().stream().map(AttributeValue::s).collect(Collectors.toList())
+            : new ArrayList<>();
+
+         // For equipment:
+         List<String> equipmentList = item.containsKey("equipment")
+            ? item.get("equipment").l().stream().map(AttributeValue::s).collect(Collectors.toList())
+            : new ArrayList<>();
+
+         // For steps:
+         List<String> stepsList = item.containsKey("steps")
+            ? item.get("steps").l().stream().map(AttributeValue::s).collect(Collectors.toList())
+            : new ArrayList<>();
+
+         // For ingredients, we want to map each string into an Ingredient:
+         List<Ingredient> ingredientsList;
+         if (item.containsKey("ingredients")) {
+            List<String> ingStrings = item.get("ingredients").l().stream()
+                  .map(AttributeValue::s)
+                  .collect(Collectors.toList());
+            ingredientsList = new ArrayList<>();
+            for (String ingStr : ingStrings) {
+               String[] parts = ingStr.split(":");
+               if (parts.length == 2) {
+                  String ingName = parts[0].trim();
+                  String[] amtParts = parts[1].trim().split(" ", 2);
+                  String amount = amtParts.length >= 1 ? amtParts[0].trim() : "";
+                  String unit = amtParts.length == 2 ? amtParts[1].trim() : "";
+                  ingredientsList.add(new Ingredient(ingName, amount, unit));
+               } else {
+                  ingredientsList.add(new Ingredient(ingStr, "", ""));
+               }
+            }
+         } else {
+            ingredientsList = new ArrayList<>();
+         }
+
          Recipe recipe = new Recipe(
             -1,  // Dummy ID for community recipes
             recipeName,
             item.getOrDefault("category", AttributeValue.builder().s("Uncategorized").build()).s(),
-            "Community",  // Indicate the source
+            "Community",
             description,
             Integer.parseInt(item.getOrDefault("prepTime", AttributeValue.builder().n("0").build()).n()),
             Integer.parseInt(item.getOrDefault("passiveTime", AttributeValue.builder().n("0").build()).n()),
             Integer.parseInt(item.getOrDefault("cookTime", AttributeValue.builder().n("0").build()).n()),
             1,  // Default complexity
             Integer.parseInt(item.getOrDefault("servings", AttributeValue.builder().n("1").build()).n()),
-            item.containsKey("tags") ? item.get("tags").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-            item.containsKey("ingredients") ? item.get("ingredients").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-            item.containsKey("equipment") ? item.get("equipment").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{},
-            item.containsKey("steps") ? item.get("steps").l().stream().map(AttributeValue::s).toArray(String[]::new) : new String[]{}
+            tagsList,
+            (ArrayList<Ingredient>) ingredientsList,
+            equipmentList,
+            stepsList
          );
+
 
          recipe.setUserID(userId);
          recipe.setRecipeDBId(recipeDBID);
@@ -1421,10 +1441,10 @@ public class CommunityRecipesController {
 
       // Collect unique ingredients and tags from existing recipes
       for (Recipe recipe : recipeList) {
-         for (String ingredient : recipe.getIngredients()) {
-            ingredientSet.add(ingredient.split(":")[0].trim()); // Extract ingredient name
+         for (Ingredient ing : recipe.getIngredients()) {
+            ingredientSet.add(ing.getName());  // Use the Ingredient object's name
          }
-         tagSet.addAll(Arrays.asList(recipe.getTags()));
+         tagSet.addAll(recipe.getTags());
          categorySet.add(capitalizeWords(recipe.getCategory()));
       }
 

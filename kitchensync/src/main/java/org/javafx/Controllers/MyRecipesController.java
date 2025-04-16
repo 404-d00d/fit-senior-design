@@ -19,13 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.javafx.Controllers.Ingredient;
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -43,9 +47,11 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -65,6 +71,9 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 
 // =================================================================================
@@ -110,7 +119,7 @@ public class MyRecipesController {
    @FXML private Text recipePrepTimeTXT, recipePassiveTimeTXT, recipeCookTimeTXT, recipeTotalTimeTXT, 
                    recipeComplexityTXT, recipeServingsTXT, stepIndex, stepOfTXT, noRecipesTXT, recipeNameTXT, 
                    recipeCookingNameTXT;
-   @FXML private ListView<String> ingredientsArea, specialEquipmentTXTArea, recipeIngredients;
+   @FXML private ListView<String> ingredientsArea, specialEquipmentTXTArea;
    @FXML private ImageView recipeImages, imagePreview, recipeDetailsImages;
    @FXML private TextField searchBar;
    @FXML private Text localRatingStars;
@@ -118,9 +127,11 @@ public class MyRecipesController {
 
    // Table Views for Ingredients & Equipment
    @FXML private TableView<Ingredient> ingredientTable;
+   @FXML private TableView<Ingredient> recipeIngredients;
    @FXML private TableView<String> equipmentTable;
    @FXML private TableColumn<String, String> equipmentList;
    @FXML private TableColumn<Ingredient, String> ingredientList, amountList;
+   @FXML private TableColumn<Ingredient, String> ingredientListView, amountListView;
 
    // Review Pane
    @FXML private Pane recipeReviews;
@@ -159,16 +170,18 @@ public class MyRecipesController {
    private Recipe currentRecipe;
    private VBox currentRecipeCard;
 
-   // Selected filters for recipes
+   // Selected filters for recipesloadFlavorMatrix
    private Set<String> selectedIngredients = new HashSet<>();
    private Set<String> selectedTags = new HashSet<>();
-
    private Set<String> availableIngredients = new HashSet<>();
    private Set<String> availableTags = new HashSet<>();
 
+   // Ingredient Suggestion and Substitution Items
+   private IngredientSuggestionAndSubstitutions suggestionService;
+   private UserPreferences userPrefs;
+
    // ====================================================================
    // Initialization & UI Setup
-   // Handles controller startup logic and UI initialization
    // ====================================================================
 
    @FXML
@@ -185,6 +198,25 @@ public class MyRecipesController {
       setupUIEventHandlers();    // Configure buttons and step navigation
       populateFilterOptions(); // Ensure filters get populated
       setupMultiSelectFilters(); // Set up Filter Buttons
+
+      String flavorMatrixPath = "flavorMatrix.json";
+      String substitutionsPath = "substitutions.json";
+
+      // Load data
+      Map<String, List<String>> flavorMatrix = loadFlavorMatrix(flavorMatrixPath);
+      Map<String, List<SubstitutionOption>> knownSubsraw = loadSubstitutions(substitutionsPath);
+      Map<String, List<SubstitutionOption>> knownSubs = IngredientSuggestionAndSubstitutions.normalizeSubstitutionKeys(knownSubsraw);
+
+      // Create the service
+      suggestionService = new IngredientSuggestionAndSubstitutions(flavorMatrix, knownSubs);
+
+      // User preferences from a user profile, load them; for now, just an example
+      userPrefs = new UserPreferences(
+         Set.of("shellfish"),  // allergies
+         Set.of("cilantro"),   // dislikes
+         false,                // vegan?
+         false                 // vegetarian?
+      );
 
       recipeNotesButton.setOnAction(event -> openRecipeNotesPopup());
       recipeReviewsButton.setOnAction(event -> openReviewPage());
@@ -616,10 +648,15 @@ public class MyRecipesController {
    }
 
    private void saveRecipe() {
-      if (!isFormValid(recipeName.getText(), recipeCategory.getValue(), recipeYield.getText(), 
-                       recipeDescription.getText(), recipeETAPrep.getText(), recipeETAPassive.getText(), 
-                       recipeETA.getText(), ingredients.stream().map(Ingredient::getName).toArray(String[]::new), 
-                       preparationSteps.toArray(new String[0]))) {
+      if (!isFormValid(recipeName.getText(),
+                       recipeCategory.getValue(),
+                       recipeYield.getText(),
+                       recipeDescription.getText(),
+                       recipeETAPrep.getText(),
+                       recipeETAPassive.getText(),
+                       recipeETA.getText(),
+                       new ArrayList<>(ingredients),
+                       new ArrayList<>(preparationSteps))) {
           return;
       }
   
@@ -635,8 +672,9 @@ public class MyRecipesController {
           }
       }
   
+      // Build a new Recipe object with typed lists
       Recipe updatedRecipe = new Recipe(
-          (id == -1 ? recipeList.size() : id), // Assign new ID only if new recipe
+          (id == -1 ? recipeList.size() : id), // new ID if not found
           recipeName.getText(),
           recipeCategory.getValue(),
           recipeCollection.getValue(),
@@ -646,12 +684,10 @@ public class MyRecipesController {
           Integer.parseInt(recipeETA.getText()),
           calculateRecipeComplexity(),
           Integer.parseInt(recipeYield.getText()),
-          tags.toArray(new String[0]),
-          ingredients.stream()
-              .map(ingredient -> ingredient.getName() + ": " + ingredient.getAmount() + " " + ingredient.getUnit())
-              .toArray(String[]::new),
-          equipment.toArray(new String[0]),
-          preparationSteps.toArray(new String[0])
+          new ArrayList<>(tags),
+          new ArrayList<>(ingredients),
+          new ArrayList<>(equipment),
+          new ArrayList<>(preparationSteps)
       );
   
       if (existingRecipe != null) {
@@ -773,9 +809,12 @@ public class MyRecipesController {
 
    }
 
-   private boolean isFormValid(String name, String category, String servings, String decsription, String prepTime, String passiveTime, String cookTime, String[] ingredientsArray, String[] stepsArray) {
+   private boolean isFormValid(String name, String category, String servings,
+                               String description, String prepTime, String passiveTime, String cookTime,
+                               List<Ingredient> ingredientsList, List<String> stepsList) {
+
       if (name == null || name.isEmpty()) {
-         showAlert("Error", "Missing Ingredient Name", "Please enter a valid recipe name.");
+         showAlert("Error", "Missing Name", "Please enter a valid recipe name.");
          return false;
       }
       if (category == null || category.isEmpty()) {
@@ -788,8 +827,8 @@ public class MyRecipesController {
          showAlert("Error", "Invalid Serving Amount", "Servings must be a number.");
          return false;
       }
-      if (decsription == null) {
-         showAlert("Error", "Missing Decsription", "Please add a decsription.");
+      if (description == null || description.isEmpty()) {
+         showAlert("Error", "Missing Description", "Please add a description.");
          return false;
       }
       try {
@@ -810,36 +849,35 @@ public class MyRecipesController {
          showAlert("Error", "Invalid Cook Time", "Cook time must be a number.");
          return false;
       }
-      if (ingredientsArray == null) {
-         showAlert("Error", "Missing Ingredients", "Please add ingredients.");
+      // Check ingredient list
+      if (ingredientsList == null || ingredientsList.isEmpty()) {
+         showAlert("Error", "Missing Ingredients", "Please add at least one ingredient.");
          return false;
       }
-      if (stepsArray == null) {
-         showAlert("Error", "Missing Steps", "Please add steps.");
+      if (stepsList == null || stepsList.isEmpty()) {
+         showAlert("Error", "Missing Steps", "Please add at least one step.");
          return false;
       }
       return true;
    }
 
    public void showRecipeDetails(int recipeId, String name, Image image, Recipe recipe) {
-
       currentRecipe = recipe;
-
-      VBox recipeCard = recipeWidgets.get(recipe.getID());
-      currentRecipeCard = recipeCard;
-
+      currentRecipeCard = recipeWidgets.get(recipe.getID());
       displayStep = 0;
 
       myRecipesPane.setVisible(false);
       recipeDetailsPane.setVisible(true);
       recipeNameTXT.setText(name);
 
-      // Clear previous images
       recipeImagesHbox.getChildren().clear();
       recipeThumbnails.clear();
-      stepImageMap.clear(); // optional, if you reload
+      stepImageMap.clear();
 
-      // Load main image (step 0)
+      // 1) Generate or load suggestions if needed
+      handleSuggestionsForRecipe(recipe);
+
+      // Load main image
       File mainImageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + ".png");
       if (mainImageFile.exists()) {
          Image mainImage = new Image(mainImageFile.toURI().toString());
@@ -849,19 +887,16 @@ public class MyRecipesController {
          recipeImagesHbox.getChildren().add(createThumbnail(mainImage, mainImageFile.getAbsolutePath(), 0));
       }
 
-      // Load step images (step 1 to N), as long as files exist
+      // Load step images
       for (int i = 1; ; i++) {
          File stepImageFile = new File("src/main/resources/org/javafx/Resources/Recipe Images/" + recipe.getName() + "_step" + i + ".png");
-
          if (!stepImageFile.exists()) break;
-
-         Image stepImage = new Image(stepImageFile.toURI().toString());
-         recipeThumbnails.add(stepImage);
-         stepImageMap.put(i, stepImage);
+         Image stepImg = new Image(stepImageFile.toURI().toString());
+         recipeThumbnails.add(stepImg);
+         stepImageMap.put(i, stepImg);
          stepImageFileMap.put(i, stepImageFile.getAbsolutePath());
-         recipeImagesHbox.getChildren().add(createThumbnail(stepImage, stepImageFile.getAbsolutePath(), i));
+         recipeImagesHbox.getChildren().add(createThumbnail(stepImg, stepImageFile.getAbsolutePath(), i));
       }
-
 
       if (!recipeThumbnails.isEmpty()) {
          recipeDetailsImages.setImage(recipeThumbnails.get(0));
@@ -872,74 +907,175 @@ public class MyRecipesController {
       localRatingStars.setText("Local Review: " + getStarsString(recipe.getLocalRating()));
       communityRatingStars.setText("Community Review: " + getStarsString(recipe.getCommunityRating()));
       recipeNotesArea.setText(recipe.getRecipeNotes());
-
-      // Review Page Info
-
       localRatingStarsReviews.setText("Local Review: " + getStarsString(recipe.getLocalRating()));
       communityRatingStarsReview.setText("Community Review: " + getStarsString(recipe.getCommunityRating()));
-
       recipeReviewName.setText(name);
 
-      // Increase text size for labels
-      //recipeNameTXT.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
-      //recipeServingsTXT.setStyle("-fx-font-size: 18px;");
-      //recipePrepTimeTXT.setStyle("-fx-font-size: 18px;");
-      //recipePassiveTimeTXT.setStyle("-fx-font-size: 18px;");
-      //recipeCookTimeTXT.setStyle("-fx-font-size: 18px;");
-      //recipeTotalTimeTXT.setStyle("-fx-font-size: 18px;");
-      //recipeComplexityTXT.setStyle("-fx-font-size: 18px;");
       recipeDetailDescription.setStyle("-fx-font-size: 20px;");
-
-      // Increase text size in list items
-      recipeIngredients.setStyle("-fx-control-inner-background: #2E2E2E; -fx-font-size: 20px; -fx-text-fill: white; -fx-border-color: #FF7F11;");
+      //recipeIngredients.setStyle("-fx-control-inner-background: #2E2E2E; -fx-font-size: 20px; -fx-text-fill: white; -fx-border-color: #FF7F11;");
       specialEquipmentTXTArea.setStyle("-fx-font-size: 20px;");
       ingredientsArea.setStyle("-fx-control-inner-background: #2E2E2E; -fx-font-size: 20px; -fx-text-fill: white; -fx-border-color: #FF7F11;");
-
       stepArea.setStyle("-fx-font-size: 20px;");
-
 
       recipeServingsTXT.setText("Servings: " + recipe.getServings());
       recipePrepTimeTXT.setText("Prep Time: " + recipe.getPrepTime() + " Minutes");
       recipePassiveTimeTXT.setText("Passive Time: " + recipe.getPassiveTime() + " Minutes");
       recipeCookTimeTXT.setText("Cook Time: " + recipe.getCookTime() + " Minutes");
-
-      int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime(); // add the prep and cook times
-
+      int totalTime = recipe.getPrepTime() + recipe.getPassiveTime() + recipe.getCookTime();
       recipeTotalTimeTXT.setText("Total: " + totalTime + " Minutes");
       recipeComplexityTXT.setText("Complexity: " + getComplexityLabel(recipe.getComplexity()));
 
       recipeDetailDescription.setText(recipe.getDescription());
 
-      recipeIngredients.setItems(FXCollections.observableArrayList(recipe.getIngredients()));
-      specialEquipmentTXTArea.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
-      recipeTagFlowPane.getChildren().clear();
+      // Convert ingredients to strings for the ListView
+      List<String> ingredientStrings = recipe.getIngredients().stream()
+         .map(ing -> ing.getName() + ": " + ing.getAmount() + " " + ing.getUnit())
+         .collect(Collectors.toList());
+      
 
+      // Populate ingredients Table
+      ingredientListView.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
+      amountListView.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getAmount() + " " + data.getValue().getUnit()));
+
+      recipeIngredients.setRowFactory(tv -> {
+         TableRow<Ingredient> row = new TableRow<>();
+         Tooltip tooltip = new Tooltip();
+     
+         row.setOnMouseEntered(event -> {
+            if (!row.isEmpty()) {
+                Ingredient ingredient = row.getItem();
+                List<SubstitutionOption> subs = suggestionService.getSubstitutions(ingredient.getName(), userPrefs, "general");
+    
+                if (!subs.isEmpty()) {
+                    StringBuilder tooltipText = new StringBuilder("Substitutions for " + ingredient.getName() + ":\n\n");
+                    for (SubstitutionOption option : subs) {
+                        tooltipText.append("- ").append(option.getIngredientName())
+                                   .append("\n  Notes: ").append(option.getNotes()).append("\n\n");
+                    }
+                    tooltip.setText(tooltipText.toString());
+    
+                    // Show instantly at mouse location
+                    tooltip.show(row, event.getScreenX(), event.getScreenY() + 10);
+                }
+            }
+        });
+    
+        row.setOnMouseExited(event -> tooltip.hide());
+    
+        row.setOnMouseMoved(event -> {
+            if (tooltip.isShowing()) {
+                tooltip.setX(event.getScreenX());
+                tooltip.setY(event.getScreenY() + 10);
+            }
+        });
+    
+        return row;
+    });
+     
+      
+      ingredients.clear();
+      ingredients.addAll(recipe.getIngredients());
+      
+      recipeIngredients.setItems(ingredients);
+      recipeIngredients.setEditable(false);
+      ingredientListView.setCellFactory(TextFieldTableCell.forTableColumn());
+      amountListView.setCellFactory(TextFieldTableCell.forTableColumn());
+
+      recipeIngredients.setFixedCellSize(40); // Adjust row height if needed
+      recipeIngredients.prefHeightProperty().bind(
+         recipeIngredients.fixedCellSizeProperty().multiply(Bindings.size(recipeIngredients.getItems()).add(2)) // +1 for header
+      );
+
+      specialEquipmentTXTArea.setItems(FXCollections.observableArrayList(recipe.getEquipment()));
+
+      recipeTagFlowPane.getChildren().clear();
       for (String tag : recipe.getTags()) {
-         // Create a label for each tag
          Label tagLabel = new Label(tag);
-         
-         // Optionally style the label (for example, add padding, border, background, etc.)
-         tagLabel.setStyle(
-                           "-fx-background-color: #555555; " +
-                           "-fx-text-fill: white; " +
-                           "-fx-padding: 5 10; " +
-                           "-fx-border-radius: 10; " +
-                           "-fx-background-radius: 10; " +
-                           "-fx-font-size: 16px; " +
-                           "-fx-border-color: #FF7F11;"
-                        );
-         
-         // Add the label to the FlowPane
+         tagLabel.setStyle("-fx-background-color: #555555; -fx-text-fill: white; -fx-padding: 5 10; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 16px; -fx-border-color: #FF7F11;");
          recipeTagFlowPane.getChildren().add(tagLabel);
       }
 
       recipeCookingNameTXT.setText(name);
-      ingredientsArea.setItems(FXCollections.observableArrayList(recipe.getIngredients()));
 
-      preparationSteps = FXCollections.observableArrayList(recipe.getSteps());
+      // Also for the cooking pane
+      ingredientsArea.setCellFactory(listView -> new ListCell<>() {
+         private final CheckBox checkBox = new CheckBox();
+         private final Label nameLabel = new Label();
+         private final Label amountLabel = new Label();
+         private final HBox hbox = new HBox(10);
+         private final Tooltip tooltip = new Tooltip();
+     
+         {
+             hbox.setAlignment(Pos.CENTER_LEFT);
+             hbox.setPadding(new Insets(2));
+             HBox spacer = new HBox();
+             spacer.setMinWidth(20);
+             spacer.setPrefWidth(20);
+             HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+             hbox.getChildren().addAll(checkBox, nameLabel, spacer, amountLabel);
+     
+             // Tooltip behavior
+             hbox.setOnMouseExited(event -> tooltip.hide());
+     
+             hbox.setOnMouseMoved(event -> {
+                 if (tooltip.isShowing()) {
+                     tooltip.setX(event.getScreenX());
+                     tooltip.setY(event.getScreenY() + 10);
+                 }
+             });
+         }
+     
+         @Override
+         protected void updateItem(String item, boolean empty) {
+             super.updateItem(item, empty);
+             if (empty || item == null) {
+                 setGraphic(null);
+                 tooltip.hide();
+                 return;
+             }
+     
+             String[] parts = item.split(":");
+             String name = parts[0].trim();
+             String amountUnit = parts.length > 1 ? parts[1].trim() : "";
+     
+             nameLabel.setText(name);
+             nameLabel.setWrapText(true);
+             nameLabel.setMaxWidth(500);
+             nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;");
+     
+             amountLabel.setText(amountUnit);
+             amountLabel.setStyle("-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;");
+             checkBox.setSelected(false);
+     
+             // Check for substitutions
+             List<SubstitutionOption> subs = suggestionService.getSubstitutions(name, userPrefs, "general");
+             if (!subs.isEmpty()) {
+                 StringBuilder tooltipText = new StringBuilder("Substitutes:\n");
+                 for (SubstitutionOption sub : subs) {
+                     tooltipText.append("- ").append(sub.getIngredientName())
+                                .append("\n  Notes: ").append(sub.getNotes()).append("\n");
+                 }
+     
+                 tooltip.setText(tooltipText.toString());
+     
+                 hbox.setOnMouseEntered(event -> {
+                     tooltip.show(hbox, event.getScreenX(), event.getScreenY() + 10);
+                 });
+     
+             } else {
+                 hbox.setOnMouseEntered(null);
+                 tooltip.hide();
+             }
+     
+             setGraphic(hbox);
+         }
+     });
 
-      stepOfTXT.setText("Step " + 1 + " of " + preparationSteps.size());
-      stepArea.setText(preparationSteps.get(0));
+     ingredientsArea.setItems(FXCollections.observableArrayList(ingredientStrings));
+
+      preparationSteps = new ArrayList<>(recipe.getSteps());
+      stepOfTXT.setText("Step 1 of " + preparationSteps.size());
+      stepArea.setText(preparationSteps.isEmpty() ? "" : preparationSteps.get(0));
    }
 
    // Method to open the edit form with the recipe's current details
@@ -995,26 +1131,14 @@ public class MyRecipesController {
       equipment.addAll(recipe.getEquipment()); 
 
       ingredients.clear();
-      for (String ingredientData : recipe.getIngredients()) {
-         String[] parts = ingredientData.split(": ");
-         if (parts.length == 2) {
-            String name = parts[0];
-            String[] quantityAndUnit = parts[1].split(" ", 2);
-            if (quantityAndUnit.length == 2) {
-               String amount = quantityAndUnit[0];
-               String unit = quantityAndUnit[1];
-               ingredients.add(new Ingredient(name, amount, unit));
-            }
-         }
+      for (Ingredient ing : recipe.getIngredients()) {
+         ingredients.add(ing);
       }
 
       preparationSteps.clear();
-      for (String step : recipe.getSteps()) {
-         preparationSteps.add(step); // Add each step back into the list
-      }
-   
-      currentStep = 0; // Reset to the first step
-      updateStepView(); // Update the UI to show the first step
+      preparationSteps.addAll(recipe.getSteps());
+      currentStep = 0;
+      updateStepView();
    }
 
    public void deleteRecipe(Recipe recipe) {
@@ -1173,10 +1297,11 @@ public class MyRecipesController {
 
       // Collect unique ingredients and tags from existing recipes
       for (Recipe recipe : recipeList) {
-         for (String ingredient : recipe.getIngredients()) {
-            ingredientSet.add(ingredient.split(":")[0].trim()); // Extract ingredient name
+         // Now each ingredient is typed
+         for (Ingredient ing : recipe.getIngredients()) {
+            ingredientSet.add(ing.getName());
          }
-         tagSet.addAll(Arrays.asList(recipe.getTags()));
+         tagSet.addAll(recipe.getTags());
          categorySet.add(capitalizeWords(recipe.getCategory()));
       }
 
@@ -1291,7 +1416,6 @@ public class MyRecipesController {
         // 1) First, figure out what was chosen in the ComboBoxes
         String selectedCategory = categoryFilter.getValue();
         String selectedSort = sortBy.getValue();
-        
         boolean filterByCategory = !selectedCategory.equals("All Categories");
     
         // 2) Start with all recipes
@@ -1299,21 +1423,19 @@ public class MyRecipesController {
     
         // 3) Filter by category, ingredients, tags
         matchingRecipes.removeIf(recipe -> {
-            // Category
-            boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
-    
-            // Ingredients
-            boolean matchesIngredients = selectedIngredients.isEmpty()
-                || Arrays.stream(recipe.getIngredients())
-                         .anyMatch(ingredient -> selectedIngredients.contains(ingredient.split(":")[0].trim()));
-    
-            // Tags
-            boolean matchesTags = selectedTags.isEmpty()
-                || Arrays.stream(recipe.getTags())
-                         .anyMatch(selectedTags::contains);
-            
-            return !(matchesCategory && matchesIngredients && matchesTags);
-        });
+         boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
+
+         // Check if any of the recipe's ingredient names match the selected ingredients
+         boolean matchesIngredients = selectedIngredients.isEmpty() ||
+             recipe.getIngredients().stream()
+                   .anyMatch(ing -> selectedIngredients.contains(ing.getName()));
+
+         boolean matchesTags = selectedTags.isEmpty() ||
+             recipe.getTags().stream()
+                   .anyMatch(selectedTags::contains);
+
+         return !(matchesCategory && matchesIngredients && matchesTags);
+      });
     
         // 4) Sort the filtered list based on selectedSort
         if (selectedSort != null) {
@@ -1367,17 +1489,20 @@ public class MyRecipesController {
       String lowerCaseQuery = query.toLowerCase();
   
       for (Recipe recipe : recipeList) {
-          if (recipe.getName().toLowerCase().contains(lowerCaseQuery) || 
-              Arrays.stream(recipe.getIngredients()).anyMatch(ingredient -> ingredient.toLowerCase().contains(lowerCaseQuery)) ||
-              Arrays.stream(recipe.getTags()).anyMatch(tag -> tag.toLowerCase().contains(lowerCaseQuery))) {
-              
-              VBox recipeCard = recipeWidgets.get(recipe.getID());
-              if (recipeCard != null) {
-                  recipeFlowPane.getChildren().add(recipeCard);
-              }
-          }
+         // Convert each ingredient to lowercase name
+         boolean ingredientMatch = recipe.getIngredients().stream()
+               .anyMatch(ing -> ing.getName().toLowerCase().contains(lowerCaseQuery));
+         boolean tagMatch = recipe.getTags().stream()
+               .anyMatch(t -> t.toLowerCase().contains(lowerCaseQuery));
+
+         if (recipe.getName().toLowerCase().contains(lowerCaseQuery) || ingredientMatch || tagMatch) {
+            VBox card = recipeWidgets.get(recipe.getID());
+            if (card != null) {
+               recipeFlowPane.getChildren().add(card);
+            }
+         }
       }
-  }
+   }
 
    // ===================================================
    // Recipe Collections Management
@@ -1932,27 +2057,99 @@ public class MyRecipesController {
       // Trim any trailing space
       return sb.toString().trim();
    }
-   
-}
 
-
-// ===================================================
-// Custom Classes
-// These helper classes manage ingredients and steps
-// ===================================================
-class Ingredient {
-   private String name;
-   private String amount;
-   private String unit;
-
-   public Ingredient(String name, String amount, String unit) {
-      this.name = name;
-      this.amount = amount;
-      this.unit = unit;
+   private Map<String, List<String>> loadFlavorMatrix(String path) {
+      try (Reader reader = new FileReader(path)) {
+          Gson gson = new Gson();
+          Type type = new TypeToken<Map<String, List<String>>>() {}.getType();
+          return gson.fromJson(reader, type);
+      } catch (IOException e) {
+          e.printStackTrace();
+          return new HashMap<>();
+      }
    }
 
-   public String getName() { return name; }
-   public String getAmount() { return amount; }
-   public String getUnit() { return unit; }
-}
+   private Map<String, List<SubstitutionOption>> loadSubstitutions(String path) {
+      try (Reader reader = new FileReader(path)) {
+          Gson gson = new Gson();
+          Type type = new TypeToken<Map<String, List<SubstitutionOption>>>() {}.getType();
+          return gson.fromJson(reader, type);
+      } catch (IOException e) {
+          e.printStackTrace();
+          return new HashMap<>();
+      }
+   }
 
+   private void handleSuggestionsForRecipe(Recipe recipe) {
+      // If no suggestions are stored, generate them
+      if (recipe.getSuggestedIngredients() == null || recipe.getSuggestedIngredients().isEmpty()) {
+         // 1) Gather typed ingredient names
+         List<String> allIngredients = recipe.getIngredients().stream()
+                                             .map(Ingredient::getName)
+                                             .collect(Collectors.toList());
+      
+         // 2) Generate up to 3 suggestions
+         List<String> suggestions = suggestionService.generateIngredientSuggestions(allIngredients, userPrefs, 3);
+      
+         // 3) Store them
+         recipe.setSuggestedIngredients(suggestions);
+      
+         // 4) Optionally re-save so next time it’s consistent
+         saveRecipesToJson(recipeList);
+      }
+  
+      // Then show them
+      List<String> suggestions = recipe.getSuggestedIngredients();
+      if (suggestions != null && !suggestions.isEmpty()) {
+         System.out.println("Suggestions for " + recipe.getName() + ": " + suggestions);
+         // suggestionsArea.setItems(FXCollections.observableArrayList(suggestions));
+      }
+   }
+
+   private void showSubstitutions(String ingredientName) {
+      // Let’s call the service
+      // Optionally pass a "context" if it’s known—e.g. "baking"
+      List<SubstitutionOption> subs = suggestionService.getSubstitutions(ingredientName, userPrefs, "general");
+
+      if (subs.isEmpty()) {
+         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+         alert.setTitle("No Substitutions Found");
+         alert.setHeaderText("No known substitutions for: " + ingredientName);
+         alert.setContentText("Try again with a different ingredient or update your substitution data.");
+         alert.showAndWait();
+         return;
+      }
+
+      // Build a small UI or just show them in an alert
+      StringBuilder sb = new StringBuilder("Substitutions for " + ingredientName + ":\n\n");
+      for (SubstitutionOption opt : subs) {
+         sb.append("- ").append(opt.getIngredientName())
+            .append(" (Context: ").append(opt.getContext()).append(")\n")
+            .append("  Notes: ").append(opt.getNotes()).append("\n\n");
+      }
+
+      Alert alert = new Alert(Alert.AlertType.INFORMATION);
+      alert.setTitle("Substitutions");
+      alert.setHeaderText("Possible Substitutions for: " + ingredientName);
+      alert.setContentText(sb.toString());
+      alert.showAndWait();
+   }
+
+   private boolean userPrefsAllows(String ingredient, UserPreferences prefs) {
+      if (prefs.hasAllergyTo(ingredient)) {
+          return false;
+      }
+      if (prefs.dislikes(ingredient)) {
+          return false;
+      }
+      if (prefs.isVegan() && isAnimalProduct(ingredient)) {
+          return false;
+      }
+      return true;
+   }
+   
+   private boolean isAnimalProduct (String ingredient) {
+      return false;
+   }
+   
+}

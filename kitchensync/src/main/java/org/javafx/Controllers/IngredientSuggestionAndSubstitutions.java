@@ -60,6 +60,12 @@ public class IngredientSuggestionAndSubstitutions {
     public List<String> generateIngredientSuggestions(List<String> recipeIngredients,
                                                       UserPreferences userPrefs,
                                                       int limit) {
+
+        if (flavorMatrix == null || flavorMatrix.isEmpty()) {
+            System.out.println("⚠️ Warning: flavorMatrix is null or empty");
+            return Collections.emptyList();
+        }
+
         // Collect potential complements from the flavor matrix
         Set<String> potential = new HashSet<>();
         
@@ -97,22 +103,22 @@ public class IngredientSuggestionAndSubstitutions {
      * @return A list of possible substitutions
      */
     public List<SubstitutionOption> getSubstitutions(String ingredient,
-                                                     UserPreferences userPrefs,
-                                                     String context) {
-        if (!knownSubstitutions.containsKey(ingredient)) {
+                                                    UserPreferences userPrefs,
+                                                    String context) {
+        // Normalize the key (lowercase and remove punctuation)
+        String normalizedKey = ingredient.trim().toLowerCase();
+
+        if (!knownSubstitutions.containsKey(normalizedKey)) {
             return Collections.emptyList();
         }
 
-        // Filter the known subs for this ingredient by user preferences and optionally context
-        List<SubstitutionOption> options = knownSubstitutions.get(ingredient).stream()
-            .filter(opt -> userPrefsAllows(opt.getIngredientName(), userPrefs))  // check allergies, etc.
-            .filter(opt -> context == null 
-                           || "general".equalsIgnoreCase(opt.getContext()) 
-                           || opt.getContext().equalsIgnoreCase(context))
-            .collect(Collectors.toList());
 
+        List<SubstitutionOption> options = knownSubstitutions.get(normalizedKey).stream()
+            .collect(Collectors.toList());
+            
         return options;
     }
+
 
     // -------------------------------------------------------------------------
     // 3) Known Substitution List
@@ -164,6 +170,15 @@ public class IngredientSuggestionAndSubstitutions {
         String lower = ingredient.toLowerCase();
         return lower.contains("meat") || lower.contains("milk") || lower.contains("egg");
     }
+
+    public static Map<String, List<SubstitutionOption>> normalizeSubstitutionKeys(Map<String, List<SubstitutionOption>> originalMap) {
+        return originalMap.entrySet().stream()
+            .collect(Collectors.toMap(
+                e -> e.getKey().trim().toLowerCase(),  // normalize key
+                Map.Entry::getValue
+            ));
+    }
+    
 
 }
 

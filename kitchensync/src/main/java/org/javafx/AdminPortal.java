@@ -29,7 +29,7 @@ public class AdminPortal {
         System.out.println("\n=== Delete Recipe ===");
         try {
             Map<String, AttributeValue> keyToDelete = Map.of(
-                "id", AttributeValue.builder().s(recipeId).build()
+                "Recipe", AttributeValue.builder().s(recipeId).build()
             );
     
             dynamoClient.deleteItem(builder -> builder
@@ -38,6 +38,7 @@ public class AdminPortal {
             );
     
             System.out.println("Recipe with ID '" + recipeId + "' deleted successfully.");
+            System.out.println("Sending message to user: ");
     
         } catch (DynamoDbException e) {
             System.err.println("Error deleting recipe: " + e.getMessage());
@@ -53,6 +54,8 @@ public class AdminPortal {
         String userID = scanner.nextLine().trim();
         System.out.print("Enter the secretAccessKey: ");
         String userKey = scanner.nextLine().trim();
+
+        
 
         // Hardcoded AWS credentials (ONLY FOR TESTING)
         AwsBasicCredentials awsCreds = AwsBasicCredentials.create( userID, userKey);
@@ -73,7 +76,7 @@ public class AdminPortal {
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
                 .build();
 
-        
+
         boolean running = true;
 
         while (running) {

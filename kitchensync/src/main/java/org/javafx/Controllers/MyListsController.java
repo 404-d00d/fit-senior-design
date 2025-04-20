@@ -424,17 +424,19 @@ public class MyListsController {
                   String unit = parts[1].trim();
   
                   if (unitName.equals("oz")){
-                     System.out.println("Price per oz: " + pricePerOz*productQuantity*0.01);
+                     System.out.println("Price for "+productQuantity+" oz: " + pricePerOz*productQuantity*0.01);
                   } else if (unitName.equals("lb")){
-                     System.out.println("Price per lb: " + convertToLb(pricePerOz)*productQuantity*0.01);
+                     System.out.println("Price per "+productQuantity+" lb: " + convertToLb(pricePerOz)*productQuantity*0.01);
                   } else if (unitName.equals("kg")){
-                     System.out.println("Price per kg: " + convertToKg(pricePerOz)*productQuantity*0.01);
+                     System.out.println("Price per "+productQuantity+" kg: " + convertToKg(pricePerOz)*productQuantity*0.01);
                   } else if (unitName.equals("g")){
-                     System.out.println("Price per g: " + convertToG(pricePerOz)*productQuantity*0.01);
+                     System.out.println("Price per "+productQuantity+" g: " + convertToG(pricePerOz)*productQuantity*0.01);
                   } else if (unitName.equals("ml")){
-                     System.out.println("Price per ml: " + convertToMl(pricePerOz)*productQuantity*0.01);
+                     System.out.println("Price per "+productQuantity+" ml: " + convertToMl(pricePerOz)*productQuantity*0.01);
                   } else if (unitName.equals("l")){
-                  System.out.println("Price per l: " + convertToL(pricePerOz)*productQuantity*0.01);
+                     System.out.println("Price per "+productQuantity+" l: " + convertToL(pricePerOz)*productQuantity*0.01);
+                  } else {
+                     System.out.println("Unit does not match - defaulting to price per oz: " + pricePerOz*0.01);
                   }
               } else {
                   System.out.println(line);

@@ -1013,5 +1013,35 @@
     "localRating": 0,
     "communityRating": 0,
     "randIngredientID": 0
+  },
+  {
+    "id": 10,
+    "name": "Freshly made orange juice",
+    "category": "Snack",
+    "servings": 1,
+    "description": "Fresh orange juice",
+    "prepTime": 2,
+    "passiveTime": 0,
+    "cookTime": 10,
+    "complexity": 1,
+    "tags": [],
+    "specialEquipment": [
+      "Juicer"
+    ],
+    "ingredients": [
+      {
+        "name": "Orange Juice",
+        "amount": "50",
+        "unit": "l"
+      }
+    ],
+    "steps": [
+      "Buy the orange juice, pour it into glasses and serve.",
+      "If guests ask - lie and say you made it yourself.",
+      ""
+    ],
+    "localRating": 0,
+    "communityRating": 0,
+    "randIngredientID": 0
   }
 ]

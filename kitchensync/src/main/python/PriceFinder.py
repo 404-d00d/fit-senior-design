@@ -40,6 +40,25 @@ def convertToL(price):
 def convertToMl(price):
     return (price/1.043)/29.6
 
+def getWalmartHTMLselenium(product, page):
+    url = f"https://www.walmart.com/search?q={product.replace(' ', '+')}&page={page}"
+
+    chrome_options = Options()
+    chrome_options.add_argument("--headless=new")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+    driver = webdriver.Chrome(options=chrome_options)
+
+    try:
+        driver.get(url)
+        time.sleep(3)  # allow JavaScript to render
+        soup = BeautifulSoup(driver.page_source, 'html.parser')
+
+        # now do your usual price extraction here...
+        return soup
+    finally:
+        driver.quit()
+
 # scrapes the url provided to get product prices and price per unit.
 # returns price per oz, can multiply the unit to get price per pound.
 def getWalmartHTML(product, page):
@@ -52,9 +71,14 @@ def getWalmartHTML(product, page):
     pageNumber = str(page)
 
     response = requests.get(url+str(product)+newPage+pageNumber, headers=headers)
+    #response = requests.getWalmartHTMLselenium(product, page)
 
     # Check if the request was successful
     if response.status_code == 200:
+
+        # print("==== RAW HTML SAMPLE ====")
+        # print(response.text[:1000])
+
         # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
 

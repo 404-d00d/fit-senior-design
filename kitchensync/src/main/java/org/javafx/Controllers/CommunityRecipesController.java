@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -38,6 +39,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceDialog;
@@ -47,6 +50,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -131,6 +135,12 @@ public class CommunityRecipesController {
 
    private static final String RECIPES_FILE_PATH = "recipes.json";
 
+   // Reviews
+   @FXML private Text communityRatingStars, communityRatingStarsReview, recipeReviewName;
+   @FXML private Button recipeReviewsButton, postCommentButton, postCommentCloseButton, recipeNotesButton; 
+   @FXML private ComboBox<String> reviewType;
+   @FXML private ScrollPane reviewPane;
+
    // ==============================
    // DATA STORAGE & CONSTANTS
    // ==============================
@@ -156,6 +166,8 @@ public class CommunityRecipesController {
    private final Map<String, VBox> recipeCardMap = new HashMap<>();
 
    private Recipe recipeBeingEdited = null;
+   private Recipe currentRecipe;
+   @FXML private VBox currentRecipeCard, reviewBoard;
 
    private void initializeDatabaseAndS3() {
       try {
@@ -182,6 +194,10 @@ public class CommunityRecipesController {
          "RpYmWXTZAk4k33zL/tQYUDP/x+L7403SYAjwSx9Y"
       );
 
+      reviewPane.setStyle("-fx-background-color: transparent;");
+      reviewBoard.setStyle("-fx-background-color: transparent;");
+
+
       initializeDatabaseAndS3();
       loadCommunityRecipes();
 
@@ -204,6 +220,13 @@ public class CommunityRecipesController {
       setupUIEventHandlers();
 
       updateSuggestedRecipes();
+
+      recipeNotesButton.setOnAction(event -> openRecipeNotesPopup());
+      recipeReviewsButton.setOnAction(event -> openReviewPage());
+
+      reviewType.getItems().addAll( "All", "Community");
+      postCommentButton.setOnAction(event -> openReviewPopup()); 
+      postCommentCloseButton.setOnAction(event -> closeReviewWindow());
       
       menuButton.setOnAction(event -> {
          try {
@@ -885,6 +908,7 @@ public class CommunityRecipesController {
       }
    }
 
+   // Method to apply hover effect for displaying short recipe details
    private void applyHoverEffect(VBox recipeCard, Recipe recipe) {
       Tooltip tooltip = new Tooltip();
       tooltip.setStyle(
@@ -901,14 +925,26 @@ public class CommunityRecipesController {
       tooltip.setMaxWidth(300);  // Set maximum width to prevent excessive horizontal stretching
       tooltip.setWrapText(true); // Ensure text wraps to the next line
   
+      // Create a tooltip string with added spacing (\n\n) between items
       String tooltipContent = String.format(
-          "Name: %s%nServings: %d%nPrep Time: %d min%nCook Time: %d min%nDescription: %s%nTags: %s",
-          recipe.getName(),
-          recipe.getServings(),
-          recipe.getPrepTime(),
-          recipe.getCookTime(),
-          recipe.getDescription(),
-          String.join(", ", recipe.getTags())
+         "Name: %s\n\n" +
+         "Servings: %d\n\n" +
+         "Prep Time: %d min\n\n" +
+         "Cook Time: %d min\n\n" +
+         "Description: %s\n\n" +
+         "Tags: %s\n\n" +
+         "Local Rating: %d\n\n" +
+         "Community Rating: %d\n\n" +
+         "Recipe Notes: %s",
+         recipe.getName(),
+         recipe.getServings(),
+         recipe.getPrepTime(),
+         recipe.getCookTime(),
+         recipe.getDescription(),
+         String.join(", ", recipe.getTags()),
+         recipe.getLocalRating(),
+         recipe.getCommunityRating(),
+         recipe.getRecipeNotes()
       );
   
       tooltip.setText(tooltipContent);
@@ -927,10 +963,355 @@ public class CommunityRecipesController {
           tooltip.setY(event.getScreenY() + 10);
       });
   }
+
+  private void saveRecipeNotes() {
+      if (currentRecipe != null) {
+         saveRecipesToJson(recipeList);
+      }
+   }
+
+   private void openRecipeNotesPopup() {
+      if (currentRecipe == null) return;
+      
+      // replace with Main.getCurrentUserID() in the testUserID123
+      boolean isAuthor = currentRecipe.getUserID().equals("testUserID123");
+  
+      Stage popupStage = new Stage();
+      popupStage.initModality(Modality.APPLICATION_MODAL);
+      popupStage.setTitle(isAuthor ? "Edit Recipe Notes" : "View Recipe Notes");
+  
+      VBox vbox = new VBox(15);
+      vbox.setPadding(new Insets(20));
+      vbox.setAlignment(Pos.CENTER);
+      vbox.setStyle("-fx-background-color: #2E2E2E;");
+  
+      Label notesLabel = new Label("Recipe Notes:");
+      notesLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;");
+  
+      TextArea notesArea = new TextArea(currentRecipe.getRecipeNotes());
+      notesArea.setWrapText(true);
+      notesArea.setPrefHeight(200);
+      notesArea.setStyle(
+          "-fx-background-color: #444444; " +
+          "-fx-text-fill: black; " +
+          "-fx-border-radius: 8; -fx-background-radius: 8;"
+      );
+      notesArea.setEditable(isAuthor);
+  
+      Button closeButton = new Button(isAuthor ? "Save & Close" : "Close");
+      closeButton.setStyle(
+          "-fx-background-color: " + (isAuthor ? "#FF7F11" : "#555555") + ";" +
+          " -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;"
+      );
+  
+      closeButton.setOnAction(event -> {
+          if (isAuthor) {
+              currentRecipe.setRecipeNotes(notesArea.getText());
+              saveRecipeNotes();
+          }
+          popupStage.close();
+      });
+  
+      vbox.getChildren().addAll(notesLabel, notesArea, closeButton);
+      Scene scene = new Scene(vbox, 450, 350);
+      popupStage.setScene(scene);
+      popupStage.showAndWait();
+  }
+  
+
+  private void openReviewPage() {
+      if (currentRecipe == null) return;
+
+      recipeReviewName.setText(currentRecipe.getName());
+
+      loadReviewsForRecipe(currentRecipe.getRecipeDBId());
+
+      recipeDetailsPane.setVisible(false);
+      recipeReviews.setVisible(true);
+   }
+
+
+   private void closeReviewWindow() {
+
+      recipeDetailsPane.setVisible(true);
+      recipeReviews.setVisible(false);
+
+   }
+
+   private void openReviewPopup() {
+      if (currentRecipe == null) return;
+
+      Stage reviewStage = new Stage();
+      reviewStage.initModality(Modality.APPLICATION_MODAL);
+      reviewStage.setTitle("Add Review");
+
+      VBox vbox = new VBox(10);
+      vbox.setPadding(new Insets(20));
+      vbox.setAlignment(Pos.CENTER);
+      vbox.setStyle("-fx-background-color: #2E2E2E;");
+
+      Label titleLabel = new Label("Review Title:");
+      titleLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+
+      TextField titleField = new TextField();
+      titleField.setStyle(" -fx-text-fill: black; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+      Label bodyLabel = new Label("Your Review:");
+      bodyLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+
+      TextArea bodyArea = new TextArea();
+      bodyArea.setWrapText(true);
+      bodyArea.setPrefHeight(100);
+      bodyArea.setStyle(" -fx-text-fill: black; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+      Label ratingLabel = new Label("Rating:");
+      ratingLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+
+      ComboBox<Integer> ratingBox = new ComboBox<>();
+      ratingBox.getItems().addAll(1, 2, 3, 4, 5);
+      ratingBox.setValue(5);
+      ratingBox.getStyleClass().add("combo-box");
+
+      Button saveButton = new Button("Save Review");
+      saveButton.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;");
+
+      Button cancelButton = new Button("Cancel");
+      cancelButton.setStyle("-fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;");
+
+      saveButton.setOnAction(event -> {
+         if (!titleField.getText().trim().isEmpty() && !bodyArea.getText().trim().isEmpty()) {
+            saveReview(currentRecipe.getRecipeDBId(), titleField.getText(), bodyArea.getText(), ratingBox.getValue());
+            reviewStage.close();
+         } else {
+            showAlert("Error", "Missing Fields", "Please fill in all fields before submitting.");
+         }
+      });
+
+      cancelButton.setOnAction(event -> reviewStage.close());
+
+      HBox buttonBox = new HBox(10, saveButton, cancelButton);
+      buttonBox.setAlignment(Pos.CENTER);
+
+      vbox.getChildren().addAll(titleLabel, titleField, bodyLabel, bodyArea, ratingLabel, ratingBox, buttonBox);
+      Scene scene = new Scene(vbox, 400, 300);
+      reviewStage.setScene(scene);
+      reviewStage.showAndWait();
+   }
+
+   private void showAlert(String title, String header, String content) {
+      Alert alert = new Alert(AlertType.ERROR);
+      alert.setTitle(title);
+      alert.setHeaderText(header);
+      alert.setContentText(content);
+      alert.showAndWait();
+   }
   
    private void sortRecipes() {
       applyFiltersAndSort();
       buildRecipeCards();
+   }
+
+   private void saveReview(String recipeDBId, String title, String body, int rating) {
+      Map<String, AttributeValue> reviewItem = new HashMap<>();
+      reviewItem.put("ReviewID", AttributeValue.builder().s(UUID.randomUUID().toString()).build());
+      reviewItem.put("RecipeID", AttributeValue.builder().s(recipeDBId).build());
+      reviewItem.put("UserID", AttributeValue.builder().s("testUserID123").build());
+      reviewItem.put("Title", AttributeValue.builder().s(title).build());
+      reviewItem.put("Body", AttributeValue.builder().s(body).build());
+      reviewItem.put("Rating", AttributeValue.builder().n(String.valueOf(rating)).build());
+  
+      try {
+          database.putItem(PutItemRequest.builder()
+              .tableName("RecipeReviews")
+              .item(reviewItem)
+              .build());
+          System.out.println("Review saved successfully!");
+      } catch (Exception e) {
+          e.printStackTrace();
+          System.out.println("Error saving review.");
+      }
+  }
+  
+   private void loadReviewsForRecipe(String recipeId) {
+      try {
+         reviewBoard.getChildren().clear();
+
+         ScanRequest scanRequest = ScanRequest.builder()
+            .tableName("RecipeReviews")
+            .build();
+
+         ScanResponse response = database.scan(scanRequest);
+         List<Map<String, AttributeValue>> items = response.items();
+
+         int totalRating = 0;
+         int reviewCount = 0;
+
+         for (Map<String, AttributeValue> item : items) {
+            if (item.containsKey("RecipeID") && item.get("RecipeID").s().equals(recipeId)) {
+                  String title = item.get("Title").s();
+                  String body = item.get("Body").s();
+                  int rating = Integer.parseInt(item.get("Rating").n());
+
+                  totalRating += rating;
+                  reviewCount++;
+                  
+                  VBox reviewCard = new VBox(8);
+                  reviewCard.setStyle(
+                     "-fx-background-color: #2E2E2E;" +
+                     "-fx-padding: 12;" +
+                     "-fx-background-radius: 12;" +
+                     "-fx-border-color: #FF7F11;" +
+                     "-fx-border-radius: 12;" +
+                     "-fx-border-width: 2;"
+                  );
+
+                  Label titleLabel = new Label("★ " + rating + "/5 - " + title);
+                  titleLabel.setStyle("-fx-text-fill: white; -fx-font-size: 20px; -fx-font-weight: bold;");
+
+                  Label bodyLabel = new Label(body);
+                  bodyLabel.setWrapText(true);
+                  bodyLabel.setStyle("-fx-text-fill: #DDDDDD; -fx-font-size: 16px;");
+
+                  reviewCard.getChildren().addAll(titleLabel, bodyLabel);
+
+                  // Add Edit/Delete for current user
+                  if (item.get("UserID").s().equals("testUserID123")) {
+                     Button editBtn = new Button("Edit");
+                     Button deleteBtn = new Button("Delete");
+
+                     editBtn.setOnAction(e -> openReviewPopupWithPrefill(item)); // implement this
+                     deleteBtn.setOnAction(e -> deleteReview(item.get("ReviewID").s()));
+
+                     HBox actionBox = new HBox(10, editBtn, deleteBtn);
+                     reviewCard.getChildren().add(actionBox);
+                  }
+                  
+                  reviewBoard.getChildren().add(reviewCard);
+            }
+            reviewBoard.setSpacing(12);
+         }
+
+         // Update star display text
+         if (reviewCount > 0) {
+            double avgRating = (double) totalRating / reviewCount;
+            communityRatingStars.setText(String.format("★ %.1f", avgRating));
+            communityRatingStarsReview.setText(String.format("★ %.1f (%d reviews)", avgRating, reviewCount));
+            if (currentRecipe != null && currentRecipe.getRecipeDBId().equals(recipeId)) {
+               currentRecipe.setCommunityRating((int)Math.round(avgRating));
+            }
+         } else {
+            communityRatingStars.setText("★ N/A");
+            communityRatingStarsReview.setText("★ N/A");
+         }
+
+         //reviewPane.setContent(reviewListBox);
+         
+
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+
+   private void openReviewPopupWithPrefill(Map<String, AttributeValue> reviewItem) {
+      if (currentRecipe == null) return;
+  
+      String oldTitle = reviewItem.get("Title").s();
+      String oldBody = reviewItem.get("Body").s();
+      int oldRating = Integer.parseInt(reviewItem.get("Rating").n());
+      String reviewID = reviewItem.get("ReviewID").s();
+  
+      Stage reviewStage = new Stage();
+      reviewStage.initModality(Modality.APPLICATION_MODAL);
+      reviewStage.setTitle("Edit Review");
+  
+      VBox vbox = new VBox(10);
+      vbox.setPadding(new Insets(20));
+      vbox.setAlignment(Pos.CENTER);
+      vbox.setStyle("-fx-background-color: #2E2E2E;");
+  
+      Label titleLabel = new Label("Review Title:");
+      titleLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+  
+      TextField titleField = new TextField(oldTitle);
+      titleField.setStyle("-fx-text-fill: black; -fx-border-radius: 8; -fx-background-radius: 8;");
+  
+      Label bodyLabel = new Label("Your Review:");
+      bodyLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+  
+      TextArea bodyArea = new TextArea(oldBody);
+      bodyArea.setWrapText(true);
+      bodyArea.setPrefHeight(100);
+      bodyArea.setStyle("-fx-text-fill: black; -fx-border-radius: 8; -fx-background-radius: 8;");
+  
+      Label ratingLabel = new Label("Rating:");
+      ratingLabel.setStyle("-fx-text-fill: white; -fx-font-size: 16px;");
+  
+      ComboBox<Integer> ratingBox = new ComboBox<>();
+      ratingBox.getItems().addAll(1, 2, 3, 4, 5);
+      ratingBox.setValue(oldRating);
+      ratingBox.getStyleClass().add("combo-box");
+  
+      Button saveButton = new Button("Update Review");
+      saveButton.setStyle("-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;");
+  
+      Button cancelButton = new Button("Cancel");
+      cancelButton.setStyle("-fx-background-color: #555555; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 8;");
+  
+      saveButton.setOnAction(event -> {
+          if (!titleField.getText().trim().isEmpty() && !bodyArea.getText().trim().isEmpty()) {
+              Map<String, AttributeValue> updatedReview = new HashMap<>();
+              updatedReview.put("ReviewID", AttributeValue.builder().s(reviewID).build());
+              updatedReview.put("RecipeID", AttributeValue.builder().s(currentRecipe.getRecipeDBId()).build());
+              updatedReview.put("UserID", AttributeValue.builder().s("testUserID123").build());
+              updatedReview.put("Title", AttributeValue.builder().s(titleField.getText().trim()).build());
+              updatedReview.put("Body", AttributeValue.builder().s(bodyArea.getText().trim()).build());
+              updatedReview.put("Rating", AttributeValue.builder().n(String.valueOf(ratingBox.getValue())).build());
+  
+              try {
+                  database.putItem(PutItemRequest.builder()
+                      .tableName("RecipeReviews")
+                      .item(updatedReview)
+                      .build());
+  
+                  System.out.println("Review updated successfully!");
+                  loadReviewsForRecipe(currentRecipe.getRecipeDBId()); // Refresh display
+              } catch (Exception e) {
+                  e.printStackTrace();
+                  showAlert("Error", "Update Failed", "Could not update your review.");
+              }
+  
+              reviewStage.close();
+          } else {
+              showAlert("Error", "Missing Fields", "Please fill in all fields before submitting.");
+          }
+      });
+  
+      cancelButton.setOnAction(event -> reviewStage.close());
+  
+      HBox buttonBox = new HBox(10, saveButton, cancelButton);
+      buttonBox.setAlignment(Pos.CENTER);
+  
+      vbox.getChildren().addAll(titleLabel, titleField, bodyLabel, bodyArea, ratingLabel, ratingBox, buttonBox);
+      Scene scene = new Scene(vbox, 400, 300);
+      reviewStage.setScene(scene);
+      reviewStage.showAndWait();
+  }
+  
+
+  private void deleteReview(String reviewId) {
+      try {
+         Map<String, AttributeValue> key = new HashMap<>();
+         key.put("ReviewID", AttributeValue.builder().s(reviewId).build());
+
+         database.deleteItem(builder -> builder
+            .tableName("RecipeReviews")
+            .key(key));
+
+         System.out.println("Review deleted.");
+         loadReviewsForRecipe(currentRecipe.getRecipeDBId()); // Refresh view
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
    }
 
    private List<String> getUserInventory() {
@@ -1215,7 +1596,8 @@ public class CommunityRecipesController {
    }
 
    public void showRecipeDetails(int recipeId, String name, Image image, Recipe recipe) {
-
+      currentRecipe = recipe;
+      currentRecipeCard = recipeWidgets.get(recipe.getID());
       displayStep = 0;
 
       myRecipesPane.setVisible(false);

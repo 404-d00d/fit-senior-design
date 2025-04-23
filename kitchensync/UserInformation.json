@@ -1,0 +1,11 @@
+{
+  "username": "user",
+  "tutorialsCompleted": {
+    "MyLists": false,
+    "UserDashboard": true,
+    "MealPlanner": false,
+    "MyRecipes": true,
+    "Inventory": false,
+    "FindRecipes": false
+  }
+}

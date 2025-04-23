@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -10,6 +11,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Shadow?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -28,8 +30,8 @@
       <!-- Header Bar -->
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="0.0" layoutY="0.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1920.0" />
       <Text layoutX="122.0" layoutY="72.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="MY RECIPES" />
-      <Circle fx:id="profileCircle" fill="#FF7F11" layoutX="1845.0" layoutY="62.0" radius="40.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" />
       <TextField fx:id="searchBar" layoutX="685.0" layoutY="38.0" prefHeight="48.0" prefWidth="595.0" promptText="Search Recipes" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 18px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5; -fx-prompt-text-fill: #555555; -fx-font-weight: bold;" />
+      <Circle fx:id="profileCircle" fill="#FF7F11" layoutX="1845.0" layoutY="62.0" radius="40.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" />
 
       <Pane fx:id="myRecipesPane" layoutX="61.0" layoutY="127.0" prefHeight="951.0" prefWidth="1827.0" style="-fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);">
          <children>
@@ -313,6 +315,31 @@
             </Text>
          </children>
       </Pane>
+      <AnchorPane fx:id="tutorialOverlay" layoutX="-8.0" layoutY="-7.0" prefHeight="1097.0" prefWidth="1938.0" style="-fx-background-color: rgba(0, 0, 0, 0.6);" visible="false">
+         <children>
+            <Canvas fx:id="maskCanvas" height="800.0" mouseTransparent="true" width="1200.0" />
+            <Rectangle fx:id="highlightBox" arcHeight="10" arcWidth="10" fill="#7a363600" height="670.0" mouseTransparent="true" style="-fx-fill: rgba(255, 255, 255, 0.1); -fx-stroke: #FF7F11; -fx-stroke-width: 4;" visible="false" width="955.0">
+               <effect>
+                  <Shadow />
+               </effect>
+            </Rectangle>
+         </children>
+      </AnchorPane>
+      <VBox fx:id="overlayText" alignment="CENTER" layoutX="700.0" layoutY="400.0" prefHeight="338.0" prefWidth="575.0" spacing="20" style="-fx-background-color: rgba(0, 0, 0, 0.4); -fx-background-radius: 50;" visible="false">
+         <children>
+            <HBox alignment="CENTER" spacing="10">
+               <children>
+                  <Button fx:id="nextTutorialButton" prefHeight="55.0" prefWidth="98.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 24;" text="Next" />
+                  <Button fx:id="skipTutorialButton" prefHeight="53.0" prefWidth="102.0" style="-fx-background-color: grey; -fx-text-fill: white; -fx-font-size: 24;" text="Skip" />
+               </children>
+            </HBox>
+            <Text fx:id="tutorialText" stroke="BLACK" style="-fx-fill: white; -fx-font-size: 36px;" text="Welcome!" textAlignment="CENTER" wrappingWidth="500.0">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Text>
+         </children>
+      </VBox>
 
    </children>
 </AnchorPane>

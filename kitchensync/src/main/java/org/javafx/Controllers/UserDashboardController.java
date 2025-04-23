@@ -79,12 +79,9 @@ public class UserDashboardController {
    @FXML
    private void initialize() {
 
-      // Check if tutorial was completed (this should be saved in user preferences later)
-      boolean tutorialCompleted = false; // Change this to read from a settings file later
-
-      if (!tutorialCompleted) {
+      if (!TutorialManager.isCompleted("UserDashboard")) {
          startTutorial();
-      }
+     }
 
       // Set tutorial button actions
       nextTutorialButton.setOnAction(event -> showNextTutorialStep());
@@ -235,6 +232,7 @@ public class UserDashboardController {
           tutorialStep++;
       } else {
           endTutorial();
+          TutorialManager.markCompleted("UserDashboard");
       }
   }
   
@@ -254,7 +252,8 @@ public class UserDashboardController {
   
    private void endTutorial() {
       tutorialOverlay.setVisible(false);
-      // Here, save a preference to mark the tutorial as completed
+      highlightBox.setVisible(false);
+      TutorialManager.markCompleted("UserDashboard");
    }
 
    private void setupCustomAutoComplete(TextField searchBar, AnchorPane basePane) {

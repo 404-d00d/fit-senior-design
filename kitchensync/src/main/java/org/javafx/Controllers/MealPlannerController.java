@@ -149,6 +149,11 @@ public class MealPlannerController {
         dateInView.setValue(LocalDate.now());
         dateInView.setStyle("-fx-font-size: 18px;");
 
+        mealReadiness.getItems().addAll("All", "Ready to Cook", "Requires Prep", "Partial Recipes", "Incomplete");
+        mealReadiness.setValue("All");
+        mealReadiness.setOnAction(event -> filterRecipes());
+
+
         for (int i = 0; i < 24; i++) {
             String label = String.format("%02d %s", (i % 12 == 0 ? 12 : i % 12), (i < 12 ? "AM" : "PM"));
         
@@ -597,6 +602,7 @@ public class MealPlannerController {
 
     private void addMealToPlan(Recipe meal, LocalDate prepDate, int prepHour, LocalDate passiveDate, int passiveHour, LocalDate cookDate, int cookHour) {
         String mealTypeValue = mealSlot.getValue(); // Get selected value
+
         String mealGroupId = UUID.randomUUID().toString();
     
         Map<String, Object> fullMealMap = new HashMap<>();
@@ -1892,11 +1898,10 @@ public class MealPlannerController {
     }
 
     private void filterRecipes() {
-
-        // 1) First, figure out what was chosen in the ComboBoxes
         String selectedCategory = mealType.getValue();
         String selectedSort = sortBy.getValue();
-        
+        String readinessFilter = mealReadiness.getValue();
+    
         boolean filterByCategory = !selectedCategory.equals("All Categories");
     
         // 2) Start with all recipes
@@ -1904,24 +1909,20 @@ public class MealPlannerController {
     
         // 3) Filter by category, ingredients, tags
         matchingRecipes.removeIf(recipe -> {
-            // Category
             boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
-    
-            // Ingredients
             boolean matchesIngredients = selectedIngredients.isEmpty()
-            || recipe.getIngredients().stream()
-            .anyMatch(ingredient -> selectedIngredients.contains(ingredient.getName()));
-   
-    
-            // Tags
+                || recipe.getIngredients().stream().anyMatch(ingredient -> selectedIngredients.contains(ingredient.getName()));
             boolean matchesTags = selectedTags.isEmpty()
-            || recipe.getTags().stream().anyMatch(selectedTags::contains);
-        
-            
+                || recipe.getTags().stream().anyMatch(selectedTags::contains);
             return !(matchesCategory && matchesIngredients && matchesTags);
         });
     
-        // 4) Sort the filtered list based on selectedSort
+        // 4) Filter by meal readiness — AFTER matchingRecipes is initialized
+        if (readinessFilter != null && !readinessFilter.equals("All")) {
+            matchingRecipes.removeIf(recipe -> !getRecipeReadiness(recipe).equals(readinessFilter));
+        }
+    
+        // 5) Sort the filtered list based on selectedSort
         if (selectedSort != null) {
             switch (selectedSort) {
                 case "A-Z":
@@ -1939,26 +1940,49 @@ public class MealPlannerController {
                 case "Cook Time":
                     matchingRecipes.sort(Comparator.comparingInt(Recipe::getCookTime));
                     break;
-                default:
-                    // do nothing or handle gracefully
-                    break;
             }
         }
     
-        // 5) Clear and rebuild the recipeFlowPane with the final filtered & sorted list
+        // 6) Clear and rebuild the recipeFlowPane
         recipeFlowPane.getChildren().clear();
-
-        System.out.println(matchingRecipes);
-    
         Set<VBox> added = new HashSet<>();
         for (Recipe recipe : matchingRecipes) {
             VBox card = recipeWidgets.get(recipe.getID());
             if (card != null && added.add(card)) {
-                
                 recipeFlowPane.getChildren().add(card);
             }
         }
     }
+    
+
+    private String getRecipeReadiness(Recipe recipe) {
+        int matched = 0;
+        int total = recipe.getIngredients().size();
+        boolean requiresPrep = false;
+    
+        for (Ingredient needed : recipe.getIngredients()) {
+            for (Item have : ingredientInventory) {
+                boolean nameMatch = have.getName().equalsIgnoreCase(needed.getName());
+                boolean unitMatch = have.getUnit().equalsIgnoreCase(needed.getUnit());
+                double neededAmt = parseAmount(needed.getAmount());
+                double availableAmt = have.getQuantity();
+    
+                if (nameMatch && unitMatch && availableAmt >= neededAmt) {
+                    matched++;
+                    if (needed.getName().toLowerCase().contains("thaw") || needed.getAmount().toLowerCase().contains("frozen")) {
+                        requiresPrep = true;
+                    }
+                    break;
+                }
+            }
+        }
+    
+        if (matched == total && !requiresPrep) return "Ready to Cook";
+        if (matched == total && requiresPrep) return "Requires Prep";
+        if (matched > 0) return "Partial Recipes";
+        return "Incomplete";
+    }
+    
     
 
     private Set<String> showMultiSelectDialog(String title, Set<String> availableOptions, Set<String> selectedOptions) {

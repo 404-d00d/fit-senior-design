@@ -29,15 +29,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import javafx.animation.Animation;
+import javafx.animation.ScaleTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -63,14 +69,18 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
@@ -140,6 +150,40 @@ public class MyRecipesController {
    @FXML private ComboBox<String> reviewType;
    @FXML private Button postCommentButton, postCommentCloseButton;
 
+   // Tutorial
+   @FXML private javafx.scene.canvas.Canvas maskCanvas;
+   @FXML private AnchorPane tutorialOverlay;
+   @FXML private Text tutorialText;
+   @FXML private Button nextTutorialButton, skipTutorialButton;
+   @FXML private Rectangle highlightBox;
+   @FXML private VBox overlayText;
+   private int tutorialStep = 0;
+   private final String[] tutorialMessages = {
+      // Sidebar Navigation
+      "Welcome to your MyRecipes! Click 'Next' to continue.",
+      "Click 'Menu' to navigate to another screen",
+
+      // Recipe List & Search
+      "This is your personal recipe collection — all the meals you've saved live here.",
+      "Use the search bar to find a specific recipe quickly by name or tag.",
+      "You can filter recipes by category, cook time, or available ingredients using the filters.",
+
+      // Recipe Interaction
+      "Click a recipe card to view full details, ingredients, and steps.",
+      "Right click a recipe card to show more options such as edit, favorite, or delete",
+
+      // Cooking Features
+      "When viewing a recipe, which is as simple as clicking on a recipe, press 'Cook' to enter cooking mode.",
+      "You can add images to specific steps to help you follow complex instructions.",
+
+      // Organization & Tags
+      "Tags help categorize your recipes. Try tagging by meal type (like breakfast) or dietary need (like vegetarian).",
+      "Recipes can also be sorted by prep time or serving size — just use the sort dropdown.",
+
+      // Done
+      "You're all set to manage and cook your favorite meals. Enjoy using My Recipes!"
+  };
+
 
    // ==============================
    // DATA STORAGE & CONSTANTS
@@ -186,6 +230,23 @@ public class MyRecipesController {
 
    @FXML
    private void initialize() {
+
+      maskCanvas = new Canvas(tutorialOverlay.getWidth(), tutorialOverlay.getHeight());
+      if (!tutorialOverlay.getChildren().contains(maskCanvas)) {
+         tutorialOverlay.getChildren().add(maskCanvas);
+         tutorialOverlay.setVisible(true);
+         overlayText.setVisible(true);
+      }
+     
+      maskCanvas.setMouseTransparent(true);
+
+      if (!TutorialManager.isCompleted("MyRecipes")) {
+         startTutorial();
+      }
+
+      // Set tutorial button actions
+      nextTutorialButton.setOnAction(event -> showNextTutorialStep());
+      skipTutorialButton.setOnAction(event -> endTutorial());
 
       initializeCollections();   // Load collections and ensure default ones exist
       loadRecipes();            // Load recipes from JSON
@@ -339,6 +400,157 @@ public class MyRecipesController {
          }
       });
    }
+
+   private void showNextTutorialStep() {
+      if (tutorialStep < tutorialMessages.length) {
+          tutorialText.setText(tutorialMessages[tutorialStep]);
+  
+          switch (tutorialStep) {
+              // Sidebar Menu Buttons
+              case 1: moveHighlight(menuButton); tutorialOverlay.setStyle("-fx-background-color: transparent;"); break;
+              case 2: moveHighlight(collectionsButtons); break;
+              case 3: moveHighlight(searchBar); break;
+              case 4: moveHighlight(ingredientFilter); break;
+              case 5: moveHighlight(recipeFlowPane); break;
+              case 6: moveHighlight(recipeFlowPane); break;
+              case 7: moveHighlight(recipeFlowPane); break;
+              case 8: moveHighlight(tagsFilter); break;
+              case 9: moveHighlight(sortBy); break;
+              case 10: highlightBox.setVisible(false); break;
+  
+              default:
+                  highlightBox.setVisible(false); // Hide highlight after last step
+          }
+  
+          tutorialStep++;
+      } else {
+          endTutorial();
+          TutorialManager.markCompleted("MyRecipes");
+      }
+  }
+  
+  private void moveHighlight(Node target) {
+      if (target == null) return;
+
+      // Ensure highlight box is on top and visible
+      highlightBox.setVisible(true);
+      highlightBox.toFront();
+
+      // Get bounds of the target in scene coordinates
+      Bounds boundsInScene = target.localToScene(target.getBoundsInLocal());
+
+      // Convert to local coordinates relative to the overlay
+      Point2D topLeft = tutorialOverlay.sceneToLocal(boundsInScene.getMinX(), boundsInScene.getMinY());
+
+      double x = topLeft.getX();
+      double y = topLeft.getY();
+      double width = target.getBoundsInLocal().getWidth();
+      double height = target.getBoundsInLocal().getHeight();
+
+      // Adjust for potential scale or padding (OPTIONAL - tweak if it's slightly off)
+      double padding = 6.0; // optional extra padding for visual emphasis
+      x -= padding;
+      y -= padding;
+      width += 2 * padding;
+      height += 2 * padding;
+
+      // Draw dark mask around this rectangle
+      drawSpotlightMask(x, y, width, height);
+
+      // Move and size the highlight box
+      highlightBox.setLayoutX(x);
+      highlightBox.setLayoutY(y);
+      highlightBox.setWidth(width);
+      highlightBox.setHeight(height);
+
+      // Optional: Add a drop shadow or border glow to make it really pop
+      highlightBox.setStyle("-fx-stroke: #FF7F11; -fx-stroke-width: 3; -fx-fill: transparent;");
+   }
+
+
+   private void drawSpotlightMask(double x, double y, double width, double height) {
+      var gc = maskCanvas.getGraphicsContext2D();
+      // Force canvas to match overlay
+      maskCanvas.setWidth(tutorialOverlay.getWidth());
+      maskCanvas.setHeight(tutorialOverlay.getHeight());
+
+      tutorialOverlay.setPickOnBounds(false);
+      maskCanvas.setMouseTransparent(true);
+
+  
+      double canvasWidth = maskCanvas.getWidth();
+      double canvasHeight = maskCanvas.getHeight();
+  
+      // Clear everything
+      gc.clearRect(0, 0, canvasWidth, canvasHeight);
+  
+      // Set semi-transparent overlay color
+      gc.setFill(javafx.scene.paint.Color.rgb(0, 0, 0, 0.6));
+  
+      // Draw top mask
+      gc.fillRect(0, 0, canvasWidth, y);
+  
+      // Draw left mask
+      gc.fillRect(0, y, x, height);
+  
+      // Draw right mask
+      gc.fillRect(x + width, y, canvasWidth - (x + width), height);
+  
+      // Draw bottom mask
+      gc.fillRect(0, y + height, canvasWidth, canvasHeight - (y + height));
+  }
+  
+  
+
+   private void clearMask() {
+      var gc = maskCanvas.getGraphicsContext2D();
+      gc.clearRect(0, 0, maskCanvas.getWidth(), maskCanvas.getHeight());
+   }
+
+   private void startTutorial() {
+      tutorialStep = 0;
+  
+      // Set visible first
+      tutorialOverlay.setVisible(true);
+      overlayText.setVisible(true);
+      maskCanvas.setVisible(true);
+  
+      // Clear any old content and force redraw
+      clearMask();
+      showNextTutorialStep();
+  
+      // Force elements on top
+      tutorialText.toFront();
+      nextTutorialButton.toFront();
+      skipTutorialButton.toFront();
+  
+      startHighlightPulse();
+  }
+  
+  
+  private void endTutorial() {
+      tutorialOverlay.setVisible(false);
+      overlayText.setVisible(false);
+      maskCanvas.setVisible(false);
+      clearMask();
+      TutorialManager.markCompleted("MyRecipes");
+  }
+  
+
+   private void startHighlightPulse() {
+      if (highlightBox == null) return;
+
+      ScaleTransition pulse = new ScaleTransition(Duration.seconds(1), highlightBox);
+      pulse.setFromX(1.0);
+      pulse.setToX(1.05);
+      pulse.setFromY(1.0);
+      pulse.setToY(1.05);
+      pulse.setCycleCount(Animation.INDEFINITE);
+      pulse.setAutoReverse(true);
+      pulse.play();
+   }
+
+
 
    private void initializeCollections() {
       loadCollectionsFromJson(); 

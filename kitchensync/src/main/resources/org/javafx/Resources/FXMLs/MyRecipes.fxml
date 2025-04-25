@@ -31,7 +31,7 @@
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="0.0" layoutY="0.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1920.0" />
       <Text layoutX="122.0" layoutY="72.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: #FFFFFF;" text="MY RECIPES" />
       <TextField fx:id="searchBar" layoutX="685.0" layoutY="38.0" prefHeight="48.0" prefWidth="595.0" promptText="Search Recipes" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 18px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5; -fx-prompt-text-fill: #555555; -fx-font-weight: bold;" />
-      <Circle fx:id="profileCircle" fill="#FF7F11" layoutX="1845.0" layoutY="62.0" radius="40.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" />
+      <Circle fx:id="profileCircle" fill="#FF7F11" layoutX="1845.0" layoutY="62.0" radius="40.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false" />
 
       <Pane fx:id="myRecipesPane" layoutX="61.0" layoutY="127.0" prefHeight="951.0" prefWidth="1827.0" style="-fx-border-radius: 25; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);">
          <children>

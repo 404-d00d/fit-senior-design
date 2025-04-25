@@ -495,7 +495,7 @@ public class MealPlannerController {
     
                     // Add day number
                     Text dayNumber = new Text(String.valueOf(dayCount));
-                    dayNumber.setStyle("-fx-font-size: 18px; -fx-fill: white;");
+                    dayNumber.setStyle("-fx-font-size: 22px; -fx-fill: white; -fx-font-weight: bold;");
 
                     dayBox.getChildren().add(dayNumber);
                     dayBox.setStyle("-fx-border-color: white; -fx-padding: 5px;");
@@ -518,7 +518,7 @@ public class MealPlannerController {
                                 Label mealLabel = new Label(mealName);
                                 mealLabel.setWrapText(true);  // ⬅️ add this for long titles
                                 mealLabel.setMaxWidth(Double.MAX_VALUE);
-                                mealLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: white;");
+                                mealLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: white; -fx-font-weight: bold;");
                                 VBox.setVgrow(mealLabel, Priority.ALWAYS); // optional for better layout
                                 dayBox.getChildren().add(mealLabel);
                                 mealCount++;
@@ -569,14 +569,14 @@ public class MealPlannerController {
                         Map<String, Object> block = (Map<String, Object>) mealData.get(timePartKey);
                         if (block != null) {
                             String mealName = (String) block.get("name");
-                            if (hour >= 7 && hour < 10) {
-                                breakfast = mealName;
-                            } else if (hour >= 12 && hour < 14) {
-                                lunch = mealName;
-                            } else if (hour >= 18 && hour < 20) {
-                                dinner = mealName;
-                            } else {
-                                snacks = mealName;
+                            String type = (String) block.get("mealType");
+                            if (type != null) {
+                                switch (type.toLowerCase()) {
+                                    case "breakfast": breakfast = mealName; break;
+                                    case "lunch": lunch = mealName; break;
+                                    case "dinner": dinner = mealName; break;
+                                    case "snack": snacks = mealName; break;
+                                }
                             }
                         }
                     }
@@ -799,7 +799,7 @@ public class MealPlannerController {
                 if (duration > 0) {
                     // If the block's date is not the same as the current day's date, skip it
                     LocalDate blockLocalDate = LocalDate.parse(blockDate);
-                    if (!blockLocalDate.equals(currentDate)) {
+                    if (!blockLocalDate.isEqual(currentDate)) {
                         continue;
                     }
     
@@ -1799,7 +1799,7 @@ public class MealPlannerController {
         for (Recipe recipe : recipeList) {
         
             if (recipe.getID() == recipeId) {
-                return recipe.getCategory();
+                return recipe.getCategory() != null ? recipe.getCategory() : "Other";
             }
         }
         return null; // If not found
@@ -1844,7 +1844,7 @@ public class MealPlannerController {
             
             tagSet.addAll(recipe.getTags());
 
-           categorySet.add(capitalizeWords(recipe.getCategory()));
+           categorySet.add(capitalizeWords(recipe.getCategory() != null ? recipe.getCategory() : "Other"));
         }
   
         // Ensure default options exist if the user has no recipes
@@ -1909,7 +1909,8 @@ public class MealPlannerController {
     
         // 3) Filter by category, ingredients, tags
         matchingRecipes.removeIf(recipe -> {
-            boolean matchesCategory = !filterByCategory || recipe.getCategory().equalsIgnoreCase(selectedCategory);
+            boolean matchesCategory = !filterByCategory || 
+                (recipe.getCategory() != null && recipe.getCategory().equalsIgnoreCase(selectedCategory));
             boolean matchesIngredients = selectedIngredients.isEmpty()
                 || recipe.getIngredients().stream().anyMatch(ingredient -> selectedIngredients.contains(ingredient.getName()));
             boolean matchesTags = selectedTags.isEmpty()

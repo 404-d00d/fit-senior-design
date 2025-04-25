@@ -12,12 +12,12 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="myListsPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyListsController">
+<AnchorPane fx:id="myListsPane" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: linear-gradient(to bottom, #2E2E2E, #3C3C3C);" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.javafx.Controllers.MyListsController">
    <children>
       <!-- Top Header Bar -->
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="-7.0" layoutY="-2.0" stroke="BLACK" strokeType="INSIDE" width="1932.0" />
       <Text layoutX="122.0" layoutY="72.0" style="-fx-font-size: 56px; -fx-font-weight: bold; -fx-fill: white;" text="My Lists" />
-      <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" />
+      <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="BLACK" strokeType="INSIDE" visible="false" />
 
       <Pane id="SpacesMenu" fx:id="myListsPane" layoutX="2.0" layoutY="118.0" prefHeight="966.0" prefWidth="1920.0">
          <children>
@@ -30,9 +30,9 @@
                   <Button fx:id="neededIngredients" mnemonicParsing="false" prefHeight="60.0" prefWidth="346.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-border-radius: 25; -fx-font-size: 24px; -fx-font-weight: bold;" text="Needed Ingredients" />
                </children>
             </VBox>
-            <Button fx:id="generateShoppingList" layoutX="787.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="459.0" style="-fx-background-color: #777777; -fx-text-fill: white; -fx-border-radius: 25; -fx-font-size: 24px;" text="Generate New Shopping List(s)" />
-            <Button fx:id="editPrefrences" layoutX="1275.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="270.0" style="-fx-background-color: #777777; -fx-text-fill: white; -fx-border-radius: 25; -fx-font-size: 24px;" text="Edit Preferences" />
-            <Button fx:id="addStoreList" layoutX="1592.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="270.0" style="-fx-background-color: #777777; -fx-text-fill: white; -fx-border-radius: 25; -fx-font-size: 24px;" text="Add Store List" />
+            <Button fx:id="generateShoppingList" layoutX="787.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="459.0" style="-fx-background-color: #777777; -fx-text-fill: white; -fx-border-radius: 25; -fx-font-size: 24px;" text="Generate New Shopping List(s)" visible="false" />
+            <Button fx:id="editPrefrences" layoutX="1275.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="270.0" style="-fx-background-color: #777777; -fx-text-fill: white; -fx-border-radius: 25; -fx-font-size: 24px;" text="Edit Preferences" visible="false" />
+            <Button fx:id="addStoreList" layoutX="1592.0" layoutY="20.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="270.0" style="-fx-background-color: #777777; -fx-text-fill: white; -fx-border-radius: 25; -fx-font-size: 24px;" text="Add Store List" visible="false" />
          </children>
       </Pane>
 
@@ -97,7 +97,7 @@
 
 
       <Button fx:id="menuButton" layoutX="20.0" layoutY="30.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #444444; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-border-color: #FF7F11; -fx-border-width: 2;" text="Menu" />
-      <TextField fx:id="searchBar" layoutX="818.0" layoutY="40.0" prefHeight="48.0" prefWidth="595.0" promptText="Can't Find Something?" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 16px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5;" />
+      <TextField fx:id="searchBar" layoutX="818.0" layoutY="40.0" prefHeight="48.0" prefWidth="595.0" promptText="Can't Find Something?" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 16px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5;" visible="false" />
 
    </children>
 </AnchorPane>

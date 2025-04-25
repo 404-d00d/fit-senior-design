@@ -137,8 +137,8 @@
         <Text layoutX="1203.0" layoutY="590.0" style="-fx-font-size: 24px; -fx-fill: #333333;" text="Shopping List" />
 
         <!-- Profile Icon -->
-        <Circle fx:id="profileCircle" fill="#FF7F11" layoutX="1845.0" layoutY="56.0" radius="40.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" />
-      <TextField fx:id="searchBar" layoutX="808.0" layoutY="30.0" prefHeight="48.0" prefWidth="595.0" promptText="Can't Find Something?" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 16px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5;" />
+        <Circle fx:id="profileCircle" fill="#FF7F11" layoutX="1845.0" layoutY="56.0" radius="40.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false" />
+      <TextField fx:id="searchBar" layoutX="808.0" layoutY="30.0" prefHeight="48.0" prefWidth="595.0" promptText="Can't Find Something?" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 16px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5;" visible="false" />
 
       <Rectangle fx:id="highlightBox" arcHeight="10" arcWidth="10" height="50" style="-fx-fill: rgba(255, 255, 255, 0.3); -fx-stroke: #FF7F11; -fx-stroke-width: 3;" visible="false" width="200" />
       <HBox fx:id="mealPlans" alignment="CENTER_LEFT" layoutX="310.0" layoutY="140.0" prefHeight="330.0" prefWidth="1590.0" style="-fx-spacing: 10;" />

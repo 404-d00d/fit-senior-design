@@ -26,7 +26,7 @@
    
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="-23.0" layoutY="-2.0" stroke="#444444" strokeType="INSIDE" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" width="1944.0" />
       <Text layoutX="105.0" layoutY="74.0" style="-fx-font-size: 56px; -fx-font-weight: bold; -fx-fill: white;" text="Community Recipes" wrappingWidth="672.30859375" />
-      <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="#444444" strokeType="INSIDE" />
+      <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="#444444" strokeType="INSIDE" visible="false" />
       
       <Pane fx:id="myRecipesPane" layoutX="61.0" layoutY="127.0" style="-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);">
          <children>

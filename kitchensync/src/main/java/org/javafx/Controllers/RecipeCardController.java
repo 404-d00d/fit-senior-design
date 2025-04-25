@@ -39,8 +39,13 @@ public class RecipeCardController {
       String fixedName = capitalizeWords(newRecipe.getName());
       recipeName.setText(fixedName);
       recipeImage.setImage(image);
-      recipeImage.setFitWidth(200);
-      recipeImage.setFitHeight(150);
+      recipeImage.setPreserveRatio(false); // maintain image aspect ratio
+      recipeImage.setSmooth(true);        // improve scaling quality
+
+      // Bind width and height to the parent VBox
+      recipeImage.fitWidthProperty().bind(recipeCardPane.widthProperty().subtract(20)); // optional padding
+      recipeImage.fitHeightProperty().bind(recipeCardPane.heightProperty().multiply(0.6)); // adjust ratio as needed
+
       this.viewType = viewType;
 
       if ("myrecipes".equals(viewType)) {

@@ -24,11 +24,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.javafx.Item.Item;
 import org.javafx.Main.Main;
 import org.javafx.Recipe.Recipe;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -197,7 +200,7 @@ public class CommunityRecipesController {
       reviewPane.setStyle("-fx-background-color: transparent;");
       reviewBoard.setStyle("-fx-background-color: transparent;");
 
-
+      cookItButton.setOnAction(e -> handleSaveAndCook());
       initializeDatabaseAndS3();
       loadCommunityRecipes();
 
@@ -411,7 +414,7 @@ public class CommunityRecipesController {
       dialog.setGraphic(null);
       Label headerLabel = (Label) dialog.getDialogPane().lookup(".header-panel .label");
       if (headerLabel != null) {
-         headerLabel.setStyle("\"-fx-background-color: #2E2E2E; -fx-text-fill: white; -fx-font-size: 18px;");
+         headerLabel.setStyle("-fx-background-color: #2E2E2E; -fx-text-fill: white; -fx-font-size: 18px;");
       }
       dialog.getDialogPane().setStyle("-fx-background-color: #2E2E2E; -fx-text-fill: white;");
       
@@ -435,6 +438,39 @@ public class CommunityRecipesController {
          return row;
       });
    }
+
+   private void handleSaveAndCook() {
+      if (currentRecipe == null) {
+         showAlert("Error", "No Recipe Selected", "Please select a recipe first.");
+         return;
+      }
+   
+      // Save to local MyRecipes (optional - skip if already saved)
+      try {
+         boolean alreadySaved = recipeList.stream()
+            .anyMatch(r -> r.getName().equals(currentRecipe.getName()));
+   
+         if (!alreadySaved) {
+            saveRecipe(currentRecipe, new Image(S3_BASE_URL + currentRecipe.getUserID() + "-" + currentRecipe.getRecipeDBId() + ".jpg"));
+            System.out.println("Recipe saved locally.");
+         } else {
+            System.out.println("Recipe already in MyRecipes.");
+         }
+      } catch (Exception ex) {
+         ex.printStackTrace();
+         showAlert("Save Failed", "Could not save recipe.", "Please try again.");
+         return;
+      }
+   
+      // Open the cooking screen with step view
+      showRecipeDetails(
+         currentRecipe.getID(),
+         currentRecipe.getName(),
+         new Image(S3_BASE_URL + currentRecipe.getUserID() + "-" + currentRecipe.getRecipeDBId() + ".jpg"),
+         currentRecipe
+      );
+   }
+   
 
    private void configureIngredientTable() {
       ingredientList.setCellValueFactory(data -> new ReadOnlyStringWrapper(data.getValue().getName()));
@@ -1314,11 +1350,36 @@ public class CommunityRecipesController {
       }
    }
 
+   private String getReadinessStatus(Recipe recipe, List<String> inventory) {
+      int total = recipe.getIngredients().size();
+      int available = 0;
+      boolean needsPrep = false;
+  
+      for (Ingredient ing : recipe.getIngredients()) {
+          String name = ing.getName().toLowerCase();
+          if (inventory.contains(name)) {
+              available++;
+              // you could flag needsPrep = true here if needed (e.g., frozen tag check)
+          }
+      }
+  
+      if (available == total) return needsPrep ? "prep" : "ready";
+      if (available > 0) return "partial";
+      return "incomplete";
+  }
+
    private List<String> getUserInventory() {
-    // Retrieve the current user's inventory.
-    // This could be loaded from a database, a file, or application state.
-    // Here’s a dummy example:
-    return Arrays.asList("tomato", "cheese", "basil", "olive oil");
+      try (Reader reader = new FileReader("itemInventory.json")) {
+         Gson gson = new Gson();
+         Type listType = new TypeToken<List<Item>>(){}.getType();
+         List<Item> inventoryItems = gson.fromJson(reader, listType);
+         return inventoryItems.stream()
+                  .map(item -> item.getName().toLowerCase())
+                  .collect(Collectors.toList());
+      } catch (Exception e) {
+         e.printStackTrace();
+         return new ArrayList<>();
+      }
    }
 
    private List<Recipe> getSuggestedRecipes(List<String> userInventory, List<Recipe> allRecipes) {
@@ -1374,6 +1435,21 @@ public class CommunityRecipesController {
           
          // Pass "community" as the viewType to set up the community-specific context menu.
          controller.setRecipeData(recipe, image, this,"community");
+
+         String status = getReadinessStatus(recipe, getUserInventory());
+         String color;
+         switch (status) {
+            case "ready":      color = "#00FF00"; break; // green
+            case "prep":       color = "#FFFF00"; break; // yellow
+            case "partial":    color = "#FFA500"; break; // orange
+            default:           color = "#FF0000"; break; // red
+         }
+         recipeCard.setStyle("-fx-border-color: " + color + "; -fx-border-width: 5; -fx-border-radius: 10; -fx-background-radius: 10;");
+
+
+         recipeCard.setPrefSize(200, 300);
+         recipeCard.setMinSize(200, 300);
+         recipeCard.setMaxSize(200, 300);
 
          // Determine outline color based on completeness:
          List<String> inventory = getUserInventory();

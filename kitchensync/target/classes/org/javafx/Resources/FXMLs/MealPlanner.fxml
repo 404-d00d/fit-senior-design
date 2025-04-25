@@ -30,7 +30,7 @@
       
       <Rectangle fill="#3C3C3C" height="112.0" layoutX="-24.0" layoutY="-11.0" stroke="#444444" strokeType="INSIDE" width="1944.0" />
       <Text layoutX="118.0" layoutY="72.0" style="-fx-font-size: 56px; -fx-font-weight: bold; -fx-fill: white;" text="Meal Planner" />
-      <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="#444444" strokeType="INSIDE" />
+      <Circle id="Profile" fill="#FF7F11" layoutX="1845.0" layoutY="52.0" radius="49.0" stroke="#444444" strokeType="INSIDE" visible="false" />
       
       <Pane fx:id="calendarPane" layoutX="18.0" layoutY="127.0" prefHeight="934.0" prefWidth="1881.0">
          <children>
@@ -39,15 +39,19 @@
             <Rectangle arcHeight="50.0" arcWidth="50.0" fill="#3C3C3C" height="934.0" layoutY="1.0" stroke="#444444" strokeType="INSIDE" width="409.0" />
             <DatePicker fx:id="datePicker" layoutX="34.0" layoutY="69.0" prefHeight="53.0" prefWidth="336.0" />
             <Text layoutX="85.0" layoutY="50.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-fill: white;" text="Daily Summary" />
+            <VBox layoutX="34.0" layoutY="184.1015625">
+               <children>
+                  
+                  <Text fx:id="breakfastMeal" style="-fx-font-size: 24px; -fx-fill: white;" text="Breakfast:" wrappingWidth="350.0" />
+                  <Text fx:id="lunchMeal" style="-fx-font-size: 24px; -fx-fill: white;" text="Lunch:" wrappingWidth="350.0" />
+                  <Text fx:id="dinnerMeal" style="-fx-font-size: 24px; -fx-fill: white;" text="Dinner:" wrappingWidth="350.0" />
+                  <Text fx:id="snacksMeal" style="-fx-font-size: 24px; -fx-fill: white;" text="Snacks:" wrappingWidth="350.0" />
+               </children>
+            </VBox>
             
-            <Text fx:id="breakfastMeal" layoutX="34.0" layoutY="210.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Breakfast:" />
-            <Text fx:id="lunchMeal" layoutX="34.0" layoutY="245.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Lunch:" />
-            <Text fx:id="dinnerMeal" layoutX="34.0" layoutY="280.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Dinner:" />
-            <Text fx:id="snacksMeal" layoutX="34.0" layoutY="315.0" style="-fx-font-size: 24px; -fx-fill: white;" text="Snacks:" />
-            
-            <Text layoutX="20.0" layoutY="584.0" style="-fx-font-size: 30px; -fx-fill: white;" text="Daily Nutritional Breakdown" />
-            <ComboBox fx:id="nutritionalMeals" layoutX="94.0" layoutY="592.0" prefHeight="44.0" prefWidth="222.0" promptText="Meal" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white;" />
-            <PieChart fx:id="dailyNutritionalBreakdown" layoutX="36.0" layoutY="630.0" prefHeight="269.0" prefWidth="336.0" />
+            <Text layoutX="20.0" layoutY="584.0" style="-fx-font-size: 30px; -fx-fill: white;" text="Daily Nutritional Breakdown" visible="false" />
+            <ComboBox fx:id="nutritionalMeals" layoutX="94.0" layoutY="592.0" prefHeight="44.0" prefWidth="222.0" promptText="Meal" style="-fx-background-color: #555555; -fx-background-radius: 50; -fx-text-fill: white;" visible="false" />
+            <PieChart fx:id="dailyNutritionalBreakdown" layoutX="36.0" layoutY="630.0" prefHeight="269.0" prefWidth="336.0" visible="false" />
             
             <Pane layoutX="446.0" layoutY="87.0" prefHeight="832.0" prefWidth="1426.0" style="-fx-background-color: #2E2E2E;">
                <children>
@@ -260,7 +264,7 @@
             <Button fx:id="nextStep" focusTraversable="false" layoutX="989.0" layoutY="553.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="54.0" style="-fx-background-color: #FF7F11; -fx-text-fill: white; -fx-font-size: 20px; -fx-background-radius: 25;" text="▶" />
          </children>
       </Pane>
-      <TextField fx:id="searchBar" layoutX="704.0" layoutY="37.0" prefHeight="48.0" prefWidth="595.0" promptText="Search Recipes" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 18px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5; -fx-prompt-text-fill: #555555; -fx-font-weight: bold;" />
+      <TextField fx:id="searchBar" layoutX="704.0" layoutY="37.0" prefHeight="48.0" prefWidth="595.0" promptText="Search Recipes" style="-fx-background-radius: 25; -fx-padding: 5; -fx-font-size: 18px; -fx-border-color: #FF7F11; -fx-border-radius: 25; -fx-border-width: 5; -fx-prompt-text-fill: #555555; -fx-font-weight: bold;" visible="false" />
       
       <VBox fx:id="menuPane" alignment="TOP_CENTER" layoutX="7.0" prefHeight="1080.0" prefWidth="400.0" style="-fx-background-color: #3C3C3C; -fx-background-radius: 50; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0.5, 0, 5);" visible="false">
          <children>

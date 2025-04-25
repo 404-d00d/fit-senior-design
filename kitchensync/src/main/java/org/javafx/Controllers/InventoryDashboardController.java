@@ -855,7 +855,7 @@ public class InventoryDashboardController {
                   controller.setIngredientData(
                      ingredient.getID(),
                      ingredient.getName() + " - " + ingredient.getQuantity() + " " + ingredient.getUnit(),
-                     null,
+                     ingredient.getImagePath(),
                      this
                   );
 
@@ -1110,15 +1110,17 @@ public class InventoryDashboardController {
          if (!jsonResponse.isEmpty()) {
             Gson gson = new Gson();
             JsonObject jsonObject = gson.fromJson(jsonResponse, JsonObject.class);
-            if ("success".equals(jsonObject.get("status").getAsString())) {
+            if (jsonObject.has("status") && "success".equals(jsonObject.get("status").getAsString()) && jsonObject.has("product")) {
                   JsonObject product = jsonObject.getAsJsonObject("product");
                   String name = product.has("product_name") ? product.get("product_name").getAsString() : null;
                   String quantityInfo = product.has("quantity") ? product.get("quantity").getAsString() : null;
 
                   prefillManualForm(name, quantityInfo != null ? parseQuantity(quantityInfo).toString() : null, parseUnit(quantityInfo));
             } else {
-                  String message = jsonObject.has("message") ? jsonObject.get("message").getAsString() : "No product information in the database.";
-                  showFailureAlert("Barcode Error", "UPC Code: " + upc, message);
+               String fallbackMessage = jsonObject.has("message")
+               ? jsonObject.get("message").getAsString()
+               : "Unable to find product details for this UPC.";
+               showFailureAlert("UPC Error", "UPC Code: " + upc, fallbackMessage);
             }
          } else {
             showFailureAlert("Barcode Error", "UPC Code: " + upc, "No response from the server.");

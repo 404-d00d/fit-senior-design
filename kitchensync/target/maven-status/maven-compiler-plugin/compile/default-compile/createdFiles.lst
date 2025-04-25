@@ -42,6 +42,7 @@ org\javafx\Controllers\InventoryDashboardController$1.class
 org\javafx\Controllers\IngredientCell.class
 org\javafx\Controllers\TutorialManager.class
 org\javafx\SecondaryController.class
+org\javafx\Controllers\CommunityRecipesController$1.class
 org\javafx\Controllers\IngredientSuggestionAndSubstitutions.class
 org\javafx\Controllers\CommunityRecipesController.class
 org\javafx\Controllers\InventoryDashboardController$2.class

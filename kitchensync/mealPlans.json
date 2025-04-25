@@ -3,25 +3,25 @@
     {
       "cookTime": {
         "date": "2025-04-19",
-        "duration": 50,
-        "hour": 18,
+        "duration": 50.0,
+        "hour": 18.0,
         "name": "Skillet Pork Chops with Potatoes and Onion",
         "mealType": "Dinner",
-        "id": 8,
+        "id": 8.0,
         "isMealMade": false,
         "mealGroupId": "67b4b8ab-adac-4c20-88fd-cfd5d27bee1c",
-        "recipeID": 5
+        "recipeID": 5.0
       },
       "prepTime": {
         "date": "2025-04-19",
-        "duration": 20,
-        "hour": 14,
+        "duration": 20.0,
+        "hour": 14.0,
         "name": "Skillet Pork Chops with Potatoes and Onion",
         "mealType": "Dinner",
-        "id": 7,
+        "id": 7.0,
         "isMealMade": false,
         "mealGroupId": "67b4b8ab-adac-4c20-88fd-cfd5d27bee1c",
-        "recipeID": 5
+        "recipeID": 5.0
       }
     }
   ],
@@ -29,36 +29,36 @@
     {
       "cookTime": {
         "date": "2025-04-18",
-        "duration": 20,
-        "hour": 18,
+        "duration": 20.0,
+        "hour": 18.0,
         "name": "Hot Spinach and Artichoke Dip",
         "mealType": "Lunch",
-        "id": 3,
+        "id": 3.0,
         "isMealMade": false,
         "mealGroupId": "d88b84eb-e41f-414a-b233-3c517521c648",
-        "recipeID": 4
+        "recipeID": 4.0
       },
       "passiveTime": {
         "date": "2025-04-18",
-        "duration": 5,
-        "hour": 15,
+        "duration": 5.0,
+        "hour": 15.0,
         "name": "Hot Spinach and Artichoke Dip",
         "mealType": "Lunch",
-        "id": 2,
+        "id": 2.0,
         "isMealMade": false,
         "mealGroupId": "d88b84eb-e41f-414a-b233-3c517521c648",
-        "recipeID": 4
+        "recipeID": 4.0
       },
       "prepTime": {
         "date": "2025-04-18",
-        "duration": 20,
-        "hour": 13,
+        "duration": 20.0,
+        "hour": 13.0,
         "name": "Hot Spinach and Artichoke Dip",
         "mealType": "Lunch",
-        "id": 1,
+        "id": 1.0,
         "isMealMade": false,
         "mealGroupId": "d88b84eb-e41f-414a-b233-3c517521c648",
-        "recipeID": 4
+        "recipeID": 4.0
       }
     }
   ],
@@ -66,25 +66,25 @@
     {
       "cookTime": {
         "date": "2025-04-20",
-        "duration": 140,
-        "hour": 18,
+        "duration": 140.0,
+        "hour": 18.0,
         "name": "Guinness beef stew",
         "mealType": "Dinner",
-        "id": 10,
+        "id": 10.0,
         "isMealMade": false,
         "mealGroupId": "d3eeb520-4987-49e3-b090-4558d4fab96a",
-        "recipeID": 1
+        "recipeID": 1.0
       },
       "prepTime": {
         "date": "2025-04-20",
-        "duration": 20,
-        "hour": 16,
+        "duration": 20.0,
+        "hour": 16.0,
         "name": "Guinness beef stew",
         "mealType": "Dinner",
-        "id": 9,
+        "id": 9.0,
         "isMealMade": false,
         "mealGroupId": "d3eeb520-4987-49e3-b090-4558d4fab96a",
-        "recipeID": 1
+        "recipeID": 1.0
       }
     }
   ],
@@ -92,36 +92,36 @@
     {
       "cookTime": {
         "date": "2025-04-17",
-        "duration": 65,
-        "hour": 19,
+        "duration": 65.0,
+        "hour": 19.0,
         "name": "American Goulash",
         "mealType": "Dinner",
-        "id": 6,
+        "id": 6.0,
         "isMealMade": false,
         "mealGroupId": "3ba1e19f-140f-4a3e-aa07-7e02b1ff69dc",
-        "recipeID": 7
+        "recipeID": 7.0
       },
       "passiveTime": {
         "date": "2025-04-17",
-        "duration": 5,
-        "hour": 18,
+        "duration": 5.0,
+        "hour": 18.0,
         "name": "American Goulash",
         "mealType": "Dinner",
-        "id": 5,
+        "id": 5.0,
         "isMealMade": false,
         "mealGroupId": "3ba1e19f-140f-4a3e-aa07-7e02b1ff69dc",
-        "recipeID": 7
+        "recipeID": 7.0
       },
       "prepTime": {
         "date": "2025-04-17",
-        "duration": 15,
-        "hour": 15,
+        "duration": 15.0,
+        "hour": 15.0,
         "name": "American Goulash",
         "mealType": "Dinner",
-        "id": 4,
+        "id": 4.0,
         "isMealMade": false,
         "mealGroupId": "3ba1e19f-140f-4a3e-aa07-7e02b1ff69dc",
-        "recipeID": 7
+        "recipeID": 7.0
       }
     }
   ],
@@ -141,7 +141,7 @@
       "passiveTime": {
         "date": "2025-04-16",
         "duration": 15.0,
-        "hour": 16,
+        "hour": 16.0,
         "name": "Chicken and Gnocchi Soup",
         "mealType": "Dinner",
         "id": 2.0,
@@ -152,13 +152,126 @@
       "prepTime": {
         "date": "2025-04-16",
         "duration": 15.0,
-        "hour": 13,
+        "hour": 13.0,
         "name": "Chicken and Gnocchi Soup",
         "mealType": "Dinner",
         "id": 1.0,
         "isMealMade": false,
         "mealGroupId": "f8662707-46fe-41cb-92e5-8afdd7cdb090",
         "recipeID": 2.0
+      }
+    }
+  ],
+  "2025-04-24": [
+    {
+      "cookTime": {
+        "date": "2025-04-24",
+        "duration": 15.0,
+        "hour": 18.0,
+        "name": "Easy Chicken Tacos",
+        "mealType": "Dinner",
+        "id": 2.0,
+        "isMealMade": false,
+        "mealGroupId": "09404a62-098c-4069-be88-b2f2ffe5f07b",
+        "recipeID": 0.0
+      },
+      "prepTime": {
+        "date": "2025-04-24",
+        "duration": 15.0,
+        "hour": 9.0,
+        "name": "Easy Chicken Tacos",
+        "mealType": "Dinner",
+        "id": 1.0,
+        "isMealMade": false,
+        "mealGroupId": "09404a62-098c-4069-be88-b2f2ffe5f07b",
+        "recipeID": 0.0
+      }
+    },
+    {
+      "cookTime": {
+        "date": "2025-04-24",
+        "duration": 20.0,
+        "hour": 8.0,
+        "name": "Hot Spinach and Artichoke Dip",
+        "mealType": "Breakfast",
+        "id": 5.0,
+        "isMealMade": false,
+        "mealGroupId": "2ecea7c0-5edc-4f49-9936-679c48a2613e",
+        "recipeID": 4.0
+      },
+      "passiveTime": {
+        "date": "2025-04-24",
+        "duration": 5.0,
+        "hour": 7.0,
+        "name": "Hot Spinach and Artichoke Dip",
+        "mealType": "Breakfast",
+        "id": 4.0,
+        "isMealMade": false,
+        "mealGroupId": "2ecea7c0-5edc-4f49-9936-679c48a2613e",
+        "recipeID": 4.0
+      },
+      "prepTime": {
+        "date": "2025-04-24",
+        "duration": 20.0,
+        "hour": 6.0,
+        "name": "Hot Spinach and Artichoke Dip",
+        "mealType": "Breakfast",
+        "id": 3.0,
+        "isMealMade": false,
+        "mealGroupId": "2ecea7c0-5edc-4f49-9936-679c48a2613e",
+        "recipeID": 4.0
+      }
+    }
+  ],
+  "2025-04-25": [
+    {
+      "cookTime": {
+        "date": "2025-04-25",
+        "duration": 50.0,
+        "hour": 18.0,
+        "name": "Skillet Pork Chops with Potatoes and Onion",
+        "mealType": "Dinner",
+        "id": 2.0,
+        "isMealMade": false,
+        "mealGroupId": "bfa3fe9e-c816-47b2-baf7-34dab813aa06",
+        "recipeID": 5.0
+      },
+      "prepTime": {
+        "date": "2025-04-25",
+        "duration": 20.0,
+        "hour": 9.0,
+        "name": "Skillet Pork Chops with Potatoes and Onion",
+        "mealType": "Dinner",
+        "id": 1.0,
+        "isMealMade": false,
+        "mealGroupId": "bfa3fe9e-c816-47b2-baf7-34dab813aa06",
+        "recipeID": 5.0
+      }
+    }
+  ],
+  "2025-04-26": [
+    {
+      "cookTime": {
+        "date": "2025-04-26",
+        "duration": 5,
+        "hour": 18,
+        "name": "Avocado Toast with Egg",
+        "mealType": "Breakfast",
+        "id": 2,
+        "isMealMade": false,
+        "mealGroupId": "0aa0b3ad-e775-404c-9cc2-76a76388fe12",
+        "recipeID": 6
+      },
+      "prepTime": {
+        "date": "2025-04-26",
+        "duration": 5,
+        "hour": 9,
+        "name": "Avocado Toast with Egg",
+        "mealType": "Breakfast",
+        "id": 1,
+        "isMealMade": false,
+        "mealGroupId": "0aa0b3ad-e775-404c-9cc2-76a76388fe12",
+        "recipeID": 6
       }
     }
   ]

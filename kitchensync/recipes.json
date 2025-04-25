@@ -1043,5 +1043,60 @@
     "localRating": 0,
     "communityRating": 0,
     "randIngredientID": 0
+  },
+  {
+    "id": 6,
+    "name": "Avocado Toast with Egg",
+    "category": "breakfast",
+    "collection": "Community",
+    "servings": 2,
+    "description": "A simple yet nourishing breakfast combining creamy avocado and a perfectly cooked egg on crusty toast.",
+    "prepTime": 5,
+    "passiveTime": 0,
+    "cookTime": 5,
+    "complexity": 1,
+    "tags": [
+      "healthy",
+      "quick"
+    ],
+    "specialEquipment": [],
+    "ingredients": [
+      {
+        "name": "2 slices sourdough bread",
+        "amount": "",
+        "unit": ""
+      },
+      {
+        "name": "1 ripe avocado",
+        "amount": "",
+        "unit": ""
+      },
+      {
+        "name": "2 eggs",
+        "amount": "",
+        "unit": ""
+      },
+      {
+        "name": "Salt and pepper to taste",
+        "amount": "",
+        "unit": ""
+      },
+      {
+        "name": "Red pepper flakes (optional)",
+        "amount": "",
+        "unit": ""
+      }
+    ],
+    "steps": [
+      "Toast bread slices.",
+      "Mash avocado with salt and pepper.",
+      "Fry or poach eggs to desired doneness.",
+      "Spread avocado on toast, top with eggs, and sprinkle with red pepper flakes."
+    ],
+    "localRating": 0,
+    "communityRating": 0,
+    "randIngredientID": 0,
+    "userId": "admin",
+    "recipeDBId": "36"
   }
 ]
